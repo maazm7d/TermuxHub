@@ -89,8 +89,8 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.9.1")
 
     // Already required for hilt viewmodels
-    implementation "com.google.dagger:hilt-android:2.51"
-    kapt "com.google.dagger:hilt-compiler:2.51"
+    implementation("com.google.dagger:hilt-android:2.51")
+    kapt("com.google.dagger:hilt-compiler:2.51")
 
     // Lifecycle / ViewModel integrations
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
