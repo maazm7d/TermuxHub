@@ -1,29 +1,20 @@
-
 package com.maazm7d.termuxhub
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.maazm7d.termuxhub.databinding.ActivityMainBinding
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import com.maazm7d.termuxhub.navigation.TermuxHubAppNav
+import com.maazm7d.termuxhub.ui.theme.TermuxHubTheme
+import dagger.hilt.android.AndroidEntryPoint
 
-public class MainActivity : AppCompatActivity() {
-
-    private var _binding: ActivityMainBinding? = null
-    
-    private val binding: ActivityMainBinding
-      get() = checkNotNull(_binding) { "Activity has been destroyed" }
-    
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Inflate and get instance of binding
-        _binding = ActivityMainBinding.inflate(layoutInflater)
-
-        // set content view to binding's root
-        setContentView(binding.root)
-    }
-    
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
+        setContent {
+            TermuxHubTheme {
+                TermuxHubAppNav()
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.kapt")
     id("kotlin-parcelize")
+    id("com.google.dagger.hilt.android")   // ★ ADD THIS
 }
 
 android {
@@ -111,6 +112,14 @@ dependencies {
 
     // Image loading (Coil)
     implementation("io.coil-kt:coil-compose:2.5.0")
+    
+    // splash 
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    
+    // Hilt for Dependency Injection
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-compiler:2.51.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // Optional: Material icons
     implementation("androidx.compose.material:material-icons-extended:1.7.0")
