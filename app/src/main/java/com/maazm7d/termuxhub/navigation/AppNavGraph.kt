@@ -17,15 +17,6 @@ import com.maazm7d.termuxhub.ui.screens.saved.SavedViewModel
 import com.maazm7d.termuxhub.ui.screens.settings.SettingsScreen
 import com.maazm7d.termuxhub.ui.screens.splash.SplashScreen
 
-object Destinations {
-    const val SPLASH = "splash"
-    const val HOME = "home"
-    const val DETAILS = "details"
-    const val SAVED = "saved"
-    const val BLOGS = "blogs"
-    const val SETTINGS = "settings"
-}
-
 @Composable
 fun TermuxHubAppNav(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
