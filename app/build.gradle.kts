@@ -83,6 +83,15 @@ dependencies {
     // Navigation for Compose
     implementation("androidx.navigation:navigation-compose:2.8.0")
 
+    // hilt injection
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
+
+    // Already required for hilt viewmodels
+    implementation "com.google.dagger:hilt-android:2.51"
+    kapt "com.google.dagger:hilt-compiler:2.51"
+
     // Lifecycle / ViewModel integrations
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
@@ -101,6 +110,7 @@ dependencies {
 
     // OkHttp logging (optional but useful)
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
 
     // Room (local DB)
     implementation("androidx.room:room-runtime:2.6.1")
