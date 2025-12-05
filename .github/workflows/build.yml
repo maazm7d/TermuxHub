@@ -1,0 +1,106 @@
+name: Build Debug Apk and Notify via Telegram
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    types: [opened]
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build Debug APK
+        id: build_apk
+        run: |
+          set -e
+          ./gradlew assembleDebug
+          echo "BUILD_STATUS=success" >> $GITHUB_ENV
+        continue-on-error: true
+
+      - name: Upload Debug APK
+        if: ${{ env.BUILD_STATUS == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Send Build Status and APK to Telegram
+        run: |
+          TEXT=$'*Message:*\n```text\n${{ github.event.head_commit.message }}\n```'
+          TEXT+=$'[View Commit](${{ github.event.head_commit.url }})\n'
+
+          if [[ "${{ env.BUILD_STATUS }}" == "success" ]]; then
+            TEXT+=$'*Build Status:* Successful\n'
+            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument" \
+              -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+              -F document=@"app/build/outputs/apk/debug/app-debug.apk" \
+              -F caption="$TEXT" \
+              -F parse_mode="Markdown"
+          else
+            TEXT+=$'*Build Status:* Failed\n'
+            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+              -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+              -d text="$TEXT" \
+              -d parse_mode="Markdown"
+          fi
+
+  telegram_misc:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify on New Pull Request
+        if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
+        run: |
+          TEXT=$'*New Pull Request on QuickSE!*\n\n'
+          TEXT+=$'*Repository:* `${{ github.repository }}`\n'
+          TEXT+=$'*Opened by:* [${{ github.actor }}](https://github.com/${{ github.actor }})\n'
+          TEXT+=$'*Title:* _${{ github.event.pull_request.title }}_\n'
+          TEXT+=$'[View PR](${{ github.event.pull_request.html_url }})'
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d text="$TEXT" \
+            -d parse_mode="Markdown" \
+            -d disable_web_page_preview=true
+
+      - name: Notify on New Release
+        if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
+        run: |
+          TEXT=$'*New QuickSE Release Published!*\n\n'
+          TEXT+=$'*Version:* `${{ github.event.release.tag_name }}`\n'
+          TEXT+=$'*Name:* _${{ github.event.release.name }}_\n'
+          TEXT+=$'*Author:* [${{ github.actor }}](https://github.com/${{ github.actor }})\n'
+          TEXT+=$'[View Release](${{ github.event.release.html_url }})'
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d text="$TEXT" \
+            -d parse_mode="Markdown" \
+            -d disable_web_page_preview=true
