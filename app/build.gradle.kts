@@ -45,13 +45,11 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs += [
+    jvmTarget = "17"
+    freeCompilerArgs = freeCompilerArgs + listOf(
         "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
-    ]
-        // You can enable progressive mode if desired:
-        // freeCompilerArgs += "-Xprogressive"
-    }
+    )
+}
 
     buildFeatures {
         compose = true
