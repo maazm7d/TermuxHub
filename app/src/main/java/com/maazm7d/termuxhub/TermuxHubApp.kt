@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.work.Configuration
 import com.maazm7d.termuxhub.data.local.AppDatabase
 import com.maazm7d.termuxhub.data.remote.MetadataClient
-import com.maazm7d.termuxhub.data.repository.ToolsRepository
+import com.maazm7d.termuxhub.data.repository.ToolRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -23,7 +23,7 @@ class TermuxHubApp : Application(), Configuration.Provider {
         lateinit var metadataClient: MetadataClient
             private set
 
-        lateinit var repository: ToolsRepository
+        lateinit var repository: ToolRepository
             private set
 
         // app scope for root-level coroutines if needed
@@ -42,7 +42,7 @@ class TermuxHubApp : Application(), Configuration.Provider {
 
         // initialize repository using existing ToolsRepository constructor
         // (constructor signature seen earlier: (toolDao, metadataClient, assetsFileName, appContext))
-        repository = ToolsRepository(
+        repository = ToolRepository(
             toolDao = database.toolDao(),
             metadataClient = metadataClient,
             assetsFileName = "metadata.json",
