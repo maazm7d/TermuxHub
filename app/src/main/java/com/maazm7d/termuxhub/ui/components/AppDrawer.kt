@@ -1,8 +1,8 @@
 package com.maazm7d.termuxhub.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -18,10 +18,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 fun AppDrawer(onAction: (String) -> Unit) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface) // or surfaceVariant / background
+            .fillMaxHeight()
+            .background(MaterialTheme.colorScheme.surface)
             .padding(12.dp)
     ) {
+        // Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
