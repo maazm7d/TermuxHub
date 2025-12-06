@@ -1,7 +1,10 @@
 name: Build Debug APK
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - '**'  # Triggers on push to any branch
+  workflow_dispatch:  # Keeps manual trigger option
 
 jobs:
   build:
