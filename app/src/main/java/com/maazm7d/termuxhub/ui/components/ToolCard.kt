@@ -1,63 +1,129 @@
 package com.maazm7d.termuxhub.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.Button
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.maazm7d.termuxhub.domain.model.Tool
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.layout.ContentScale
 
 @Composable
-fun ToolCard(tool: Tool, onOpenDetails: (String) -> Unit, onLike: (String) -> Unit, onSave: (String) -> Unit, onShare: (Tool) -> Unit) {
+fun ToolCard(
+    tool: Tool,
+    onOpenDetails: (String) -> Unit,
+    onLike: (String) -> Unit,
+    onSave: (String) -> Unit,
+    onShare: (Tool) -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .clickable { onOpenDetails(tool.id) },
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
+
         Column {
+            // Thumbnail 16:9
             if (!tool.thumbnail.isNullOrBlank()) {
                 AsyncImage(
                     model = tool.thumbnail,
                     contentDescription = "${tool.name} thumbnail",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(160.dp)
-                        .background(MaterialTheme.colorScheme.surface),
-                    contentScale = ContentScale.Crop
+                        .aspectRatio(16f / 9f)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
-                Text(tool.name, style = MaterialTheme.typography.titleLarge)
-                Spacer(modifier = Modifier.height(6.dp))
-                Row {
-                    // tags preview (use first 2 or category)
-                    Text(tool.category.ifBlank { "Utility" }, style = MaterialTheme.typography.bodyMedium)
+
+            Column(
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
+            ) {
+
+                // Title
+                Text(
+                    text = tool.name,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontSize = 18.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Subtitle (Category)
+                Text(
+                    text = tool.category.ifBlank { "Utility" },
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontSize = 13.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Tags Row (show first 2)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    tool.tags.take(2).forEach {
+                        AssistChip(
+                            onClick = {},
+                            label = { Text(it, fontSize = 12.sp) },
+                            shape = RoundedCornerShape(10.dp),
+                        )
+                    }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                MetricsRow(likes = tool.likes, views = tool.views, published = tool.publishedAt ?: "")
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Stats Row
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text("${tool.likes}", fontSize = 12.sp)
+
+                    Icon(
+                        imageVector = Icons.Default.RemoveRedEye,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text("${tool.views}", fontSize = 12.sp)
+
+                    if (!tool.publishedAt.isNullOrBlank()) {
+                        Text(tool.publishedAt, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Actions bottom-right
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
                     IconButton(onClick = { onLike(tool.id) }) {
                         Icon(Icons.Default.Favorite, contentDescription = "Like")
                     }
