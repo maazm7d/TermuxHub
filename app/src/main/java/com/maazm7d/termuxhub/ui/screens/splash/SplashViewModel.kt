@@ -1,45 +1,39 @@
 package com.maazm7d.termuxhub.ui.screens.splash
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.style.TextAlign
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.maazm7d.termuxhub.R
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import com.maazm7d.termuxhub.data.repository.ToolRepository
+import javax.inject.Inject
 
-@Composable
-fun SplashScreen(onFinished: (Boolean) -> Unit) {
-    val vm: SplashViewModel = hiltViewModel()
+@HiltViewModel
+class SplashViewModel @Inject constructor(
+    private val repository: ToolRepository
+) : ViewModel() {
 
-    LaunchedEffect(Unit) {
-        vm.load { onFinished(it) }
-    }
+    var ready = false
+        private set
 
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(24.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(id = R.mipmap.ic_launcher),
-                contentDescription = "Termux Hub",
-                modifier = Modifier.size(96.dp)
-            )
-            Spacer(Modifier.height(16.dp))
-            Text(text = "Termux Hub", style = MaterialTheme.typography.titleLarge)
-            Spacer(Modifier.height(12.dp))
-            CircularProgressIndicator()
-            Spacer(Modifier.height(8.dp))
-            Text("Loading tools...", style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Center)
+    /**
+     * Load metadata and prepare DB. Ensure splash visible at least minDelayMs.
+     * Callback onComplete(true/false) when finished.
+     */
+    fun load(onComplete: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val minDelayMs = 1000L
+            val start = System.currentTimeMillis()
+            val success = try {
+                repository.refreshFromRemote()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+            val elapsed = System.currentTimeMillis() - start
+            if (elapsed < minDelayMs) delay(minDelayMs - elapsed)
+            ready = true
+            onComplete(success)
         }
     }
 }
