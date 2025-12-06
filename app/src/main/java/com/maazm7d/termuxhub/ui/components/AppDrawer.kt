@@ -2,17 +2,25 @@ package com.maazm7d.termuxhub.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.ui.draw.alpha
+
 
 @Composable
 fun AppDrawer(onAction: (String) -> Unit) {
@@ -20,20 +28,31 @@ fun AppDrawer(onAction: (String) -> Unit) {
         modifier = Modifier
             .fillMaxHeight()
             .background(MaterialTheme.colorScheme.surface)
-            .padding(12.dp)
+            .padding(WindowInsets.statusBars.asPaddingValues())   // Prevent overlap with status bar
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
-        // Header
+
+        // Drawer Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
+                .padding(vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            Icon(Icons.Default.List, contentDescription = "App")
-            Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                imageVector = Icons.Default.List,
+                contentDescription = "App",
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(10.dp))
             Column {
                 Text("Termux Hub", style = MaterialTheme.typography.titleLarge)
-                Text("com.maazm7d.termuxhub", style = MaterialTheme.typography.bodySmall)
+                Text(
+                    "com.maazm7d.termuxhub",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.alpha(0.6f)
+                )
             }
         }
 
@@ -47,20 +66,38 @@ fun AppDrawer(onAction: (String) -> Unit) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Text("v1.0.0 (1)", style = MaterialTheme.typography.bodySmall)
+        Text(
+            "v1.0.0 (1)",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.alpha(0.5f)
+        )
     }
 }
+
 
 @Composable
 fun DrawerItem(icon: ImageVector, label: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(vertical = 12.dp),
+            .clickable(
+                indication = LocalIndication.current,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = onClick
+            )
+            .padding(vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(icon, contentDescription = label)
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(label, style = MaterialTheme.typography.bodyLarge)
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.width(14.dp))
+        Text(
+            label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
