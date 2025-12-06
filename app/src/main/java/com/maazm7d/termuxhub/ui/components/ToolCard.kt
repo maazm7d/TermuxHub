@@ -7,13 +7,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.RemoveRedEye
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +27,11 @@ fun ToolCard(
     onSave: (String) -> Unit,
     onShare: (Tool) -> Unit
 ) {
+
+    // Build thumbnail URL based on tool.id
+    val thumbnailUrl =
+        "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/metadata/thumbnail/${tool.id}.png"
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,18 +43,17 @@ fun ToolCard(
     ) {
 
         Column {
+
             // Thumbnail 16:9
-            if (!tool.thumbnail.isNullOrBlank()) {
-                AsyncImage(
-                    model = tool.thumbnail,
-                    contentDescription = "${tool.name} thumbnail",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(16f / 9f)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                )
-            }
+            AsyncImage(
+                model = thumbnailUrl,
+                contentDescription = "${tool.name} thumbnail",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+            )
 
             Column(
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
@@ -67,7 +70,7 @@ fun ToolCard(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Subtitle (Category)
+                // Category Subtitle
                 Text(
                     text = tool.category.ifBlank { "Utility" },
                     style = MaterialTheme.typography.bodyMedium.copy(
@@ -78,7 +81,7 @@ fun ToolCard(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Tags Row (show first 2)
+                // Tags
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     tool.tags.take(2).forEach {
                         AssistChip(
@@ -91,7 +94,7 @@ fun ToolCard(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Stats Row
+                // Stats row
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -113,13 +116,17 @@ fun ToolCard(
                     Text("${tool.views}", fontSize = 12.sp)
 
                     if (!tool.publishedAt.isNullOrBlank()) {
-                        Text(tool.publishedAt, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            tool.publishedAt,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Actions bottom-right
+                // Bottom actions
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
