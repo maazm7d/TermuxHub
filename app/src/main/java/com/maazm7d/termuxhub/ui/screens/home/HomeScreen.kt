@@ -3,14 +3,14 @@ package com.maazm7d.termuxhub.ui.screens.home
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.maazm7d.termuxhub.ui.components.*
 import kotlinx.coroutines.launch
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FilterList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,12 +29,19 @@ fun HomeScreen(
 
     ModalNavigationDrawer(
         drawerContent = {
-            AppDrawer { action ->
-                when (action) {
-                    "saved" -> onOpenSaved()
-                    "settings" -> onOpenSettings()
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(280.dp)  // Drawer width constraint
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                AppDrawer { action ->
+                    when (action) {
+                        "saved" -> onOpenSaved()
+                        "settings" -> onOpenSettings()
+                    }
+                    scope.launch { drawerState.close() }
                 }
-                scope.launch { drawerState.close() }
             }
         },
         drawerState = drawerState
