@@ -42,7 +42,7 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
-                    title = { Text("Termux Tools & Commands") },
+                    title = { Text("Termux Hub") },
                     actions = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Default.FilterList, contentDescription = "Menu")
