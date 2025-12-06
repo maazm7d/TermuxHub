@@ -24,18 +24,16 @@ fun TermuxHubAppNav(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AppNavHost(
-    navController: NavHostController,
-    modifier: Modifier = Modifier
-) {
+fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
         startDestination = Destinations.SPLASH,
         modifier = modifier
     ) {
-
         composable(Destinations.SPLASH) {
-            SplashScreen(onFinished = {
+            // SplashScreen obtains its own ViewModel via hiltViewModel(), so just call it.
+            SplashScreen(onFinished = { success ->
+                // navigate to Home only after splash completes (pop splash)
                 navController.navigate(Destinations.HOME) {
                     popUpTo(Destinations.SPLASH) { inclusive = true }
                 }
