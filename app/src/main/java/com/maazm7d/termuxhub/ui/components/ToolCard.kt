@@ -1,18 +1,22 @@
 package com.maazm7d.termuxhub.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,9 +32,13 @@ fun ToolCard(
     onShare: (Tool) -> Unit
 ) {
 
-    // Build thumbnail URL based on tool.id
+    // Build thumbnail URL from tool.id
     val thumbnailUrl =
         "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/metadata/thumbnail/${tool.id}.png"
+
+    // Animate like button
+    var isLiked by remember { mutableStateOf(false) }
+    val likeScale by animateFloatAsState(targetValue = if (isLiked) 1.2f else 1f)
 
     Card(
         modifier = Modifier
@@ -44,7 +52,7 @@ fun ToolCard(
 
         Column {
 
-            // Thumbnail 16:9
+            // THUMBNAIL
             AsyncImage(
                 model = thumbnailUrl,
                 contentDescription = "${tool.name} thumbnail",
@@ -55,33 +63,27 @@ fun ToolCard(
                     .background(MaterialTheme.colorScheme.surfaceVariant)
             )
 
-            Column(
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
-            ) {
+            Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
 
-                // Title
+                // TITLE
                 Text(
                     text = tool.name,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontSize = 18.sp
-                    ),
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Category Subtitle
+                // CATEGORY
                 Text(
                     text = tool.category.ifBlank { "Utility" },
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontSize = 13.sp
-                    ),
+                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Tags
+                // TAGS
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     tool.tags.take(2).forEach {
                         AssistChip(
@@ -94,19 +96,11 @@ fun ToolCard(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Stats row
+                // STATS
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Text("${tool.likes}", fontSize = 12.sp)
-
                     Icon(
                         imageVector = Icons.Default.RemoveRedEye,
                         contentDescription = null,
@@ -126,19 +120,49 @@ fun ToolCard(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Bottom actions
+                // ACTIONS BAR (modern layout)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    IconButton(onClick = { onLike(tool.id) }) {
-                        Icon(Icons.Default.Favorite, contentDescription = "Like")
+
+                    // LIKE
+                    Row(
+                        modifier = Modifier.clickable {
+                            isLiked = !isLiked
+                            onLike(tool.id)
+                        }.scale(likeScale),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            contentDescription = "Like",
+                            tint = Color.Red,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("${tool.likes + if (isLiked) 1 else 0}", fontSize = 14.sp)
                     }
-                    IconButton(onClick = { onSave(tool.id) }) {
-                        Icon(Icons.Default.Save, contentDescription = "Save")
+
+                    // SAVE
+                    Row(
+                        modifier = Modifier.clickable { onSave(tool.id) },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.Save, contentDescription = "Save", modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Save", fontSize = 14.sp)
                     }
-                    IconButton(onClick = { onShare(tool) }) {
-                        Icon(Icons.Default.Share, contentDescription = "Share")
+
+                    // SHARE
+                    Row(
+                        modifier = Modifier.clickable { onShare(tool) },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Default.Share, contentDescription = "Share", modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Share", fontSize = 14.sp)
                     }
                 }
             }
