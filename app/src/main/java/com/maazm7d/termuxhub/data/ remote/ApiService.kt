@@ -5,7 +5,6 @@ import retrofit2.Response
 import retrofit2.http.GET
 
 interface ApiService {
-    // Single endpoint returning the main metadata JSON
-    @GET("metadata/tools.json")
+    @GET("metadata/metadata.json")
     suspend fun getMetadata(): Response<MetadataDto>
 }
