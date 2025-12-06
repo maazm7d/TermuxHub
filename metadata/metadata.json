@@ -1,7 +1,7 @@
 {
   "tools": [
     {
-      "id": "tool_1",
+      "id": "0001",
       "name": "AAPT Dump Badging",
       "description": "Analyze APK package information",
       "category": "APK Tools",
@@ -14,7 +14,7 @@
       "publishedAt": "2025-01-01"
     },
     {
-      "id": "tool_2",
+      "id": "0002",
       "name": "ADB Devices",
       "description": "List connected devices",
       "category": "ADB Tools",
