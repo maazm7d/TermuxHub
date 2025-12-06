@@ -50,13 +50,15 @@ fun HomeScreen(
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
-                    title = { Text("Termux Hub") },
-                    navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.FilterList, contentDescription = "Menu")
-                        }
-                    }
-                )
+    title = { Text("Termux Hub") },
+    navigationIcon = {
+        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+            Icon(Icons.Default.FilterList, contentDescription = "Menu")
+        }
+    },
+    modifier = Modifier.height(48.dp), // default is 64.dp
+    windowInsets = WindowInsets(0.dp) // remove extra padding if needed
+)
             }
         ) { padding ->
             Column(modifier = Modifier.padding(padding)) {
