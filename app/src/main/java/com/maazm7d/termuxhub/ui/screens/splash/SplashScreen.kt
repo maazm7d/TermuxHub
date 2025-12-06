@@ -40,7 +40,7 @@ fun SplashScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = R.mipmap.ic_launcher),
+                painter = painterResource(id = R.mipmap.termux),
                 contentDescription = "Termux Hub",
                 modifier = Modifier.size(96.dp)
             )
