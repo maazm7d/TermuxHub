@@ -51,7 +51,7 @@ fun HomeScreen(
             topBar = {
                 CenterAlignedTopAppBar(
                     title = { Text("Termux Hub") },
-                    actions = {
+                    navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Default.FilterList, contentDescription = "Menu")
                         }
