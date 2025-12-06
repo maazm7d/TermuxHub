@@ -23,7 +23,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DataModule {
 
-    private const val METADATA_BASE_URL = "https://raw.githubusercontent.com/yourusername/yourrepo/main/"
+    private const val METADATA_BASE_URL = "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/"
 
     // --- Moshi ---
     @Provides
