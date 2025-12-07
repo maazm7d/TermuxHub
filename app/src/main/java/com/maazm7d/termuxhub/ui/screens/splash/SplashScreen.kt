@@ -1,13 +1,19 @@
 package com.maazm7d.termuxhub.ui.screens.splash
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.draw.alpha
 import kotlinx.coroutines.delay
 import kotlin.math.pow
@@ -23,6 +29,13 @@ fun SplashScreen(onFinished: () -> Unit) {
 
     var animationAlpha by remember { mutableStateOf(1f) }
     var glitchOffset by remember { mutableStateOf(Offset(0f, 0f)) }
+    var showText by remember { mutableStateOf(false) }
+
+    // fade-in for "Termux Hub" text
+    val textAlpha by animateFloatAsState(
+        targetValue = if (showText) 1f else 0f,
+        label = "textAlpha"
+    )
 
     // Initialize random particles
     LaunchedEffect(Unit) {
@@ -36,27 +49,37 @@ fun SplashScreen(onFinished: () -> Unit) {
         }
     }
 
-    // Animate particles
+    // Sequence: form icon -> delay -> show text -> delay -> glitch -> fade-out
     LaunchedEffect(Unit) {
-        val steps = 90
+        // 1) Form the icon quickly (~0.5 s)
+        val steps = 30
         repeat(steps) {
             particles.forEach { it.moveTowardsTarget() }
             delay(16)
         }
 
-        // Glitch effect
-        repeat(6) {
+        // 2) Extra short delay to be sure all particles are settled
+        delay(150)
+
+        // 3) Start showing the text; alpha animation handles smooth fade-in
+        showText = true
+
+        // 4) Keep icon + text visible for a bit
+        delay(400)
+
+        // 5) Optional light glitch
+        repeat(2) {
             glitchOffset = Offset(
-                Random.nextFloat() * 20 - 10,
-                Random.nextFloat() * 20 - 10
+                Random.nextFloat() * 10 - 5,
+                Random.nextFloat() * 10 - 5
             )
-            delay(50)
+            delay(40)
             glitchOffset = Offset(0f, 0f)
-            delay(50)
+            delay(40)
         }
 
-        // Fade-out
-        val fadeSteps = 30
+        // 6) Fade-out everything (~0.2 s)
+        val fadeSteps = 12
         repeat(fadeSteps) {
             animationAlpha -= 1f / fadeSteps
             delay(16)
@@ -71,24 +94,46 @@ fun SplashScreen(onFinished: () -> Unit) {
             .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .alpha(animationAlpha)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.alpha(animationAlpha)
         ) {
-            val centerX = size.width / 2
-            val centerY = size.height / 2
+            // particle icon
+            Box(
+                modifier = Modifier
+                    .size(140.dp)
+            ) {
+                Canvas(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    val centerX = size.width / 2
+                    val centerY = size.height / 2
 
-            particles.forEach { particle ->
-                drawCircle(
-                    color = Color.Black,
-                    radius = 3f,
-                    center = Offset(
-                        centerX + particle.x + glitchOffset.x,
-                        centerY + particle.y + glitchOffset.y
-                    )
-                )
+                    particles.forEach { particle ->
+                        drawCircle(
+                            color = Color.Black,
+                            radius = 3f,
+                            center = Offset(
+                                centerX + particle.x + glitchOffset.x,
+                                centerY + particle.y + glitchOffset.y
+                            )
+                        )
+                    }
+                }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // "Termux Hub" text, appears only after icon formation
+            Text(
+                text = "Termux Hub",
+                color = Color.Black,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.alpha(textAlpha)
+            )
         }
     }
 }
@@ -102,14 +147,19 @@ data class Particle(
     var y by mutableStateOf(startY)
 
     fun moveTowardsTarget() {
-        val speed = 0.20f
+        // fast enough to form icon in under a second
+        val speed = 0.4f
         val dx = target.x - x
         val dy = target.y - y
         val dist = sqrt(dx.pow(2) + dy.pow(2))
 
-        if (dist > 0.8f) {
+        if (dist > 0.5f) {
             x += dx * speed
             y += dy * speed
+        } else {
+            // snap to exact target for crisp shape
+            x = target.x
+            y = target.y
         }
     }
 }
