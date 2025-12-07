@@ -4,7 +4,7 @@
       "id": "0001",
       "name": "AAPT Dump Badging",
       "description": "Analyze APK package information",
-      "category": "APK Tools",
+      "category": "AI & ML",
       "install": "aapt dump badging",
       "version": "1.0",
       "thumbnail": "",
