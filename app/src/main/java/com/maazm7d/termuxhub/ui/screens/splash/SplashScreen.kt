@@ -1,20 +1,20 @@
 package com.maazm7d.termuxhub.ui.screens.splash
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.maazm7d.termuxhub.R
 import kotlinx.coroutines.delay
 
 @Composable
@@ -23,67 +23,55 @@ fun SplashScreen(
 ) {
     val vm: SplashViewModel = hiltViewModel()
 
-    // Animation trigger state
-    var startAnimation by remember { mutableStateOf(false) }
+    val fullText = "Termux Hub"
+    var visibleText by remember { mutableStateOf("") }
+    var showCursor by remember { mutableStateOf(true) }
 
-    // Animate scale from 0.6f to 1f in 800ms
-    val scale = animateFloatAsState(
-        targetValue = if (startAnimation) 1f else 0.6f,
-        animationSpec = tween(
-            durationMillis = 800,
-            easing = FastOutSlowInEasing
-        ),
-        label = ""
-    )
-
-    // Start animation when composed
+    // Typing effect
     LaunchedEffect(Unit) {
-        startAnimation = true
-        delay(1200)  // Allow animation to finish before loading data
+        for (i in fullText.indices) {
+            visibleText = fullText.substring(0, i + 1)
+            delay(100) // typing speed
+        }
+
+        // keep blinking cursor while loading
+        launch {
+            while (true) {
+                showCursor = !showCursor
+                delay(350)
+            }
+        }
+
+        delay(1200)
         vm.load { success -> onFinished(success) }
     }
 
     Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp),
+            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // Animated Logo
-            Image(
-                painter = painterResource(id = R.drawable.splashlogo),
-                contentDescription = "Termux Hub",
-                modifier = Modifier
-                    .scale(scale.value)
-                    .size(180.dp)
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
+            // Terminal style animated typing text
             Text(
-                "Termux Hub",
-                style = MaterialTheme.typography.headlineMedium
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            CircularProgressIndicator(
-                modifier = Modifier.size(42.dp),
-                strokeWidth = 4.dp
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                "Loading tools...",
-                style = MaterialTheme.typography.bodyMedium,
+                text = visibleText + if (showCursor) "|" else "",
+                color = Color.Green,
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text(
+                "Initializing system modules...",
+                color = Color.Green.copy(alpha = 0.7f),
+                fontSize = 16.sp
             )
         }
     }
