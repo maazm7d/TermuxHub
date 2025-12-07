@@ -24,6 +24,9 @@ fun HomeScreen(
     onOpenSettings: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+    LaunchedEffect(Unit) {
+    viewModel.refresh()
+    }
 
     val query = remember { mutableStateOf("") }
     var selectedChip by remember { mutableStateOf(0) }
