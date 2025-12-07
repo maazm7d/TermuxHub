@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.maazm7d.termuxhub.ui.components.*
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +35,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(280.dp)  // Drawer width constraint
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(Color.White)
             ) {
                 AppDrawer { action ->
                     when (action) {
