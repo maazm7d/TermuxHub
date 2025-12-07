@@ -8,18 +8,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.alpha
 import kotlinx.coroutines.delay
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
-import androidx.compose.ui.draw.alpha
 
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
-    val totalParticles = 1400 // slight increase for smoother shape
+    val totalParticles = 1400
     val particles = remember { mutableStateListOf<Particle>() }
 
-    // target points now approximate a bold Termux-style ">_" glyph
     val targetPoints = remember { generateTargetPointsDense() }
 
     var animationAlpha by remember { mutableStateOf(1f) }
@@ -124,78 +123,54 @@ fun generateTargetPointsDense(): List<Offset> {
     val points = mutableListOf<Offset>()
 
     // overall size
-    val scale = 3.2f                // tweak to fit your screen density
-    val chevronLength = 80f * scale
-    val chevronThickness = 14f * scale
-    val chevronGap = 10f * scale    // gap between upper/lower strokes
-    val barWidth = 90f * scale
-    val barHeight = 14f * scale
-    val barYOffset = 40f * scale    // distance of "_" from chevron center
+    val scale = 3.5f
 
-    // center offsets so shape is nicely balanced
-    val centerOffsetX = -5f * scale
-    val centerOffsetY = -5f * scale
+    // basic geometry for ">"
+    val x0 = -24f * scale   // left base (common for both strokes)
+    val y0 = -16f * scale   // upper base
+    val x1 = 16f * scale    // tip
+    val y1 = 0f
+    val x2 = -24f * scale   // lower base
+    val y2 = 16f * scale
 
-    // --- Build ">" as two thick strokes (upper and lower) ---
+    // center offset to balance in canvas
+    val cx = 0f
+    val cy = -4f * scale
 
-    // Upper stroke
-    for (t in 0..100) {
-        val f = t / 100f
-        val x = -chevronLength / 2f + chevronLength * f
-        val y = -chevronLength / 4f + chevronLength * f / 2f
+    // small thickness for strokes
+    val halfThick = 3f
 
-        // thickness: offset perpendicular to line
-        for (k in -chevronThickness.toInt()..chevronThickness.toInt() step 3) {
-            val px = x
-            val py = y + k
-            points += Offset(
-                px + centerOffsetX,
-                py + centerOffsetY - chevronGap / 2f
-            )
-        }
+    // upper stroke (x0,y0) -> (x1,y1)
+    for (i in 0..140) {
+        val t = i / 140f
+        val x = x0 + (x1 - x0) * t + cx
+        val y = y0 + (y1 - y0) * t + cy
+        points += Offset(x, y)
+        points += Offset(x, y - halfThick)
+        points += Offset(x, y + halfThick)
     }
 
-    // Lower stroke
-    for (t in 0..100) {
-        val f = t / 100f
-        val x = -chevronLength / 2f + chevronLength * f
-        val y = chevronLength / 4f - chevronLength * f / 2f
-
-        for (k in -chevronThickness.toInt()..chevronThickness.toInt() step 3) {
-            val px = x
-            val py = y + k
-            points += Offset(
-                px + centerOffsetX,
-                py + centerOffsetY + chevronGap / 2f
-            )
-        }
+    // lower stroke (x0,y2) -> (x1,y1)
+    for (i in 0..140) {
+        val t = i / 140f
+        val x = x0 + (x1 - x0) * t + cx
+        val y = y2 + (y1 - y2) * t + cy
+        points += Offset(x, y)
+        points += Offset(x, y - halfThick)
+        points += Offset(x, y + halfThick)
     }
 
-    // --- Build "_" as a rounded thick bar ---
+    // underscore "_"
+    val underscoreWidth = 52f * scale
+    val underscoreY = 26f * scale + cy
+    val underscoreLeft = -2f * scale + cx   // slightly shifted right
 
-    val left = -barWidth / 2f + centerOffsetX + 20f
-    val right = barWidth / 2f + centerOffsetX + 20f
-    val top = barYOffset - barHeight / 2f + centerOffsetY
-    val bottom = barYOffset + barHeight / 2f + centerOffsetY
-    val radius = barHeight / 2f
-
-    // horizontal run
-    for (x in left.toInt()..right.toInt() step 3) {
-        for (y in top.toInt()..bottom.toInt() step 3) {
-            points += Offset(x.toFloat(), y.toFloat())
-        }
-    }
-
-    // rounded ends (left & right semicircles)
-    for (dx in -radius.toInt()..radius.toInt() step 2) {
-        for (dy in -radius.toInt()..radius.toInt() step 2) {
-            if (dx * dx + dy * dy <= radius * radius) {
-                // left
-                points += Offset(left + dx, (top + bottom) / 2f + dy)
-                // right
-                points += Offset(right + dx, (top + bottom) / 2f + dy)
-            }
-        }
+    for (i in 0..150) {
+        val t = i / 150f
+        val x = underscoreLeft + underscoreWidth * t
+        points += Offset(x, underscoreY)
+        points += Offset(x, underscoreY - halfThick)
+        points += Offset(x, underscoreY + halfThick)
     }
 
     return points
