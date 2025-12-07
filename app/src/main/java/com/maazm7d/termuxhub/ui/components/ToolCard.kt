@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.filled.RemoveRedEye
@@ -32,11 +33,9 @@ fun ToolCard(
     onShare: (Tool) -> Unit
 ) {
 
-    // Build thumbnail URL from tool.id
     val thumbnailUrl =
         "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/metadata/thumbnail/${tool.id}.png"
 
-    // Animate like button
     var isLiked by remember { mutableStateOf(false) }
     val likeScale by animateFloatAsState(targetValue = if (isLiked) 1.2f else 1f)
 
@@ -52,7 +51,6 @@ fun ToolCard(
 
         Column {
 
-            // THUMBNAIL
             AsyncImage(
                 model = thumbnailUrl,
                 contentDescription = "${tool.name} thumbnail",
@@ -65,7 +63,6 @@ fun ToolCard(
 
             Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
 
-                // TITLE
                 Text(
                     text = tool.name,
                     style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
@@ -74,14 +71,45 @@ fun ToolCard(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // CATEGORY
                 Text(
                     text = tool.category.ifBlank { "Utility" },
                     style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // VIEWS + DATE BAR (premium alignment)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Icon(
+                        Icons.Default.RemoveRedEye,
+                        contentDescription = "Views",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("${tool.views}", fontSize = 13.sp)
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    if (!tool.publishedAt.isNullOrBlank()) {
+                        Icon(
+                            Icons.Default.CalendarMonth,
+                            contentDescription = "Published",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(tool.publishedAt, fontSize = 13.sp)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
 
                 // TAGS
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -94,33 +122,9 @@ fun ToolCard(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
-
-                // STATS
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.RemoveRedEye,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Text("${tool.views}", fontSize = 12.sp)
-
-                    if (!tool.publishedAt.isNullOrBlank()) {
-                        Text(
-                            tool.publishedAt,
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // ACTIONS BAR (modern layout)
+                // ACTION BUTTONS ROW
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -129,10 +133,12 @@ fun ToolCard(
 
                     // LIKE
                     Row(
-                        modifier = Modifier.clickable {
-                            isLiked = !isLiked
-                            onLike(tool.id)
-                        }.scale(likeScale),
+                        modifier = Modifier
+                            .clickable {
+                                isLiked = !isLiked
+                                onLike(tool.id)
+                            }
+                            .scale(likeScale),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
