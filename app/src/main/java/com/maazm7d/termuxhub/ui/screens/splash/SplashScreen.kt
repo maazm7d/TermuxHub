@@ -2,45 +2,45 @@ package com.maazm7d.termuxhub.ui.screens.splash
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.delay
 import kotlin.math.pow
 import kotlin.math.sqrt
-import androidx.compose.ui.Alignment
+import kotlin.random.Random
 
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
-    val particleCount = 300
+    val particleCount = 800 // more particles for full screen
     val particles = remember { mutableStateListOf<Particle>() }
 
     // Target shape points for Termux ">_"
     val targetPoints = remember { generateTargetPoints() }
 
-    // Create random starting particles
+    // Initialize particles randomly across the screen
     LaunchedEffect(Unit) {
         particles.clear()
         repeat(particleCount) {
             particles += Particle(
-                startX = (-600..600).random().toFloat(),
-                startY = (-600..600).random().toFloat(),
+                startX = Random.nextFloat() * 2000f - 1000f, // cover larger area
+                startY = Random.nextFloat() * 2000f - 1000f,
                 target = targetPoints.random()
             )
         }
     }
 
-    // Movement animation
+    // Animate particles quickly (max 1.5 sec)
     LaunchedEffect(Unit) {
-        repeat(180) {   // approx 3 seconds of motion
+        val steps = 90  // ~1.5 seconds at 16ms per frame
+        repeat(steps) {
             particles.forEach { it.moveTowardsTarget() }
             delay(16)
         }
-
-        delay(500) // hold shape for half second
+        delay(200) // brief hold for shape
         onFinished()
     }
 
@@ -51,14 +51,14 @@ fun SplashScreen(onFinished: () -> Unit) {
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
+            val centerX = size.width / 2
+            val centerY = size.height / 2
+
             particles.forEach { particle ->
                 drawCircle(
                     color = Color.Black,
                     radius = 3f,
-                    center = Offset(
-                        x = size.width / 2 + particle.x,
-                        y = size.height / 2 + particle.y
-                    )
+                    center = Offset(centerX + particle.x, centerY + particle.y)
                 )
             }
         }
@@ -74,7 +74,7 @@ data class Particle(
     var y by mutableStateOf(startY)
 
     fun moveTowardsTarget() {
-        val speed = 0.07f
+        val speed = 0.15f // faster convergence
         val dx = target.x - x
         val dy = target.y - y
         val dist = sqrt(dx.pow(2) + dy.pow(2))
@@ -86,18 +86,18 @@ data class Particle(
     }
 }
 
-// Build ">_" shape points
+// Build larger ">_" shape points
 fun generateTargetPoints(): List<Offset> {
     val points = mutableListOf<Offset>()
-    val pixel = 18f
+    val pixel = 50f // increase size
 
     val shape = listOf(
         // >
-        Offset(0f, -40f), Offset(15f, -25f), Offset(30f, -10f),
-        Offset(15f, 5f), Offset(0f, 20f),
+        Offset(0f, -40f), Offset(20f, -20f), Offset(40f, 0f),
+        Offset(20f, 20f), Offset(0f, 40f),
 
         // _
-        Offset(-10f, 40f), Offset(10f, 40f), Offset(30f, 40f)
+        Offset(-30f, 60f), Offset(0f, 60f), Offset(30f, 60f)
     )
 
     shape.forEach { p ->
