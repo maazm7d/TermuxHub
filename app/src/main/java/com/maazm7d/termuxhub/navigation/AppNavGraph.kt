@@ -31,9 +31,7 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
         modifier = modifier
     ) {
         composable(Destinations.SPLASH) {
-            // SplashScreen obtains its own ViewModel via hiltViewModel(), so just call it.
-            SplashScreen(onFinished = { success ->
-                // navigate to Home only after splash completes (pop splash)
+            SplashScreen(onFinished = {
                 navController.navigate(Destinations.HOME) {
                     popUpTo(Destinations.SPLASH) { inclusive = true }
                 }
