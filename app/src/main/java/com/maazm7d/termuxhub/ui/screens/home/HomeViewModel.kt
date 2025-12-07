@@ -14,8 +14,7 @@ data class HomeUiState(
     val tools: List<Tool> = emptyList(),
     val isLoading: Boolean = false,
     val query: String = "",
-    val selectedChipIndex: Int = 0,
-    val chips: List<String> = listOf("All", "AI & ML", "All-in-One", "Brute Force", "OSINT")
+    val selectedChipIndex: Int = 0
 )
 
 @HiltViewModel
