@@ -15,6 +15,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.material3.Text
 
 @Composable
 fun SplashScreen(
@@ -38,7 +45,8 @@ fun SplashScreen(
     var cursorVisible by remember { mutableStateOf(true) }
 
     // Scanline flicker animation
-    val alphaAnim by infiniteTransition().animateFloat(
+    val infiniteTransition = rememberInfiniteTransition()
+    val alphaAnim by infiniteTransition.animateFloat(
         initialValue = 0.85f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
