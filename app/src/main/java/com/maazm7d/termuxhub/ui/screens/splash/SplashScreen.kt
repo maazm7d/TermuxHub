@@ -15,7 +15,6 @@ import kotlinx.coroutines.delay
 import kotlin.math.pow
 import kotlin.math.sqrt
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.drawscope.drawCircle
 
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
