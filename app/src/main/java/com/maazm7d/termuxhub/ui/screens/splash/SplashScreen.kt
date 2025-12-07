@@ -3,25 +3,20 @@ package com.maazm7d.termuxhub.ui.screens.splash
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.material3.Text
 
 @Composable
 fun SplashScreen(
@@ -29,64 +24,83 @@ fun SplashScreen(
 ) {
     val vm: SplashViewModel = hiltViewModel()
 
-    val green = Color(0xFF00FF5A)
-
-    // Typing animation setup
+    val green = Color(0xFF15FF77)
     val bootLines = listOf(
-        "Booting Termux Hub System...",
-        "Initializing modules...",
-        "Loading user tools...",
-        "Checking repository updates...",
-        "Starting UI service...",
+        "Initializing Termux Hub...",
+        "Booting system environment...",
+        "Loading modules...",
+        "Fetching remote tools list...",
+        "Sync complete.",
         "System Ready."
     )
 
-    var displayedLines by remember { mutableStateOf(listOf<String>()) }
+    var printedLines by remember { mutableStateOf(listOf<String>()) }
+    var currentTypedText by remember { mutableStateOf("") }
     var cursorVisible by remember { mutableStateOf(true) }
 
-    // Scanline flicker animation
-    val infiniteTransition = rememberInfiniteTransition()
-    val alphaAnim by infiniteTransition.animateFloat(
-        initialValue = 0.85f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(600, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        )
-    )
-
-    // vertical scan gradient
-    val scanlineBrush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0x6600FF00),
-            Color.Transparent,
-            Color(0x6600FF00)
-        )
-    )
-
+    // blinking cursor
     LaunchedEffect(Unit) {
-        // typing lines one by one
-        bootLines.forEach { line ->
-            displayedLines = displayedLines + line
-            delay(500)
-        }
-
-        // blinking cursor
         while (true) {
             cursorVisible = !cursorVisible
             delay(350)
         }
     }
 
-    // start loading repo
-    LaunchedEffect(true) {
+    // main typing loop
+    LaunchedEffect(Unit) {
+        for (line in bootLines) {
+            currentTypedText = ""
+            line.forEach { char ->
+                currentTypedText += char
+                delay(40) // speed per char
+            }
+            printedLines = printedLines + currentTypedText
+            delay(300)
+        }
+
+        delay(600)
         vm.load { success -> onFinished(success) }
     }
+
+    // CRT scan animation
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+    val alphaAnim by infiniteTransition.animateFloat(
+        0.9f, 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(550, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = ""
+    )
+
+    // scanline gradient
+    val scanBrush = Brush.verticalGradient(
+        colors = listOf(
+            Color(0x2200FF00),
+            Color.Transparent,
+            Color(0x2200FF00)
+        )
+    )
+
+    // fade-in animation for whole screen
+    val fadeAlpha by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(900),
+        label = ""
+    )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
+            .graphicsLayer {
+                // CRT curvature distortion
+                val intensity = 0.08f
+                shape = null
+                transformOrigin = TransformOrigin.Center
+                scaleX = 1f + intensity
+                scaleY = 1f + intensity
+            }
+            .alpha(fadeAlpha)
     ) {
         Column(
             modifier = Modifier
@@ -96,33 +110,32 @@ fun SplashScreen(
             horizontalAlignment = Alignment.Start
         ) {
 
-            displayedLines.forEach { line ->
+            printedLines.forEach { line ->
                 Text(
                     text = line,
                     color = green,
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    textAlign = TextAlign.Start
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.SemiBold
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(Modifier.height(4.dp))
             }
 
-            // terminal cursor
-            if (cursorVisible) {
+            if (cursorVisible)
                 Text(
                     text = ">",
                     color = green,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.ExtraBold
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Black
                 )
-            }
         }
 
-        // CRT scanlines overlay
+        // Overlay scanline flicker
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .background(scanlineBrush)
+                .background(scanBrush)
                 .alpha(alphaAnim)
         )
     }
