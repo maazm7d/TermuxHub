@@ -1,7 +1,6 @@
 package com.maazm7d.termuxhub.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.maazm7d.termuxhub.domain.model.Tool
-import androidx.compose.ui.graphics.Color
 
 @Composable
 fun ToolCard(
@@ -46,11 +44,12 @@ fun ToolCard(
             .clickable { onOpenDetails(tool.id) },
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface) // White card
     ) {
 
         Column {
 
+            // Thumbnail
             AsyncImage(
                 model = thumbnailUrl,
                 contentDescription = "${tool.name} thumbnail",
@@ -58,7 +57,6 @@ fun ToolCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f)
-                    .background(Color.White)
             )
 
             Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
@@ -79,9 +77,9 @@ fun ToolCard(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // VIEWS + DATE
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
@@ -123,6 +121,7 @@ fun ToolCard(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
+                // BOTTOM ACTIONS
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -154,12 +153,7 @@ fun ToolCard(
                         modifier = Modifier.clickable { onSave(tool.id) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            Icons.Default.Save,
-                            contentDescription = "Save",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        Icon(Icons.Default.Save, contentDescription = "Save", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                         Spacer(modifier = Modifier.width(4.dp))
                         Text("Save", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                     }
@@ -169,12 +163,7 @@ fun ToolCard(
                         modifier = Modifier.clickable { onShare(tool) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            Icons.Default.Share,
-                            contentDescription = "Share",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        Icon(Icons.Default.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                         Spacer(modifier = Modifier.width(4.dp))
                         Text("Share", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                     }
