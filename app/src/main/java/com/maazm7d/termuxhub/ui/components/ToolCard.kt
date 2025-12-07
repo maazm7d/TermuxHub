@@ -57,7 +57,7 @@ fun ToolCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f)
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .background(Color.White)
             )
 
             Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
