@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +39,7 @@ fun SplashScreen(
     var currentTypedText by remember { mutableStateOf("") }
     var cursorVisible by remember { mutableStateOf(true) }
 
-    // blinking cursor
+    // Blink cursor
     LaunchedEffect(Unit) {
         while (true) {
             cursorVisible = !cursorVisible
@@ -46,13 +47,13 @@ fun SplashScreen(
         }
     }
 
-    // main typing loop
+    // Typewriter effect
     LaunchedEffect(Unit) {
         for (line in bootLines) {
             currentTypedText = ""
-            line.forEach { char ->
+            for (char in line) {
                 currentTypedText += char
-                delay(40) // speed per char
+                delay(40)
             }
             printedLines = printedLines + currentTypedText
             delay(300)
@@ -62,30 +63,32 @@ fun SplashScreen(
         vm.load { success -> onFinished(success) }
     }
 
-    // CRT scan animation
+    // Scanline flicker animation
     val infiniteTransition = rememberInfiniteTransition(label = "")
     val alphaAnim by infiniteTransition.animateFloat(
-        0.9f, 1f,
+        initialValue = 0.9f,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(550, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
-        ), label = ""
+        ),
+        label = ""
     )
 
-    // scanline gradient
-    val scanBrush = Brush.verticalGradient(
-        colors = listOf(
-            Color(0x2200FF00),
-            Color.Transparent,
-            Color(0x2200FF00)
-        )
-    )
-
-    // fade-in animation for whole screen
+    // Fade-in intro
     val fadeAlpha by animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(900),
         label = ""
+    )
+
+    // Scanlines
+    val scanBrush = Brush.verticalGradient(
+        listOf(
+            Color(0x2200FF00),
+            Color.Transparent,
+            Color(0x2200FF00)
+        )
     )
 
     Box(
@@ -93,12 +96,10 @@ fun SplashScreen(
             .fillMaxSize()
             .background(Color.Black)
             .graphicsLayer {
-                // CRT curvature distortion
-                val intensity = 0.08f
-                shape = null
-                transformOrigin = TransformOrigin.Center
-                scaleX = 1f + intensity
-                scaleY = 1f + intensity
+                // CRT curvature effect
+                transformOrigin = TransformOrigin(0.5f, 0.5f)
+                scaleX = 1.06f
+                scaleY = 1.08f
             }
             .alpha(fadeAlpha)
     ) {
@@ -109,7 +110,6 @@ fun SplashScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
-
             printedLines.forEach { line ->
                 Text(
                     text = line,
@@ -121,7 +121,7 @@ fun SplashScreen(
                 Spacer(Modifier.height(4.dp))
             }
 
-            if (cursorVisible)
+            if (cursorVisible) {
                 Text(
                     text = ">",
                     color = green,
@@ -129,9 +129,10 @@ fun SplashScreen(
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Black
                 )
+            }
         }
 
-        // Overlay scanline flicker
+        // Scanlines overlay
         Box(
             modifier = Modifier
                 .matchParentSize()
