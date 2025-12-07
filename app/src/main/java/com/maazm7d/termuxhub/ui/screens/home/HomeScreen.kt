@@ -1,5 +1,6 @@
 package com.maazm7d.termuxhub.ui.screens.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,8 +11,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.maazm7d.termuxhub.ui.components.*
 import kotlinx.coroutines.launch
+import com.maazm7d.termuxhub.ui.components.*
+import com.maazm7d.termuxhub.ui.components.CategoryChips
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,6 +24,7 @@ fun HomeScreen(
     onOpenSettings: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+
     val query = remember { mutableStateOf("") }
     var selectedChip by remember { mutableStateOf(0) }
 
@@ -30,9 +33,11 @@ fun HomeScreen(
 
     ModalNavigationDrawer(
         drawerContent = {
-            ModalDrawerSheet(
-                drawerContainerColor = Color.White,
-                modifier = Modifier.width(280.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(280.dp)
+                    .background(Color.White)
             ) {
                 AppDrawer { action ->
                     when (action) {
@@ -45,9 +50,7 @@ fun HomeScreen(
         },
         drawerState = drawerState
     ) {
-
         Scaffold(
-            containerColor = MaterialTheme.colorScheme.background,
             topBar = {
                 CenterAlignedTopAppBar(
                     title = { Text("Termux Hub") },
@@ -59,32 +62,41 @@ fun HomeScreen(
                 )
             }
         ) { padding ->
-            Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize()
-            ) {
 
+            Column(modifier = Modifier.padding(padding)) {
+
+                // SEARCH BAR
                 SearchBar(
                     queryState = query,
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp, vertical = 10.dp)
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
                 )
 
+                // CATEGORY CHIPS
+                CategoryChips(
+                    chips = listOf("All") + state.chips,
+                    selectedIndex = selectedChip,
+                    onChipSelected = { selectedChip = it }
+                )
+
+                // FILTER LIST
+                val filteredTools = state.tools.filter {
+                    val matchesQuery = query.value.isBlank() ||
+                            it.name.contains(query.value, ignoreCase = true) ||
+                            it.description.contains(query.value, ignoreCase = true)
+
+                    val matchesCategory = selectedChip == 0 ||
+                            it.category.contains(state.chips[selectedChip - 1], ignoreCase = true)
+
+                    matchesQuery && matchesCategory
+                }
+
+                // TOOL LIST
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 6.dp)
+                        .padding(top = 6.dp)
                 ) {
-
-                    val filtered = state.tools.filter {
-                        (query.value.isBlank() || it.name.contains(query.value, true) ||
-                                it.description.contains(query.value, true)) &&
-                                (selectedChip == 0 ||
-                                        it.category.contains(state.chips[selectedChip], true))
-                    }
-
-                    items(filtered) { tool ->
+                    items(filteredTools) { tool ->
                         ToolCard(
                             tool = tool,
                             onOpenDetails = onOpenDetails,
