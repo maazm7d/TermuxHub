@@ -31,11 +31,11 @@ fun HomeScreen(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    // Build category count
+    // Dynamically generate categories
     val categoryCounts = state.tools.groupingBy { it.category }.eachCount()
 
     val chipsWithCounts = listOf("All" to state.tools.size) +
-            state.chips.map { it to (categoryCounts[it] ?: 0) }
+            categoryCounts.keys.sorted().map { it to (categoryCounts[it] ?: 0) }
 
     ModalNavigationDrawer(
         drawerContent = {
@@ -76,21 +76,19 @@ fun HomeScreen(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
                 )
 
-                // Category Chips with counts
                 CategoryChips(
                     chips = chipsWithCounts,
                     selectedIndex = selectedChip,
                     onChipSelected = { selectedChip = it }
                 )
 
-                // Filtered tools list
                 val filteredTools = state.tools.filter {
                     val byQuery = query.value.isBlank() ||
-                            it.name.contains(query.value, ignoreCase = true) ||
-                            it.description.contains(query.value, ignoreCase = true)
+                            it.name.contains(query.value, true) ||
+                            it.description.contains(query.value, true)
 
                     val byCategory = selectedChip == 0 ||
-                            it.category.contains(state.chips[selectedChip - 1], ignoreCase = true)
+                            it.category.equals(chipsWithCounts[selectedChip].first, true)
 
                     byQuery && byCategory
                 }
