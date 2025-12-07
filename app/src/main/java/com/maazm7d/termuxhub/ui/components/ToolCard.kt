@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.maazm7d.termuxhub.domain.model.Tool
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun ToolCard(
