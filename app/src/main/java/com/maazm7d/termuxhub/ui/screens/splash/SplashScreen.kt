@@ -12,35 +12,53 @@ import kotlinx.coroutines.delay
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
+import androidx.compose.ui.draw.alpha
 
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
-    val particleCount = 800 // more particles for full screen
+    val totalParticles = 1200 // more particles overall
     val particles = remember { mutableStateListOf<Particle>() }
 
-    // Target shape points for Termux ">_"
-    val targetPoints = remember { generateTargetPoints() }
+    val targetPoints = remember { generateTargetPointsDense() }
 
-    // Initialize particles randomly across the screen
+    var animationAlpha by remember { mutableStateOf(1f) }
+    var glitchOffset by remember { mutableStateOf(Offset(0f, 0f)) }
+
+    // Initialize random particles
     LaunchedEffect(Unit) {
         particles.clear()
-        repeat(particleCount) {
+        repeat(totalParticles) {
             particles += Particle(
-                startX = Random.nextFloat() * 2000f - 1000f, // cover larger area
+                startX = Random.nextFloat() * 2000f - 1000f,
                 startY = Random.nextFloat() * 2000f - 1000f,
                 target = targetPoints.random()
             )
         }
     }
 
-    // Animate particles quickly (max 1.5 sec)
+    // Animate particles
     LaunchedEffect(Unit) {
-        val steps = 90  // ~1.5 seconds at 16ms per frame
+        val steps = 90 // ~1.5s
         repeat(steps) {
             particles.forEach { it.moveTowardsTarget() }
             delay(16)
         }
-        delay(200) // brief hold for shape
+
+        // Glitch effect
+        repeat(6) {
+            glitchOffset = Offset(Random.nextFloat() * 20 - 10, Random.nextFloat() * 20 - 10)
+            delay(50)
+            glitchOffset = Offset(0f, 0f)
+            delay(50)
+        }
+
+        // Fade-out
+        val fadeSteps = 30
+        repeat(fadeSteps) {
+            animationAlpha -= 1f / fadeSteps
+            delay(16)
+        }
+
         onFinished()
     }
 
@@ -50,7 +68,10 @@ fun SplashScreen(onFinished: () -> Unit) {
             .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
+        Canvas(modifier = Modifier
+            .fillMaxSize()
+            .alpha(animationAlpha)
+        ) {
             val centerX = size.width / 2
             val centerY = size.height / 2
 
@@ -58,7 +79,10 @@ fun SplashScreen(onFinished: () -> Unit) {
                 drawCircle(
                     color = Color.Black,
                     radius = 3f,
-                    center = Offset(centerX + particle.x, centerY + particle.y)
+                    center = Offset(
+                        centerX + particle.x + glitchOffset.x,
+                        centerY + particle.y + glitchOffset.y
+                    )
                 )
             }
         }
@@ -74,7 +98,7 @@ data class Particle(
     var y by mutableStateOf(startY)
 
     fun moveTowardsTarget() {
-        val speed = 0.15f // faster convergence
+        val speed = 0.18f
         val dx = target.x - x
         val dy = target.y - y
         val dist = sqrt(dx.pow(2) + dy.pow(2))
@@ -86,22 +110,20 @@ data class Particle(
     }
 }
 
-// Build larger ">_" shape points
-fun generateTargetPoints(): List<Offset> {
+// Dense Termux ">_" shape
+fun generateTargetPointsDense(): List<Offset> {
     val points = mutableListOf<Offset>()
-    val pixel = 50f // increase size
+    val scale = 25f
 
-    val shape = listOf(
-        // >
-        Offset(0f, -40f), Offset(20f, -20f), Offset(40f, 0f),
-        Offset(20f, 20f), Offset(0f, 40f),
+    // Build '>'
+    for (i in 0..40 step 2) {
+        points += Offset(i.toFloat() - 20f, -40f + i)          // diagonal /
+        points += Offset(i.toFloat() - 20f, -20f + i/2f)      // thicker diagonal
+    }
 
-        // _
-        Offset(-30f, 60f), Offset(0f, 60f), Offset(30f, 60f)
-    )
-
-    shape.forEach { p ->
-        points += Offset(p.x * pixel / 20f, p.y * pixel / 20f)
+    // Build '_', right under '>'
+    for (i in -15..40 step 2) {
+        points += Offset(i.toFloat(), 45f) // underscore line
     }
 
     return points
