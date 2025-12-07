@@ -3,8 +3,7 @@ package com.maazm7d.termuxhub.ui.screens.splash
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,25 +22,37 @@ fun SplashScreen(
 ) {
     val vm: SplashViewModel = hiltViewModel()
 
-    val particleCount = 850 // amount of pixels
+    val particleCount = 900
     var morphing by remember { mutableStateOf(false) }
     var glitch by remember { mutableStateOf(false) }
 
     val fadeOut = remember { Animatable(1f) }
 
-    // Generate all particles with random starting points and target shape points
+    val targets = remember { targetsForTermuxShape() }
+
+    // create all particle objects
     val particles = remember {
-        List(particleCount) { Particle.randomParticle(targetsForTermuxShape()) }
+        List(particleCount) { Particle.randomParticle(targets) }
     }
 
-    // Sequence Flow
+    // *** Animation timeline ***
     LaunchedEffect(Unit) {
-        delay(900)        // floating stage
-        morphing = true   // attract to target shape
-        delay(1600)       // allow morph to finish
-        glitch = true     // glitch animation
-        delay(400)
-        fadeOut.animateTo(0f, tween(650))
+        delay(900)  // floating stage
+        morphing = true
+
+        particles.forEachIndexed { index, p ->
+            launch {
+                delay(index * 2L) // staggered magnet pull
+                p.x.animateTo(p.target.x, spring(dampingRatio = 0.6f, stiffness = 80f))
+                p.y.animateTo(p.target.y, spring(dampingRatio = 0.6f, stiffness = 80f))
+            }
+        }
+
+        delay(1600)
+        glitch = true
+        delay(300)
+        fadeOut.animateTo(0f, tween(600))
+
         vm.load { success -> onFinished(success) }
     }
 
@@ -54,20 +65,8 @@ fun SplashScreen(
     ) {
 
         Canvas(modifier = Modifier.fillMaxSize()) {
+
             particles.forEach { p ->
-
-                val tx = if (morphing) p.target.x else p.start.x
-                val ty = if (morphing) p.target.y else p.start.y
-
-                // particle motion
-                if (morphing) {
-                    LaunchedEffect(Unit) {
-                        p.x.animateTo(tx, spring(stiffness = Spring.StiffnessLow))
-                        p.y.animateTo(ty, spring(stiffness = Spring.StiffnessLow))
-                    }
-                }
-
-                // glitch vibration
                 val jitterX = if (glitch) Random.nextFloat() * 12f - 6f else 0f
                 val jitterY = if (glitch) Random.nextFloat() * 12f - 6f else 0f
 
@@ -97,12 +96,10 @@ data class Particle(
                 Random.nextFloat() * 1080f,
                 Random.nextFloat() * 2400f
             )
-
-            val randomTarget = targets.random()
-
+            val target = targets.random()
             return Particle(
                 start = start,
-                target = randomTarget,
+                target = target,
                 x = Animatable(start.x),
                 y = Animatable(start.y)
             )
@@ -110,22 +107,22 @@ data class Particle(
     }
 }
 
-/* Termux icon shape ">_" built by pixel points */
+/* pixel mapped points for ">_" icon */
 fun targetsForTermuxShape(): List<Offset> {
     val points = mutableListOf<Offset>()
 
-    val centerX = 540f
-    val centerY = 1200f
+    val cx = 540f
+    val cy = 1200f
 
-    // Character: >
+    // character: >
     for (i in 0..38) {
-        points += Offset(centerX - 120 + i * 5f, centerY - 70 + i * 3f)
-        points += Offset(centerX - 120 + i * 5f, centerY + 70 - i * 3f)
+        points += Offset(cx - 140 + i * 6f, cy - 70 + i * 3f)
+        points += Offset(cx - 140 + i * 6f, cy + 70 - i * 3f)
     }
 
-    // Character: _
-    for (i in 0..70) {
-        points += Offset(centerX - 50 + i * 4f, centerY + 120)
+    // character: _
+    for (i in 0..80) {
+        points += Offset(cx - 60 + i * 4f, cy + 120)
     }
 
     return points
