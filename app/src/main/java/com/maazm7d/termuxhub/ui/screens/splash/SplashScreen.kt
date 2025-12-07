@@ -1,16 +1,13 @@
 package com.maazm7d.termuxhub.ui.screens.splash
 
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -18,39 +15,33 @@ import androidx.compose.ui.Alignment
 
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
-    val vm: SplashViewModel = hiltViewModel()
-
     val particleCount = 300
     val particles = remember { mutableStateListOf<Particle>() }
 
-    // target icon points (Termux >_)
-    val targetPoints = remember {
-        generateTargetPoints()
-    }
+    // Target shape points for Termux ">_"
+    val targetPoints = remember { generateTargetPoints() }
 
-    // initialize particles randomly
+    // Create random starting particles
     LaunchedEffect(Unit) {
         particles.clear()
         repeat(particleCount) {
             particles += Particle(
-                x = (-600..600).random().toFloat(),
-                y = (-600..600).random().toFloat(),
+                startX = (-600..600).random().toFloat(),
+                startY = (-600..600).random().toFloat(),
                 target = targetPoints.random()
             )
         }
     }
 
-    // animate particles movement
+    // Movement animation
     LaunchedEffect(Unit) {
-        repeat(140) {  // smooth 2s movement
+        repeat(180) {   // approx 3 seconds of motion
             particles.forEach { it.moveTowardsTarget() }
             delay(16)
         }
 
-        delay(400) // final hold
-        vm.load {
-            onFinished()
-        }
+        delay(500) // hold shape for half second
+        onFinished()
     }
 
     Box(
@@ -75,15 +66,19 @@ fun SplashScreen(onFinished: () -> Unit) {
 }
 
 data class Particle(
-    var x: Float,
-    var y: Float,
+    val startX: Float,
+    val startY: Float,
     val target: Offset
 ) {
+    var x by mutableStateOf(startX)
+    var y by mutableStateOf(startY)
+
     fun moveTowardsTarget() {
         val speed = 0.07f
         val dx = target.x - x
         val dy = target.y - y
         val dist = sqrt(dx.pow(2) + dy.pow(2))
+
         if (dist > 1f) {
             x += dx * speed
             y += dy * speed
@@ -91,12 +86,11 @@ data class Particle(
     }
 }
 
-// generate Termux ">_" pixel points
+// Build ">_" shape points
 fun generateTargetPoints(): List<Offset> {
     val points = mutableListOf<Offset>()
     val pixel = 18f
 
-    // builds > and _
     val shape = listOf(
         // >
         Offset(0f, -40f), Offset(15f, -25f), Offset(30f, -10f),
