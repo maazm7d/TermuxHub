@@ -3,12 +3,11 @@ package com.maazm7d.termuxhub.ui.screens.splash
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,56 +22,100 @@ fun SplashScreen(
 ) {
     val vm: SplashViewModel = hiltViewModel()
 
-    val fullText = "Termux Hub"
-    var visibleText by remember { mutableStateOf("") }
-    var showCursor by remember { mutableStateOf(true) }
+    val green = Color(0xFF00FF5A)
 
-    // Typing effect
+    // Typing animation setup
+    val bootLines = listOf(
+        "Booting Termux Hub System...",
+        "Initializing modules...",
+        "Loading user tools...",
+        "Checking repository updates...",
+        "Starting UI service...",
+        "System Ready."
+    )
+
+    var displayedLines by remember { mutableStateOf(listOf<String>()) }
+    var cursorVisible by remember { mutableStateOf(true) }
+
+    // Scanline flicker animation
+    val alphaAnim by infiniteTransition().animateFloat(
+        initialValue = 0.85f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(600, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    // vertical scan gradient
+    val scanlineBrush = Brush.verticalGradient(
+        colors = listOf(
+            Color(0x6600FF00),
+            Color.Transparent,
+            Color(0x6600FF00)
+        )
+    )
+
     LaunchedEffect(Unit) {
-        for (i in fullText.indices) {
-            visibleText = fullText.substring(0, i + 1)
-            delay(100) // typing speed
+        // typing lines one by one
+        bootLines.forEach { line ->
+            displayedLines = displayedLines + line
+            delay(500)
         }
 
-        // keep blinking cursor while loading
-        launch {
-            while (true) {
-                showCursor = !showCursor
-                delay(350)
-            }
+        // blinking cursor
+        while (true) {
+            cursorVisible = !cursorVisible
+            delay(350)
         }
+    }
 
-        delay(1200)
+    // start loading repo
+    LaunchedEffect(true) {
         vm.load { success -> onFinished(success) }
     }
 
-    Surface(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(18.dp),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.Start
         ) {
 
-            // Terminal style animated typing text
-            Text(
-                text = visibleText + if (showCursor) "|" else "",
-                color = Color.Green,
-                fontSize = 36.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
+            displayedLines.forEach { line ->
+                Text(
+                    text = line,
+                    color = green,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Start
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+            }
 
-            Spacer(modifier = Modifier.height(14.dp))
-
-            Text(
-                "Initializing system modules...",
-                color = Color.Green.copy(alpha = 0.7f),
-                fontSize = 16.sp
-            )
+            // terminal cursor
+            if (cursorVisible) {
+                Text(
+                    text = ">",
+                    color = green,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.ExtraBold
+                )
+            }
         }
+
+        // CRT scanlines overlay
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(scanlineBrush)
+                .alpha(alphaAnim)
+        )
     }
 }
