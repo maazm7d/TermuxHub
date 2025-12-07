@@ -7,99 +7,117 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.drawscope.drawCircle
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
-import kotlin.math.hypot
 import kotlin.random.Random
 
 @Composable
-fun SplashScreen(onFinished: () -> Unit) {
-    val particleCount = 650
+fun SplashScreen(
+    onFinished: () -> Unit
+) {
+    val vm: SplashViewModel = hiltViewModel()
 
-    var phase by remember { mutableStateOf(0) }   // 0 = float, 1 = magnet, 2 = complete
-    val particles = remember { mutableStateListOf<Particle>() }
+    val particleCount = 350
+    var particles by remember { mutableStateOf(generateParticles(particleCount)) }
+    var morphToIcon by remember { mutableStateOf(false) }
+    var fadeOut by remember { mutableStateOf(false) }
 
-    // Termux icon mask (| shape)
-    val targetPoints = remember { mutableStateListOf<Pair<Float, Float>>() }
-
-    val density = LocalDensity.current
+    val fadeAlpha by animateFloatAsState(
+        targetValue = if (fadeOut) 0f else 1f,
+        animationSpec = tween(durationMillis = 900, easing = LinearEasing),
+        finishedListener = { onFinished() }
+    )
 
     LaunchedEffect(Unit) {
-        // Generate particles
-        particles.clear()
-        repeat(particleCount) {
-            particles += Particle(
-                x = Random.nextFloat() * 1.1f - 0.05f,
-                y = Random.nextFloat() * 1.1f - 0.05f,
-                vx = Random.nextFloat() * 0.002f - 0.001f,
-                vy = Random.nextFloat() * 0.002f - 0.001f
-            )
-        }
-
-        // Build mask points for Termux | icon (narrow vertical bar)
-        targetPoints.clear()
-        for (i in 0 until 230) {
-            val px = 0.48f + Random.nextFloat() * 0.04f
-            val py = 0.25f + Random.nextFloat() * 0.50f
-            targetPoints += px to py
-        }
-
         delay(1800)
-        phase = 1            // → attract particles
-        delay(2300)
-        phase = 2            // → fade transition
-        delay(600)
-        onFinished()
+        morphToIcon = true
+
+        delay(1700)
+        fadeOut = true
+
+        vm.load { }
     }
 
-    val alpha by animateFloatAsState(if (phase == 2) 0f else 1f, tween(900))
+    LaunchedEffect(morphToIcon) {
+        if (morphToIcon) {
+            particles = particles.mapIndexed { index, particle ->
+                particle.copy(
+                    targetX = termuxShape[index % termuxShape.size].first,
+                    targetY = termuxShape[index % termuxShape.size].second
+                )
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(Color.White)
+            .alpha(fadeAlpha),
         contentAlignment = Alignment.Center
     ) {
-        Canvas(modifier = Modifier.fillMaxSize().alpha(alpha)) {
-
-            particles.forEachIndexed { i, p ->
-                if (phase == 0) {
-                    // free float
-                    p.x += p.vx
-                    p.y += p.vy
-                }
-                if (phase == 1) {
-                    // attract to icon points
-                    val (tx, ty) = targetPoints[i % targetPoints.size]
-                    val dx = tx - p.x
-                    val dy = ty - p.y
-                    val dist = hypot(dx, dy)
-                    val force = 0.015f
-                    p.x += dx * force
-                    p.y += dy * force
-                }
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            particles.forEach { particle ->
+                val animX by animateFloatAsState(
+                    targetValue = particle.targetX,
+                    animationSpec = tween(1600, easing = FastOutSlowInEasing)
+                )
+                val animY by animateFloatAsState(
+                    targetValue = particle.targetY,
+                    animationSpec = tween(1600, easing = FastOutSlowInEasing)
+                )
 
                 drawCircle(
                     color = Color.Black,
-                    radius = 2.2f,
-                    center = androidx.compose.ui.geometry.Offset(
-                        size.width * p.x,
-                        size.height * p.y
-                    )
+                    radius = 3f,
+                    center = androidx.compose.ui.geometry.Offset(animX, animY)
                 )
             }
         }
     }
 }
 
+/*** DATA STRUCT ***/
 data class Particle(
-    var x: Float,
-    var y: Float,
-    var vx: Float,
-    var vy: Float
+    val id: Int,
+    val targetX: Float,
+    val targetY: Float
+)
+
+/*** INITIAL RANDOM POSITIONS ***/
+fun generateParticles(count: Int): List<Particle> {
+    return List(count) { i ->
+        Particle(
+            id = i,
+            targetX = Random.nextFloat() * 1080f,
+            targetY = Random.nextFloat() * 2400f
+        )
+    }
+}
+
+/*** TERMUX ICON SHAPE COORDINATES (Pixel cloud target map) ***/
+val termuxShape = listOf(
+    540f to 700f,
+    540f to 720f,
+    540f to 740f,
+    540f to 760f,
+    545f to 720f,
+    550f to 740f,
+    555f to 760f,
+    560f to 780f,
+    565f to 800f,
+    570f to 820f,
+    575f to 840f,
+    580f to 860f,
+    590f to 880f,
+    600f to 900f,
+    610f to 920f,
+    620f to 940f,
+    630f to 960f,
+    640f to 980f,
+    650f to 1000f
 )
