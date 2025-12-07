@@ -17,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -79,7 +78,6 @@ fun ToolCard(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // VIEWS + DATE BAR (premium alignment)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Start,
@@ -124,7 +122,6 @@ fun ToolCard(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // ACTION BUTTONS ROW
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -144,7 +141,7 @@ fun ToolCard(
                         Icon(
                             imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                             contentDescription = "Like",
-                            tint = Color.Red,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -156,9 +153,14 @@ fun ToolCard(
                         modifier = Modifier.clickable { onSave(tool.id) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Save, contentDescription = "Save", modifier = Modifier.size(20.dp))
+                        Icon(
+                            Icons.Default.Save,
+                            contentDescription = "Save",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Save", fontSize = 14.sp)
+                        Text("Save", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                     }
 
                     // SHARE
@@ -166,9 +168,14 @@ fun ToolCard(
                         modifier = Modifier.clickable { onShare(tool) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Share, contentDescription = "Share", modifier = Modifier.size(20.dp))
+                        Icon(
+                            Icons.Default.Share,
+                            contentDescription = "Share",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Share", fontSize = 14.sp)
+                        Text("Share", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
