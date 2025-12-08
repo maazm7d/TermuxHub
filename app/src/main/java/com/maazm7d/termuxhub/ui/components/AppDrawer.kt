@@ -18,6 +18,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.maazm7d.termuxhub.R
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun AppDrawer(onAction: (String) -> Unit) {
@@ -85,21 +90,41 @@ fun AppDrawer(onAction: (String) -> Unit) {
 }
 
 @Composable
-fun DrawerItem(icon: ImageVector, label: String, desc: String, onClick: () -> Unit) {
+fun DrawerItem(
+    icon: ImageVector,
+    label: String,
+    desc: String,
+    onClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable(onClick = onClick)
             .padding(vertical = 10.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, contentDescription = label)
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                modifier = Modifier.size(24.dp)
+            )
+
             Spacer(modifier = Modifier.width(14.dp))
+
             Column {
-                Text(label, style = MaterialTheme.typography.titleMedium)
-                Text(desc, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = desc,
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
         }
+
         Spacer(modifier = Modifier.height(12.dp))
         Divider()
     }
