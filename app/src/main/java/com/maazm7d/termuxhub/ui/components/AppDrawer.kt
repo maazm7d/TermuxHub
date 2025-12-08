@@ -1,5 +1,6 @@
 package com.maazm7d.termuxhub.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,11 +14,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.safeDrawing
+import com.maazm7d.termuxhub.R
 
 @Composable
 fun AppDrawer(onAction: (String) -> Unit) {
@@ -29,16 +32,43 @@ fun AppDrawer(onAction: (String) -> Unit) {
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
 
-        // HEADER
-        Text(
-            "Termux Hub",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(vertical = 18.dp)
-        )
-        Divider()
-        Spacer(modifier = Modifier.height(10.dp))
+        // ---- HEADER ----
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 18.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // QUIRCLE SHAPE ICON
+            Image(
+                painter = painterResource(id = R.mipmap.ic_launcher),
+                contentDescription = "App Icon",
+                modifier = Modifier
+                    .size(90.dp)
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 50.dp,
+                            topEnd = 50.dp,
+                            bottomStart = 0.dp,
+                            bottomEnd = 0.dp
+                        )
+                    )
+            )
 
-        // ITEMS
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text("Termux Hub", style = MaterialTheme.typography.headlineSmall)
+            Text(
+                "com.maazm7d.termuxhub",
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // ---- DRAWER ITEMS ----
         DrawerItem(
             icon = Icons.Default.Bookmark,
             label = "Saved List",
@@ -75,17 +105,19 @@ fun DrawerItem(icon: ImageVector, label: String, desc: String, onClick: () -> Un
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(vertical = 10.dp)
+            .padding(vertical = 12.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(icon, contentDescription = label)
             Spacer(modifier = Modifier.width(14.dp))
+
             Column {
                 Text(label, style = MaterialTheme.typography.titleMedium)
                 Text(desc, style = MaterialTheme.typography.bodySmall)
             }
         }
-        Spacer(modifier = Modifier.height(12.dp))
+
+        Spacer(modifier = Modifier.height(14.dp))
         Divider()
     }
 }
