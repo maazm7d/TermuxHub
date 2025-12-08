@@ -10,26 +10,29 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.maazm7d.termuxhub.R
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.statusBarsPadding
 
 @Composable
 fun AppDrawer(onAction: (String) -> Unit) {
     Column(
         modifier = Modifier
-            .fillMaxHeight()
+            // Take the whole window so the drawer sheet reaches behind the status bar
+            .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
+            // Add automatic padding so content does not overlap the status bar
+            .statusBarsPadding()          // or .systemBarsPadding() if needed[web:3][web:22]
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
 
