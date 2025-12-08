@@ -5,13 +5,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.safeDrawing
-
 
 @Composable
 fun AppDrawer(onAction: (String) -> Unit) {
@@ -31,29 +28,40 @@ fun AppDrawer(onAction: (String) -> Unit) {
             .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
+
         // HEADER
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(Icons.Default.List, contentDescription = "App")
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
-                Text("Termux Hub", style = MaterialTheme.typography.titleLarge)
-                Text("com.maazm7d.termuxhub", style = MaterialTheme.typography.bodySmall)
-            }
-        }
-
+        Text(
+            "Termux Hub",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(vertical = 18.dp)
+        )
         Divider()
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        // DRAWER ITEMS
-        DrawerItem(icon = Icons.Default.Star, label = "Saved List") { onAction("saved") }
-        DrawerItem(icon = Icons.Default.Settings, label = "Settings") { onAction("settings") }
-        DrawerItem(icon = Icons.Default.Star, label = "Hall of Fame") { onAction("hall") }
-        DrawerItem(icon = Icons.Default.Star, label = "What's New") { onAction("whats_new") }
+        // ITEMS
+        DrawerItem(
+            icon = Icons.Default.Bookmark,
+            label = "Saved List",
+            desc = "Your saved tools and commands"
+        ) { onAction("saved") }
+
+        DrawerItem(
+            icon = Icons.Default.EmojiEvents,
+            label = "Hall of Fame",
+            desc = "Most popular tools curated by users"
+        ) { onAction("hall") }
+
+        DrawerItem(
+            icon = Icons.Default.NewReleases,
+            label = "What's New",
+            desc = "Latest tools, features & updates"
+        ) { onAction("whats_new") }
+
+        DrawerItem(
+            icon = Icons.Default.Settings,
+            label = "Settings",
+            desc = "Themes, preferences & appearance"
+        ) { onAction("settings") }
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -62,17 +70,22 @@ fun AppDrawer(onAction: (String) -> Unit) {
 }
 
 @Composable
-fun DrawerItem(icon: ImageVector, label: String, onClick: () -> Unit) {
-    Row(
+fun DrawerItem(icon: ImageVector, label: String, desc: String, onClick: () -> Unit) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(vertical = 14.dp)
-            .background(MaterialTheme.colorScheme.surface),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(vertical = 10.dp)
     ) {
-        Icon(icon, contentDescription = label)
-        Spacer(modifier = Modifier.width(14.dp))
-        Text(label, style = MaterialTheme.typography.bodyLarge)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, contentDescription = label)
+            Spacer(modifier = Modifier.width(14.dp))
+            Column {
+                Text(label, style = MaterialTheme.typography.titleMedium)
+                Text(desc, style = MaterialTheme.typography.bodySmall)
+            }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Divider()
     }
 }
