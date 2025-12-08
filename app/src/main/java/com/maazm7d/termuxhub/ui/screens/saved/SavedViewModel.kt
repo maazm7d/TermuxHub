@@ -27,20 +27,10 @@ class SavedViewModel @Inject constructor(
                 .collect { _savedTools.value = it }
         }
     }
-}
 
-fun com.maazm7d.termuxhub.data.local.entities.ToolEntity.toDomain() = Tool(
-    id = id,
-    name = name,
-    description = description,
-    category = category,
-    installCommand = installCommand,
-    repoUrl = repoUrl,
-    thumbnail = thumbnail,
-    version = version,
-    updatedAt = updatedAt,
-    isFavorite = isFavorite,
-    likes = likes,
-    views = views,
-    publishedAt = publishedAt
-)
+    fun removeTool(tool: Tool) {
+        viewModelScope.launch {
+            repository.setFavorite(tool.id, false) // remove favorite permanently
+        }
+    }
+}
