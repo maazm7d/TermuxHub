@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -40,7 +39,6 @@ fun AppDrawer(onAction: (String) -> Unit) {
                 .padding(vertical = 18.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             // QUIRCLE SHAPE ICON
             Image(
                 painter = painterResource(id = R.mipmap.ic_launcher),
@@ -110,12 +108,7 @@ fun DrawerItem(icon: ImageVector, label: String, desc: String, onClick: () -> Un
             .padding(vertical = 12.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-
-            Icon(
-                imageVector = icon,
-                contentDescription = label
-            )
-
+            Icon(icon, contentDescription = label)
             Spacer(modifier = Modifier.width(14.dp))
 
             Column {
