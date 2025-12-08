@@ -6,47 +6,47 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.NewReleases
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.ui.unit.sp
 import com.maazm7d.termuxhub.R
 
 @Composable
-fun AppDrawer(onAction: (String) -> Unit) {
+fun AppDrawer(
+    onMyToolsClick: () -> Unit = {},
+    onFavoritesClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
-            .fillMaxHeight()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
-        // ---- HEADER ----
-        Column(
+        // -------- Drawer Header --------
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 18.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .height(180.dp)
+                .background(Color.Black),
+            contentAlignment = Alignment.Center
         ) {
-
-            // QUIRCLE SHAPE ICON
             Image(
-                painter = painterResource(id = R.mipmap.ic_launcher),
+                painter = painterResource(id = R.drawable.ic_launcher),  // fixed drawable resource
                 contentDescription = "App Icon",
                 modifier = Modifier
-                    .size(90.dp)
+                    .size(95.dp)
                     .clip(
                         RoundedCornerShape(
                             topStart = 50.dp,
@@ -56,75 +56,63 @@ fun AppDrawer(onAction: (String) -> Unit) {
                         )
                     )
             )
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            Text("Termux Hub", style = MaterialTheme.typography.headlineSmall)
-            Text(
-                "com.maazm7d.termuxhub",
-                style = MaterialTheme.typography.bodySmall
-            )
         }
 
         Spacer(modifier = Modifier.height(10.dp))
-        Divider()
-        Spacer(modifier = Modifier.height(16.dp))
 
-        // ---- DRAWER ITEMS ----
+        // -------- Drawer Items --------
         DrawerItem(
-            icon = Icons.Default.Bookmark,
-            label = "Saved List",
-            desc = "Your saved tools and commands"
-        ) { onAction("saved") }
+            icon = Icons.Default.List,
+            text = "My Tools",
+            onClick = onMyToolsClick
+        )
 
         DrawerItem(
-            icon = Icons.Default.EmojiEvents,
-            label = "Hall of Fame",
-            desc = "Most popular tools curated by users"
-        ) { onAction("hall") }
-
-        DrawerItem(
-            icon = Icons.Default.NewReleases,
-            label = "What's New",
-            desc = "Latest tools, features & updates"
-        ) { onAction("whats_new") }
+            icon = Icons.Default.Favorite,
+            text = "Favorites",
+            onClick = onFavoritesClick
+        )
 
         DrawerItem(
             icon = Icons.Default.Settings,
-            label = "Settings",
-            desc = "Themes, preferences & appearance"
-        ) { onAction("settings") }
+            text = "Settings",
+            onClick = onSettingsClick
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Text("v1.0.0 (1)", style = MaterialTheme.typography.bodySmall)
+        Divider(thickness = 1.dp, color = Color.Gray.copy(alpha = 0.3f))
+
+        Text(
+            text = "Termux Hub v1.0",
+            modifier = Modifier.padding(16.dp),
+            fontSize = 13.sp,
+            color = Color.Gray
+        )
     }
 }
 
 @Composable
-fun DrawerItem(icon: ImageVector, label: String, desc: String, onClick: () -> Unit) {
-    Column(
+fun DrawerItem(icon: androidx.compose.ui.graphics.vector.ImageVector, text: String, onClick: () -> Unit) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(vertical = 12.dp)
+            .padding(vertical = 14.dp, horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            imageVector = icon,
+            contentDescription = text,
+            tint = Color.White
+        )
 
-            Icon(
-                imageVector = icon,
-                contentDescription = label
-            )
+        Spacer(modifier = Modifier.width(14.dp))
 
-            Spacer(modifier = Modifier.width(14.dp))
-
-            Column {
-                Text(label, style = MaterialTheme.typography.titleMedium)
-                Text(desc, style = MaterialTheme.typography.bodySmall)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(14.dp))
-        Divider()
+        Text(
+            text = text,
+            fontSize = 17.sp,
+            color = Color.White
+        )
     }
 }
