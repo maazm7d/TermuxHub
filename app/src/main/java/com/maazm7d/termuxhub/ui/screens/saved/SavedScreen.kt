@@ -8,23 +8,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.PopupProperties
 import com.maazm7d.termuxhub.ui.components.ToolCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SavedScreen(
-    viewModel: SavedViewModel,
-    onBack: () -> Unit
-) {
+fun SavedScreen(viewModel: SavedViewModel, onBack: () -> Unit) {
     val savedTools by viewModel.savedTools.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
-
         TopAppBar(
             title = { Text("Saved Tools") },
             navigationIcon = {
@@ -35,12 +30,14 @@ fun SavedScreen(
         )
 
         if (savedTools.isEmpty()) {
-            // Show friendly message when no saved tools
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Start by saving your favourite tool!", style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    "Start by saving your favourite tool!",
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
