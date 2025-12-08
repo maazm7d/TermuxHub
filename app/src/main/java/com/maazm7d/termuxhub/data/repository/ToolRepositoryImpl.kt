@@ -13,10 +13,6 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import javax.inject.Inject
 
-/**
- * Concrete implementation of ToolRepository.
- * Uses Room (ToolDao) and MetadataClient (Retrofit + Moshi) and falls back to local asset JSON.
- */
 class ToolRepositoryImpl @Inject constructor(
     private val toolDao: ToolDao,
     private val metadataClient: MetadataClient,
@@ -25,9 +21,7 @@ class ToolRepositoryImpl @Inject constructor(
 ) : ToolRepository {
 
     override fun observeAll(): Flow<List<ToolEntity>> = toolDao.getAllToolsFlow()
-
     override fun observeFavorites(): Flow<List<ToolEntity>> = toolDao.getFavoritesFlow()
-
     override suspend fun getToolById(id: String): ToolEntity? = toolDao.getToolById(id)
 
     override suspend fun setFavorite(toolId: String, isFav: Boolean) {
@@ -41,15 +35,14 @@ class ToolRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 val body = response.body()
                 if (body != null) {
-                    val entities = body.tools.mapNotNull { it.toEntity() }
-                    toolDao.insertAll(entities)
+                    body.tools.forEach { dto ->
+                        val existing = toolDao.getToolById(dto.id)
+                        val entity = dto.toEntity(existing)
+                        if (entity != null) toolDao.insert(entity)
+                    }
                     true
-                } else {
-                    loadFromAssets()
-                }
-            } else {
-                loadFromAssets()
-            }
+                } else loadFromAssets()
+            } else loadFromAssets()
         } catch (ex: Exception) {
             ex.printStackTrace()
             loadFromAssets()
@@ -60,26 +53,24 @@ class ToolRepositoryImpl @Inject constructor(
         try {
             val input = appContext.assets.open(assetsFileName)
             val text = BufferedReader(InputStreamReader(input)).use { it.readText() }
-
             val moshi = com.squareup.moshi.Moshi.Builder()
                 .addLast(com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory())
                 .build()
-
             val adapter = moshi.adapter(MetadataDto::class.java)
             val dto = adapter.fromJson(text)
-
-            if (dto != null) {
-                val entities = dto.tools.mapNotNull { it.toEntity() }
-                toolDao.insertAll(entities)
-                true
-            } else false
+            dto?.tools?.forEach { t ->
+                val existing = toolDao.getToolById(t.id)
+                val entity = t.toEntity(existing)
+                if (entity != null) toolDao.insert(entity)
+            }
+            true
         } catch (e: Exception) {
             e.printStackTrace()
             false
         }
     }
 
-    private fun ToolDto.toEntity(): ToolEntity? {
+    private fun ToolDto.toEntity(existing: ToolEntity? = null): ToolEntity? {
         if (id.isBlank() || name.isBlank()) return null
         return ToolEntity(
             id = id,
@@ -91,7 +82,7 @@ class ToolRepositoryImpl @Inject constructor(
             thumbnail = thumbnail,
             version = version,
             updatedAt = updatedAt ?: 0L,
-            isFavorite = false,
+            isFavorite = existing?.isFavorite ?: false,
             likes = likes ?: 0,
             views = views ?: 0,
             publishedAt = publishedAt
