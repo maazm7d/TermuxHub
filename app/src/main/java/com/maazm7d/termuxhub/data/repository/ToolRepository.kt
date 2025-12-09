@@ -9,4 +9,7 @@ interface ToolRepository {
     suspend fun getToolById(id: String): ToolEntity?
     suspend fun setFavorite(toolId: String, isFav: Boolean)
     suspend fun refreshFromRemote(): Boolean
+
+    // NEW: fetch github stars for a repo url (returns null on parse/error)
+    suspend fun fetchStarsForRepo(repoUrl: String): Int?
 }
