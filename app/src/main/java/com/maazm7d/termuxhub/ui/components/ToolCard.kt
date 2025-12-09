@@ -1,14 +1,14 @@
 package com.maazm7d.termuxhub.ui.components
 
+import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.filled.RemoveRedEye
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -25,8 +26,9 @@ import com.maazm7d.termuxhub.domain.model.Tool
 @Composable
 fun ToolCard(
     tool: Tool,
+    stars: Int?,
     onOpenDetails: (String) -> Unit,
-    onLike: (String) -> Unit,
+    onToggleFavorite: (String) -> Unit,
     onSave: (String) -> Unit,
     onShare: (Tool) -> Unit
 ) {
@@ -34,8 +36,14 @@ fun ToolCard(
     val thumbnailUrl =
         "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/metadata/thumbnail/${tool.id}.png"
 
-    var isLiked by remember { mutableStateOf(false) }
-    val likeScale by animateFloatAsState(targetValue = if (isLiked) 1.2f else 1f)
+    var isFav by remember { mutableStateOf(tool.isFavorite) }
+    val favScale by animateFloatAsState(targetValue = if (isFav) 1.05f else 1f)
+
+    val uriHandler = LocalUriHandler.current
+
+    // dialog state for star action
+    var showStarDialog by remember { mutableStateOf(false) }
+    var pendingRepoUrl by remember { mutableStateOf<String?>(null) }
 
     Card(
         modifier = Modifier
@@ -44,7 +52,7 @@ fun ToolCard(
             .clickable { onOpenDetails(tool.id) },
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface) // White card
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
 
         Column {
@@ -75,13 +83,13 @@ fun ToolCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // DATE
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
                     if (!tool.publishedAt.isNullOrBlank()) {
                         Icon(
                             Icons.Default.CalendarMonth,
@@ -89,7 +97,7 @@ fun ToolCard(
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp)
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(tool.publishedAt, fontSize = 13.sp)
                     }
                 }
@@ -109,40 +117,50 @@ fun ToolCard(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // BOTTOM ACTIONS
+                // ACTION ROW
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
-                    // LIKE
+                    // STAR (shows count and allows "open repo to star")
                     Row(
                         modifier = Modifier
                             .clickable {
-                                isLiked = !isLiked
-                                onLike(tool.id)
-                            }
-                            .scale(likeScale),
+                                // open confirm dialog
+                                pendingRepoUrl = tool.repoUrl
+                                showStarDialog = true
+                            },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                            contentDescription = "Like",
+                            imageVector = if (stars != null) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                            contentDescription = "Stars",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("${tool.likes + if (isLiked) 1 else 0}", fontSize = 14.sp)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(stars?.toString() ?: "—", fontSize = 14.sp)
                     }
 
-                    // SAVE
+                    // SAVE (favorite)
                     Row(
-                        modifier = Modifier.clickable { onSave(tool.id) },
+                        modifier = Modifier
+                            .clickable {
+                                isFav = !isFav
+                                onToggleFavorite(tool.id)
+                            }
+                            .scale(favScale),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Save, contentDescription = "Save", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = if (isFav) Icons.Filled.Save else Icons.Filled.Save,
+                            contentDescription = "Save",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text("Save", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                     }
 
@@ -151,12 +169,35 @@ fun ToolCard(
                         modifier = Modifier.clickable { onShare(tool) },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(Icons.Filled.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text("Share", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
         }
+    }
+
+    // Star confirmation dialog
+    if (showStarDialog) {
+        AlertDialog(
+            onDismissRequest = { showStarDialog = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    showStarDialog = false
+                    pendingRepoUrl?.let { url ->
+                        // open repo page so user can star it on GitHub
+                        uriHandler.openUri(url)
+                    }
+                }) {
+                    Text("Continue")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showStarDialog = false }) { Text("Cancel") }
+            },
+            title = { Text("Star on GitHub") },
+            text = { Text("Do you want to open the repository on GitHub to star it?") }
+        )
     }
 }
