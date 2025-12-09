@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.maazm7d.termuxhub.domain.mapper.toDomain
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 data class HomeUiState(
     val tools: List<Tool> = emptyList(),
@@ -26,6 +28,10 @@ class HomeViewModel @Inject constructor(
         .map { list -> HomeUiState(tools = list.map { it.toDomain() }) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
 
+    // starsMap: toolId -> star count (nullable if not loaded)
+    private val _starsMap = MutableStateFlow<Map<String, Int>>(emptyMap())
+    val starsMap: StateFlow<Map<String, Int>> = _starsMap.asStateFlow()
+
     fun toggleFavorite(toolId: String) {
         viewModelScope.launch {
             val tool = repository.getToolById(toolId) ?: return@launch
@@ -34,21 +40,29 @@ class HomeViewModel @Inject constructor(
     }
 
     fun refresh() {
-        viewModelScope.launch { repository.refreshFromRemote() }
+        viewModelScope.launch {
+            repository.refreshFromRemote()
+            // After metadata refresh, fetch stars in background
+            fetchStarsForAllTools()
+        }
+    }
+
+    private fun fetchStarsForAllTools() {
+        viewModelScope.launch {
+            val tools = repository.observeAll().firstOrNull() ?: return@launch
+            val results = mutableMapOf<String, Int>()
+            // parallel fetch with coroutines
+            coroutineScope {
+                val jobs = tools.map { entity ->
+                    async {
+                        val repo = entity.repoUrl ?: ""
+                        val stars = if (repo.isBlank()) null else repository.fetchStarsForRepo(repo)
+                        if (stars != null) results[entity.id] = stars
+                    }
+                }
+                jobs.forEach { it.join() }
+            }
+            _starsMap.value = results
+        }
     }
 }
-
-fun com.maazm7d.termuxhub.data.local.entities.ToolEntity.toDomain() = com.maazm7d.termuxhub.domain.model.Tool(
-    id = id,
-    name = name,
-    description = description,
-    category = category,
-    installCommand = installCommand,
-    repoUrl = repoUrl,
-    thumbnail = thumbnail,
-    version = version,
-    updatedAt = updatedAt,
-    isFavorite = isFavorite,
-    likes = likes,
-    publishedAt = publishedAt
-)
