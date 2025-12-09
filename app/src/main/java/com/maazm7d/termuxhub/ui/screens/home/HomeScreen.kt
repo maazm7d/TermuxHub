@@ -39,6 +39,7 @@ fun HomeScreen(
             categoryCounts.keys.sorted().map { it to (categoryCounts[it] ?: 0) }
 
     ModalNavigationDrawer(
+        drawerState = drawerState,
         drawerContent = {
             Box(
                 modifier = Modifier
@@ -54,38 +55,45 @@ fun HomeScreen(
                     scope.launch { drawerState.close() }
                 }
             }
-        },
-        drawerState = drawerState
+        }
     ) {
         Scaffold(
             topBar = {
-                SmallTopAppBar(  // Reduced height TopBar
-                    title = { Text("Termux Hub") },
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text("Termux Hub", style = MaterialTheme.typography.titleMedium)
+                    },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Default.FilterList, contentDescription = "Menu")
                         }
-                    }
+                    },
+                    modifier = Modifier.height(48.dp)  // reduced height top bar
                 )
             }
         ) { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .padding(horizontal = 8.dp)
+            ) {
 
-            Column(modifier = Modifier
-                .padding(padding)
-                .padding(horizontal = 8.dp)) // Less padding
-            {
                 SearchBar(
                     queryState = query,
-                    modifier = Modifier.padding(vertical = 6.dp) // smaller
+                    modifier = Modifier
+                        .padding(vertical = 4.dp) // reduced padding
+                        .height(46.dp)           // reduced searchbar height
                 )
 
-                CategoryChips(
-    chips = chipsWithCounts,
-    selectedIndex = selectedChip,
-    onChipSelected = { selectedChip = it }
-)
+                Spacer(modifier = Modifier.height(2.dp))
 
-Spacer(modifier = Modifier.height(4.dp)) // spacing after chips
+                CategoryChips(
+                    chips = chipsWithCounts,
+                    selectedIndex = selectedChip,
+                    onChipSelected = { selectedChip = it }
+                )
+
+                Spacer(modifier = Modifier.height(2.dp))
 
                 val filteredTools = state.tools.filter {
                     val byQuery = query.value.isBlank() ||
@@ -101,7 +109,7 @@ Spacer(modifier = Modifier.height(4.dp)) // spacing after chips
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 4.dp)
+                        .padding(top = 2.dp)
                 ) {
                     items(filteredTools) { tool ->
                         ToolCard(
