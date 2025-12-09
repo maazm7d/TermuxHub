@@ -28,9 +28,15 @@ class HomeViewModel @Inject constructor(
         .map { list -> HomeUiState(tools = list.map { it.toDomain() }) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
 
-    // starsMap: toolId -> star count (nullable if not loaded)
+    // starsMap: toolId -> star count
     private val _starsMap = MutableStateFlow<Map<String, Int>>(emptyMap())
     val starsMap: StateFlow<Map<String, Int>> = _starsMap.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            fetchStarsForAllTools() // ⭐ fetch immediately when ViewModel is created
+        }
+    }
 
     fun toggleFavorite(toolId: String) {
         viewModelScope.launch {
@@ -42,27 +48,24 @@ class HomeViewModel @Inject constructor(
     fun refresh() {
         viewModelScope.launch {
             repository.refreshFromRemote()
-            // After metadata refresh, fetch stars in background
             fetchStarsForAllTools()
         }
     }
 
-    private fun fetchStarsForAllTools() {
-        viewModelScope.launch {
-            val tools = repository.observeAll().firstOrNull() ?: return@launch
-            val results = mutableMapOf<String, Int>()
-            // parallel fetch with coroutines
-            coroutineScope {
-                val jobs = tools.map { entity ->
-                    async {
-                        val repo = entity.repoUrl ?: ""
-                        val stars = if (repo.isBlank()) null else repository.fetchStarsForRepo(repo)
-                        if (stars != null) results[entity.id] = stars
-                    }
+    private suspend fun fetchStarsForAllTools() {
+        val tools = repository.observeAll().firstOrNull() ?: return
+        val results = mutableMapOf<String, Int>()
+
+        coroutineScope {
+            val jobs = tools.map { entity ->
+                async {
+                    val repo = entity.repoUrl ?: ""
+                    val stars = if (repo.isBlank()) null else repository.fetchStarsForRepo(repo)
+                    if (stars != null) results[entity.id] = stars
                 }
-                jobs.forEach { it.join() }
             }
-            _starsMap.value = results
+            jobs.forEach { it.join() }
         }
+        _starsMap.value = results
     }
 }
