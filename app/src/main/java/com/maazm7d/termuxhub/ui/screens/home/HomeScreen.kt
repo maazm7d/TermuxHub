@@ -102,13 +102,16 @@ fun HomeScreen(
                         .padding(top = 6.dp)
                 ) {
                     items(filteredTools) { tool ->
-                        ToolCard(
-                            tool = tool,
-                            onOpenDetails = onOpenDetails,
-                            onLike = { viewModel.toggleFavorite(it) },
-                            onSave = { viewModel.toggleFavorite(it) },
-                            onShare = {}
-                        )
+                        // inside LazyColumn items(filteredTools) { tool ->
+
+ToolCard(
+    tool = tool,
+    stars = viewModel.starsMap.value[tool.id],
+    onOpenDetails = onOpenDetails,
+    onToggleFavorite = { viewModel.toggleFavorite(it) },
+    onSave = { viewModel.toggleFavorite(it) },
+    onShare = {}
+)
                     }
                 }
             }
