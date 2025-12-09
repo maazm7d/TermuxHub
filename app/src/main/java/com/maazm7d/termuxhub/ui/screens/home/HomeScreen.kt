@@ -80,11 +80,12 @@ fun HomeScreen(
                 )
 
                 CategoryChips(
-                    chips = chipsWithCounts,
-                    selectedIndex = selectedChip,
-                    onChipSelected = { selectedChip = it },
-                    modifier = Modifier.padding(bottom = 4.dp) // reduced
-                )
+    chips = chipsWithCounts,
+    selectedIndex = selectedChip,
+    onChipSelected = { selectedChip = it }
+)
+
+Spacer(modifier = Modifier.height(4.dp)) // spacing after chips
 
                 val filteredTools = state.tools.filter {
                     val byQuery = query.value.isBlank() ||
