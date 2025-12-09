@@ -46,12 +46,13 @@ fun SavedScreen(viewModel: SavedViewModel, onBack: () -> Unit) {
 
                     Box {
                         ToolCard(
-                            tool = tool,
-                            onOpenDetails = {},
-                            onLike = {},
-                            onSave = {},
-                            onShare = {}
-                        )
+    tool = tool,
+    stars = tool.stars,
+    onToggleFavorite = { viewModel.removeTool(tool) },
+    onOpenDetails = {},
+    onShare = {},
+    onStarClick = { viewModel.requestStarGithub(tool) }
+)
 
                         // Three dots menu
                         IconButton(
