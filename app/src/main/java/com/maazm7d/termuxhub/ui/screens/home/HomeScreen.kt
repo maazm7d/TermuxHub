@@ -63,18 +63,7 @@ fun HomeScreen(
         },
         drawerState = drawerState
     ) {
-        Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = { Text("Termux Hub") },
-                    navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.FilterList, contentDescription = "Menu")
-                        }
-                    }
-                )
-            }
-        ) { padding ->
+        { padding ->
 
             Column(modifier = Modifier.padding(padding)) {
 
