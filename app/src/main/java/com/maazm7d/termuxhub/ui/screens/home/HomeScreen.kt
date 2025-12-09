@@ -24,8 +24,12 @@ fun HomeScreen(
     onOpenSettings: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+
+    // Collect star updates reactively
+    val stars by viewModel.starsMap.collectAsState()
+
     LaunchedEffect(Unit) {
-    viewModel.refresh()
+        viewModel.refresh()
     }
 
     val query = remember { mutableStateOf("") }
@@ -102,16 +106,15 @@ fun HomeScreen(
                         .padding(top = 6.dp)
                 ) {
                     items(filteredTools) { tool ->
-                        // inside LazyColumn items(filteredTools) { tool ->
 
-ToolCard(
-    tool = tool,
-    stars = viewModel.starsMap.value[tool.id],
-    onOpenDetails = onOpenDetails,
-    onToggleFavorite = { viewModel.toggleFavorite(it) },
-    onSave = { viewModel.toggleFavorite(it) },
-    onShare = {}
-)
+                        ToolCard(
+                            tool = tool,
+                            stars = stars[tool.id], // ⭐ reactive star updates
+                            onOpenDetails = onOpenDetails,
+                            onToggleFavorite = { viewModel.toggleFavorite(it) },
+                            onSave = { viewModel.toggleFavorite(it) },
+                            onShare = {}
+                        )
                     }
                 }
             }
