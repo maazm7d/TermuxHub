@@ -3,6 +3,7 @@ package com.maazm7d.termuxhub.di
 import android.content.Context
 import com.maazm7d.termuxhub.data.local.ToolDao
 import com.maazm7d.termuxhub.data.remote.MetadataClient
+import com.maazm7d.termuxhub.data.remote.GitHubClient
 import com.maazm7d.termuxhub.data.repository.ToolRepository
 import com.maazm7d.termuxhub.data.repository.ToolRepositoryImpl
 import dagger.Module
@@ -20,6 +21,7 @@ object RepositoryModule {
     fun provideToolRepository(
         dao: ToolDao,
         api: MetadataClient,
+        github: GitHubClient,
         context: Context
-    ): ToolRepository = ToolRepositoryImpl(dao, api, context)
+    ): ToolRepository = ToolRepositoryImpl(dao, api, github, context)
 }
