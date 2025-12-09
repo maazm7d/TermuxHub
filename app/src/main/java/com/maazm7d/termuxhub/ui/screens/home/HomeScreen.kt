@@ -57,40 +57,45 @@ fun HomeScreen(
             }
         }
     ) {
-        Scaffold(
-            topBar = {},  // removed
-        ) { padding ->
+        Scaffold(topBar = {}) { padding ->
 
             Column(
                 modifier = Modifier
                     .padding(padding)
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 6.dp)
             ) {
 
-                // Custom small menu button row
+                // SEARCH + DRAWER IN ONE LINE
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 6.dp, bottom = 4.dp),
-                    horizontalArrangement = Arrangement.Start
+                        .padding(top = 6.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                    IconButton(
+                        onClick = { scope.launch { drawerState.open() } }
+                    ) {
                         Icon(Icons.Default.FilterList, contentDescription = "Menu")
                     }
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    SearchBar(
+                        queryState = query,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(46.dp)
+                    )
                 }
 
-                SearchBar(
-                    queryState = query,
-                    modifier = Modifier.padding(vertical = 6.dp)
-                )
+                Spacer(modifier = Modifier.height(4.dp))
 
                 CategoryChips(
                     chips = chipsWithCounts,
                     selectedIndex = selectedChip,
                     onChipSelected = { selectedChip = it }
                 )
-
-                Spacer(modifier = Modifier.height(4.dp))
 
                 val filteredTools = state.tools.filter {
                     val byQuery = query.value.isBlank() ||
@@ -106,7 +111,7 @@ fun HomeScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 2.dp)
+                        .padding(top = 4.dp)
                 ) {
                     items(filteredTools) { tool ->
                         ToolCard(
