@@ -50,6 +50,5 @@ fun com.maazm7d.termuxhub.data.local.entities.ToolEntity.toDomain() = com.maazm7
     updatedAt = updatedAt,
     isFavorite = isFavorite,
     likes = likes,
-    views = views,
     publishedAt = publishedAt
 )
