@@ -4,6 +4,7 @@ import android.content.Context
 import com.maazm7d.termuxhub.data.local.ToolDao
 import com.maazm7d.termuxhub.data.local.entities.ToolEntity
 import com.maazm7d.termuxhub.data.remote.MetadataClient
+import com.maazm7d.termuxhub.data.remote.GitHubClient
 import com.maazm7d.termuxhub.data.remote.dto.MetadataDto
 import com.maazm7d.termuxhub.data.remote.dto.ToolDto
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,7 @@ import javax.inject.Inject
 class ToolRepositoryImpl @Inject constructor(
     private val toolDao: ToolDao,
     private val metadataClient: MetadataClient,
+    private val githubClient: GitHubClient,
     private val appContext: Context,
     private val assetsFileName: String = "metadata.json"
 ) : ToolRepository {
@@ -47,6 +49,64 @@ class ToolRepositoryImpl @Inject constructor(
             ex.printStackTrace()
             loadFromAssets()
         }
+    }
+
+    /**
+     * Try to fetch star count from GitHub API for a given repo url.
+     * Accepts common forms:
+     *  - https://github.com/owner/repo
+     *  - https://github.com/owner/repo/
+     *  - git@github.com:owner/repo.git
+     *  - owner/repo
+     * Returns null if parse or network error.
+     */
+    override suspend fun fetchStarsForRepo(repoUrl: String): Int? = withContext(Dispatchers.IO) {
+        try {
+            val parts = parseOwnerRepo(repoUrl) ?: return@withContext null
+            val (owner, repo) = parts
+            val resp = githubClient.api.getRepo(owner, repo)
+            if (resp.isSuccessful) {
+                resp.body()?.stargazers_count
+            } else null
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    private fun parseOwnerRepo(raw: String): Pair<String, String>? {
+        var s = raw.trim()
+        if (s.isEmpty()) return null
+
+        // common https urls
+        if (s.startsWith("https://") || s.startsWith("http://")) {
+            // strip trailing slashes and .git
+            s = s.removeSuffix("/")
+            s = s.removeSuffix(".git")
+            val segments = s.split("/")
+            // last two segments expected: owner/repo
+            if (segments.size >= 2) {
+                val owner = segments[segments.size - 2]
+                val repo = segments.last()
+                return owner to repo
+            }
+        }
+
+        // git@github.com:owner/repo.git
+        if (s.startsWith("git@")) {
+            val afterColon = s.substringAfter(':')
+            val cleaned = afterColon.removeSuffix(".git").trim()
+            val seg = cleaned.split("/")
+            if (seg.size == 2) return seg[0] to seg[1]
+        }
+
+        // owner/repo
+        if (!s.contains("://") && s.contains("/")) {
+            val seg = s.removeSuffix(".git").split("/")
+            if (seg.size == 2) return seg[0] to seg[1]
+        }
+
+        return null
     }
 
     private suspend fun loadFromAssets(): Boolean = withContext(Dispatchers.IO) {
