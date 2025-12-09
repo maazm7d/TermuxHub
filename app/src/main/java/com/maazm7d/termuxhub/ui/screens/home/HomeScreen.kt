@@ -24,9 +24,13 @@ fun HomeScreen(
     onOpenSettings: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+
+    // Collect star updates reactively
     val stars by viewModel.starsMap.collectAsState()
 
-    LaunchedEffect(Unit) { viewModel.refresh() }
+    LaunchedEffect(Unit) {
+        viewModel.refresh()
+    }
 
     val query = remember { mutableStateOf("") }
     var selectedChip by remember { mutableStateOf(0) }
@@ -34,7 +38,9 @@ fun HomeScreen(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    // Dynamically generate categories
     val categoryCounts = state.tools.groupingBy { it.category }.eachCount()
+
     val chipsWithCounts = listOf("All" to state.tools.size) +
             categoryCounts.keys.sorted().map { it to (categoryCounts[it] ?: 0) }
 
@@ -59,7 +65,7 @@ fun HomeScreen(
     ) {
         Scaffold(
             topBar = {
-                SmallTopAppBar(  // Reduced height TopBar
+                CenterAlignedTopAppBar(
                     title = { Text("Termux Hub") },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
@@ -70,20 +76,17 @@ fun HomeScreen(
             }
         ) { padding ->
 
-            Column(modifier = Modifier
-                .padding(padding)
-                .padding(horizontal = 8.dp)) // Less padding
-            {
+            Column(modifier = Modifier.padding(padding)) {
+
                 SearchBar(
                     queryState = query,
-                    modifier = Modifier.padding(vertical = 6.dp) // smaller
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
                 )
 
                 CategoryChips(
                     chips = chipsWithCounts,
                     selectedIndex = selectedChip,
-                    onChipSelected = { selectedChip = it },
-                    modifier = Modifier.padding(bottom = 4.dp) // reduced
+                    onChipSelected = { selectedChip = it }
                 )
 
                 val filteredTools = state.tools.filter {
@@ -100,12 +103,13 @@ fun HomeScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 4.dp)
+                        .padding(top = 6.dp)
                 ) {
                     items(filteredTools) { tool ->
+
                         ToolCard(
                             tool = tool,
-                            stars = stars[tool.id],
+                            stars = stars[tool.id], // ⭐ reactive star updates
                             onOpenDetails = onOpenDetails,
                             onToggleFavorite = { viewModel.toggleFavorite(it) },
                             onSave = { viewModel.toggleFavorite(it) },
