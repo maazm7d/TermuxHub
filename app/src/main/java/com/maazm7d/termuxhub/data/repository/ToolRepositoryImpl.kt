@@ -84,7 +84,6 @@ class ToolRepositoryImpl @Inject constructor(
             updatedAt = updatedAt ?: 0L,
             isFavorite = existing?.isFavorite ?: false,
             likes = likes ?: 0,
-            views = views ?: 0,
             publishedAt = publishedAt
         )
     }
