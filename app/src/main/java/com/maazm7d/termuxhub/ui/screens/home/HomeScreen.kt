@@ -24,13 +24,9 @@ fun HomeScreen(
     onOpenSettings: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
-
-    // Collect star updates reactively
     val stars by viewModel.starsMap.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.refresh()
-    }
+    LaunchedEffect(Unit) { viewModel.refresh() }
 
     val query = remember { mutableStateOf("") }
     var selectedChip by remember { mutableStateOf(0) }
@@ -38,13 +34,12 @@ fun HomeScreen(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    // Dynamically generate categories
     val categoryCounts = state.tools.groupingBy { it.category }.eachCount()
-
     val chipsWithCounts = listOf("All" to state.tools.size) +
             categoryCounts.keys.sorted().map { it to (categoryCounts[it] ?: 0) }
 
     ModalNavigationDrawer(
+        drawerState = drawerState,
         drawerContent = {
             Box(
                 modifier = Modifier
@@ -60,27 +55,33 @@ fun HomeScreen(
                     scope.launch { drawerState.close() }
                 }
             }
-        },
-        drawerState = drawerState
+        }
     ) {
         Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = { Text("Termux Hub") },
-                    navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.FilterList, contentDescription = "Menu")
-                        }
-                    }
-                )
-            }
+            topBar = {},  // removed
         ) { padding ->
 
-            Column(modifier = Modifier.padding(padding)) {
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .padding(horizontal = 8.dp)
+            ) {
+
+                // Custom small menu button row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp, bottom = 4.dp),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                        Icon(Icons.Default.FilterList, contentDescription = "Menu")
+                    }
+                }
 
                 SearchBar(
                     queryState = query,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
+                    modifier = Modifier.padding(vertical = 6.dp)
                 )
 
                 CategoryChips(
@@ -88,6 +89,8 @@ fun HomeScreen(
                     selectedIndex = selectedChip,
                     onChipSelected = { selectedChip = it }
                 )
+
+                Spacer(modifier = Modifier.height(4.dp))
 
                 val filteredTools = state.tools.filter {
                     val byQuery = query.value.isBlank() ||
@@ -103,13 +106,12 @@ fun HomeScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 6.dp)
+                        .padding(top = 2.dp)
                 ) {
                     items(filteredTools) { tool ->
-
                         ToolCard(
                             tool = tool,
-                            stars = stars[tool.id], // ⭐ reactive star updates
+                            stars = stars[tool.id],
                             onOpenDetails = onOpenDetails,
                             onToggleFavorite = { viewModel.toggleFavorite(it) },
                             onSave = { viewModel.toggleFavorite(it) },
