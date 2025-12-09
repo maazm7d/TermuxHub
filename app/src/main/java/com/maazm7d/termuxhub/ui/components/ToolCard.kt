@@ -75,24 +75,12 @@ fun ToolCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Spacer(modifier = Modifier.height(10.dp))
 
-                // VIEWS + DATE
+                // DATE
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
-                    Icon(
-                        Icons.Default.RemoveRedEye,
-                        contentDescription = "Views",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("${tool.views}", fontSize = 13.sp)
-
-                    Spacer(modifier = Modifier.width(16.dp))
 
                     if (!tool.publishedAt.isNullOrBlank()) {
                         Icon(
