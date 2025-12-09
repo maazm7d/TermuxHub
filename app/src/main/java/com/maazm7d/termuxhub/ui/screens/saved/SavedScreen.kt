@@ -46,15 +46,14 @@ fun SavedScreen(viewModel: SavedViewModel, onBack: () -> Unit) {
 
                     Box {
                         ToolCard(
-    tool = tool,
-    stars = null, // saved screen doesn't show stars
-    onOpenDetails = onOpenDetails,
-    onToggleFavorite = { viewModel.removeTool(tool) },
-    onSave = { viewModel.removeTool(tool.id) }, // required parameter
-    onShare = {} // handle share later if needed
-)
+                            tool = tool,
+                            stars = null,
+                            onOpenDetails = {},
+                            onToggleFavorite = { viewModel.removeTool(tool) },
+                            onSave = { viewModel.removeTool(tool) },
+                            onShare = {}
+                        )
 
-                        // Three dots menu
                         IconButton(
                             onClick = { expanded = true },
                             modifier = Modifier.align(Alignment.TopEnd)
