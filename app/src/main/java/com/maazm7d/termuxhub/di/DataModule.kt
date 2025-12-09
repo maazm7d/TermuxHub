@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import com.maazm7d.termuxhub.data.local.AppDatabase
 import com.maazm7d.termuxhub.data.local.ToolDao
-import com.maazm7d.termuxhub.data.remote.ApiService
 import com.maazm7d.termuxhub.data.remote.MetadataClient
+import com.maazm7d.termuxhub.data.remote.GitHubClient
+import com.maazm7d.termuxhub.data.remote.ApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -18,6 +19,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
+import java.util.concurrent.TimeUnit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -25,24 +27,24 @@ object DataModule {
 
     private const val METADATA_BASE_URL = "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/"
 
-    // --- Moshi ---
     @Provides
     @Singleton
     fun provideMoshi(): Moshi = Moshi.Builder()
         .addLast(KotlinJsonAdapterFactory())
         .build()
 
-    // --- OkHttp ---
     @Provides
     @Singleton
     fun provideOkHttp(): OkHttpClient {
         val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
         return OkHttpClient.Builder()
             .addInterceptor(logger)
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 
-    // --- Retrofit ---
+    // Retrofit for metadata
     @Provides
     @Singleton
     fun provideRetrofit(moshi: Moshi, okHttp: OkHttpClient): Retrofit =
@@ -52,17 +54,21 @@ object DataModule {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
 
-    // --- ApiService ---
     @Provides
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService =
         retrofit.create(ApiService::class.java)
 
-    // --- MetadataClient ---
     @Provides
     @Singleton
     fun provideMetadataClient(apiService: ApiService): MetadataClient =
         MetadataClient(apiService)
+
+    // GitHub client (uses same okHttp & moshi)
+    @Provides
+    @Singleton
+    fun provideGitHubClient(moshi: Moshi, okHttp: OkHttpClient): GitHubClient =
+        GitHubClient.create(moshi, okHttp)
 
     // --- Database ---
     @Provides
@@ -72,11 +78,9 @@ object DataModule {
             .fallbackToDestructiveMigration()
             .build()
 
-    // --- ToolDao ---
     @Provides
     fun provideToolDao(db: AppDatabase): ToolDao = db.toolDao()
 
-    // --- Application Context ---
     @Provides
     @Singleton
     fun provideAppContext(@ApplicationContext context: Context): Context = context
