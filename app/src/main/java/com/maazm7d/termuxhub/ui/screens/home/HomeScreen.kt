@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import com.maazm7d.termuxhub.ui.components.*
 import com.maazm7d.termuxhub.ui.components.CategoryChips
+import androidx.compose.ui.Alignment
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
