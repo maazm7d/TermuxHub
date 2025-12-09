@@ -1,12 +1,11 @@
 package com.maazm7d.termuxhub.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -25,11 +24,7 @@ fun SearchBar(
         onValueChange = { queryState.value = it },
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = RoundedCornerShape(16.dp)
-            ),
+            .height(56.dp),
         placeholder = {
             Text(
                 text = placeholder,
@@ -56,8 +51,11 @@ fun SearchBar(
             }
         },
         singleLine = true,
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.Transparent,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            disabledContainerColor = MaterialTheme.colorScheme.surface,
+            errorContainerColor = MaterialTheme.colorScheme.surface,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             cursorColor = MaterialTheme.colorScheme.primary
