@@ -24,7 +24,7 @@ fun SearchBar(
         onValueChange = { queryState.value = it },
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(60.dp),
         placeholder = {
             Text(
                 text = placeholder,
