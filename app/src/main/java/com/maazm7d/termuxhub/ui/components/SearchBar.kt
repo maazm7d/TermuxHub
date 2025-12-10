@@ -1,6 +1,7 @@
 package com.maazm7d.termuxhub.ui.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -23,12 +24,13 @@ fun SearchBar(
         value = queryState.value,
         onValueChange = { queryState.value = it },
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .height(48.dp), // Prevent text clipping
         placeholder = {
             Text(
                 text = placeholder,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
             )
         },
         leadingIcon = {
@@ -40,7 +42,10 @@ fun SearchBar(
         },
         trailingIcon = {
             if (queryState.value.isNotEmpty()) {
-                IconButton(onClick = { queryState.value = "" }) {
+                IconButton(
+                    onClick = { queryState.value = "" },
+                    modifier = Modifier.height(20.dp)
+                ) {
                     Icon(
                         imageVector = Icons.Filled.Clear,
                         contentDescription = "Clear",
@@ -50,6 +55,7 @@ fun SearchBar(
             }
         },
         singleLine = true,
+        shape = RoundedCornerShape(12.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -58,7 +64,6 @@ fun SearchBar(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             cursorColor = MaterialTheme.colorScheme.primary
-        ),
-        shape = RoundedCornerShape(16.dp)
+        )
     )
 }
