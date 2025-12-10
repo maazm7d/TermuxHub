@@ -8,37 +8,40 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
     queryState: MutableState<String>,
     modifier: Modifier = Modifier,
     placeholder: String = "Search tools..."
 ) {
-    // Wrap TextField inside a Box to add padding safely
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp)  // Vertical spacing to avoid clipping
+            .padding(horizontal = 8.dp, vertical = 8.dp) // More breathing room
     ) {
         TextField(
             value = queryState.value,
             onValueChange = { newValue -> queryState.value = newValue },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp), // Material height (no clipping)
+                .height(64.dp), // Taller field for bigger touch target
             placeholder = {
                 Text(
                     text = placeholder,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                    style = MaterialTheme.typography.bodyLarge, // Slightly larger text
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
             },
             leadingIcon = {
@@ -53,14 +56,15 @@ fun SearchBar(
                     IconButton(onClick = { queryState.value = "" }) {
                         Icon(
                             imageVector = Icons.Default.Clear,
-                            contentDescription = "Clear",
+                            contentDescription = "Clear search",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
             },
             singleLine = true,
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(18.dp), // More pill-like
+            textStyle = MaterialTheme.typography.bodyLarge, // Bigger input text
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
                 unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -68,7 +72,11 @@ fun SearchBar(
                 errorContainerColor = MaterialTheme.colorScheme.surface,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                cursorColor = MaterialTheme.colorScheme.primary
+                disabledIndicatorColor = Color.Transparent,
+                errorIndicatorColor = Color.Transparent,
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
             )
         )
     }
