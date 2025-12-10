@@ -11,7 +11,6 @@ data class Tool(
     val version: String?,
     val updatedAt: Long,
     val isFavorite: Boolean,
-    val likes: Int,
     val publishedAt: String?,
     val tags: List<String> = emptyList()  // <-- Add this
 )
