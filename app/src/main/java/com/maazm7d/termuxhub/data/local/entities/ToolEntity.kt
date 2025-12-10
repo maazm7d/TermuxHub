@@ -16,6 +16,5 @@ data class ToolEntity(
     val version: String?,
     @ColumnInfo(name = "updated_at") val updatedAt: Long = 0L,
     @ColumnInfo(name = "is_favorite") val isFavorite: Boolean = false,
-    @ColumnInfo(name = "likes") val likes: Int = 0,
     @ColumnInfo(name = "published_at") val publishedAt: String? = null
 )
