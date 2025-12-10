@@ -1,8 +1,9 @@
 package com.maazm7d.termuxhub.ui.components
 
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -21,52 +22,54 @@ fun SearchBar(
     modifier: Modifier = Modifier,
     placeholder: String = "Search tools..."
 ) {
-    TextField(
-        value = queryState.value,
-        onValueChange = { queryState.value = it },
+    // Wrap TextField inside a Box to add padding safely
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp),   // Standard Material height + no clipping
-        textStyle = MaterialTheme.typography.bodyMedium,
-        contentPadding = PaddingValues(
-            vertical = 10.dp, // Extra padding inside to stop clipping
-            horizontal = 12.dp
-        ),
-        placeholder = {
-            Text(
-                text = placeholder,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
-        trailingIcon = {
-            if (queryState.value.isNotEmpty()) {
-                IconButton(onClick = { queryState.value = "" }) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = "Clear",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+            .padding(vertical = 6.dp)  // Vertical spacing to avoid clipping
+    ) {
+        TextField(
+            value = queryState.value,
+            onValueChange = { newValue -> queryState.value = newValue },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp), // Material height (no clipping)
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            trailingIcon = {
+                if (queryState.value.isNotEmpty()) {
+                    IconButton(onClick = { queryState.value = "" }) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "Clear",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
-            }
-        },
-        singleLine = true,
-        shape = RoundedCornerShape(14.dp),
-        colors = TextFieldDefaults.colors(
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-            disabledContainerColor = MaterialTheme.colorScheme.surface,
-            errorContainerColor = MaterialTheme.colorScheme.surface,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            cursorColor = MaterialTheme.colorScheme.primary
+            },
+            singleLine = true,
+            shape = RoundedCornerShape(14.dp),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                disabledContainerColor = MaterialTheme.colorScheme.surface,
+                errorContainerColor = MaterialTheme.colorScheme.surface,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = MaterialTheme.colorScheme.primary
+            )
         )
-    )
+    }
 }
