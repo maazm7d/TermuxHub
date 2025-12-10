@@ -28,6 +28,5 @@ private fun ToolEntity.toDomain() = Tool(
     version = version,
     updatedAt = updatedAt,
     isFavorite = isFavorite,
-    likes = likes,
     publishedAt = publishedAt
 )
