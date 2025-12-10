@@ -1,5 +1,6 @@
 package com.maazm7d.termuxhub.ui.components
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,29 +26,31 @@ fun SearchBar(
         onValueChange = { queryState.value = it },
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp), // Prevent text clipping
+            .height(56.dp),   // Standard Material height + no clipping
+        textStyle = MaterialTheme.typography.bodyMedium,
+        contentPadding = PaddingValues(
+            vertical = 10.dp, // Extra padding inside to stop clipping
+            horizontal = 12.dp
+        ),
         placeholder = {
             Text(
                 text = placeholder,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
             )
         },
         leadingIcon = {
             Icon(
-                imageVector = Icons.Filled.Search,
+                imageVector = Icons.Default.Search,
                 contentDescription = "Search",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
         trailingIcon = {
             if (queryState.value.isNotEmpty()) {
-                IconButton(
-                    onClick = { queryState.value = "" },
-                    modifier = Modifier.height(20.dp)
-                ) {
+                IconButton(onClick = { queryState.value = "" }) {
                     Icon(
-                        imageVector = Icons.Filled.Clear,
+                        imageVector = Icons.Default.Clear,
                         contentDescription = "Clear",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -55,7 +58,7 @@ fun SearchBar(
             }
         },
         singleLine = true,
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
