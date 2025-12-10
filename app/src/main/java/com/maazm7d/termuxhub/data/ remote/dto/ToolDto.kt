@@ -14,6 +14,5 @@ data class ToolDto(
     val version: String? = null,
     val updatedAt: Long? = 0L,
     val tags: List<String>? = emptyList(),
-    val likes: Int? = 0,
     val publishedAt: String? = null
 )
