@@ -1,27 +1,21 @@
 package com.maazm7d.termuxhub.ui.screens.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.maazm7d.termuxhub.ui.components.CategoryChips
-import com.maazm7d.termuxhub.ui.components.SearchBar
-import com.maazm7d.termuxhub.ui.components.ToolCard
-import com.maazm7d.termuxhub.domain.model.Tool
-import java.text.SimpleDateFormat
-import java.util.*
+import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
+import com.maazm7d.termuxhub.ui.components.*
+import com.maazm7d.termuxhub.domain.model.Tool
 
 enum class SortType(val label: String) {
     MOST_STARRED("Most starred"),
@@ -51,7 +45,6 @@ fun HomeScreen(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    // Prepare chips
     val categoryCounts = state.tools.groupingBy { it.category }.eachCount()
     val chipsWithCounts = listOf("All" to state.tools.size) +
             categoryCounts.keys.sorted().map { it to (categoryCounts[it] ?: 0) }
@@ -83,7 +76,7 @@ fun HomeScreen(
                     .padding(horizontal = 4.dp)
             ) {
 
-                // SEARCH + DRAWER + SORT
+                // SEARCH + DRAWER + SORT IN ONE LINE
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -125,7 +118,6 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(2.dp))
 
-                // Category Chips
                 CategoryChips(
                     chips = chipsWithCounts,
                     selectedIndex = selectedChip,
@@ -146,8 +138,8 @@ fun HomeScreen(
                     when (currentSort) {
                         SortType.MOST_STARRED -> list.sortedByDescending { stars[it.id] ?: 0 }
                         SortType.LEAST_STARRED -> list.sortedBy { stars[it.id] ?: 0 }
-                        SortType.NEWEST_FIRST -> list.sortedByDescending { it.getPublishedDate() }
-                        SortType.OLDEST_FIRST -> list.sortedBy { it.getPublishedDate() }
+                        SortType.NEWEST_FIRST -> list.sortedByDescending { it.updatedAt }
+                        SortType.OLDEST_FIRST -> list.sortedBy { it.updatedAt }
                     }
                 }
 
