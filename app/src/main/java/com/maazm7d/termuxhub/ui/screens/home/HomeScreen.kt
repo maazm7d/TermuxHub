@@ -80,7 +80,7 @@ fun HomeScreen(
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
 
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(2.dp))
 
                     SearchBar(
                         queryState = query,
