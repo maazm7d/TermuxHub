@@ -2,14 +2,17 @@
   "tools": [
     {
       "id": "0001",
-      "name": "AAPT Dump Badging",
-      "description": "Analyze APK package information",
-      "category": "AI & ML",
-      "install": "aapt dump badging",
-      "version": "1.0",
+      "name": "seeker",
+      "description": "Accurately Locate Smartphones using Social Engineering",
+      "category": "Social Engineering",
+      "install": "git clone https://github.com/thewhiteh4t/seeker.git
+                  cd seeker/
+                  chmod +x install.sh
+                  ./install.sh",
+      "version": "1.3.1",
       "thumbnail": "",
-      "repo": "https://github.com/rodion-gudz/Android-Tool",
-      "publishedAt": "2025-01-01"
+      "repo": "https://github.com/thewhiteh4t/seeker",
+      "publishedAt": "11 DEC 2025"
     },
     {
       "id": "0002",
