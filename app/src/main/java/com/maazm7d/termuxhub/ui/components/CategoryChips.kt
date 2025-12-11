@@ -17,7 +17,7 @@ fun CategoryChips(
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+        modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp)
     ) {
 
         itemsIndexed(chips) { index, item ->
