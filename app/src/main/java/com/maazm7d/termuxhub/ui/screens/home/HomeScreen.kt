@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
 import com.maazm7d.termuxhub.ui.components.*
 import com.maazm7d.termuxhub.domain.model.Tool
+import com.maazm7d.termuxhub.domain.model.getPublishedDate
 
 enum class SortType(val label: String) {
     MOST_STARRED("Most starred"),
@@ -138,7 +139,7 @@ fun HomeScreen(
                     when (currentSort) {
                         SortType.MOST_STARRED -> list.sortedByDescending { stars[it.id] ?: 0 }
                         SortType.LEAST_STARRED -> list.sortedBy { stars[it.id] ?: 0 }
-                        SortType.NEWEST_FIRST -> list.sortedByDescending { it.getPublishedDate }
+                        SortType.NEWEST_FIRST -> list.sortedByDescending { it.getPublishedDate() }
                         SortType.OLDEST_FIRST -> list.sortedBy { it.getPublishedDate() }
                     }
                 }
