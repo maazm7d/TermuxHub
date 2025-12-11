@@ -1,11 +1,17 @@
 package com.maazm7d.termuxhub.ui.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -18,23 +24,31 @@ fun SearchBar(
     modifier: Modifier = Modifier,
     placeholder: String = "Search tools..."
 ) {
+
     TextField(
         value = queryState.value,
         onValueChange = { queryState.value = it },
+
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-            .height(56.dp), // Standard Material3 height, no clipping
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+
         singleLine = true,
-        shape = RoundedCornerShape(16.dp),
-        textStyle = MaterialTheme.typography.bodyLarge,
+        shape = RoundedCornerShape(14.dp),
+
+        textStyle = MaterialTheme.typography.bodyMedium.copy(
+            color = MaterialTheme.colorScheme.onSurface
+        ),
+
         placeholder = {
             Text(
                 text = placeholder,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             )
         },
+
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
@@ -42,6 +56,7 @@ fun SearchBar(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
+
         trailingIcon = {
             if (queryState.value.isNotEmpty()) {
                 IconButton(onClick = { queryState.value = "" }) {
@@ -53,6 +68,7 @@ fun SearchBar(
                 }
             }
         },
+
         colors = TextFieldDefaults.colors(
             focusedContainerColor = MaterialTheme.colorScheme.surface,
             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -65,6 +81,7 @@ fun SearchBar(
             errorIndicatorColor = Color.Transparent,
 
             cursorColor = MaterialTheme.colorScheme.primary,
+
             focusedTextColor = MaterialTheme.colorScheme.onSurface,
             unfocusedTextColor = MaterialTheme.colorScheme.onSurface
         )
