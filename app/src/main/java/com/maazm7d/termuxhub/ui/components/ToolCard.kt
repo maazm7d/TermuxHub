@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.maazm7d.termuxhub.domain.model.Tool
+import androidx.compose.material.icons.filled.Person
 
 @Composable
 fun ToolCard(
@@ -122,13 +123,24 @@ Row(
     }
 
     // Author
-    if (!tool.author.isNullOrBlank()) {
-        Text(
-            text = tool.author,
-            fontSize = 13.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
+    // Author
+if (!tool.author.isNullOrBlank()) {
+
+    Icon(
+        imageVector = Icons.Default.Person,
+        contentDescription = "Author",
+        tint = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.size(18.dp)
+    )
+
+    Spacer(modifier = Modifier.width(6.dp))
+
+    Text(
+        text = tool.author,
+        fontSize = 13.sp,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
 }
 
                 Spacer(modifier = Modifier.height(10.dp))
