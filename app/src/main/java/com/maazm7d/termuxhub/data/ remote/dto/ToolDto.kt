@@ -10,6 +10,7 @@ data class ToolDto(
     val category: String? = "",
     val install: String? = "",
     val repo: String? = "",
+    val author: String? = "", 
     val thumbnail: String? = null,
     val version: String? = null,
     val updatedAt: Long? = 0L,
