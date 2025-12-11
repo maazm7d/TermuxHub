@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -77,7 +77,7 @@ fun HomeScreen(
                     IconButton(
                         onClick = { scope.launch { drawerState.open() } }
                     ) {
-                        Icon(Icons.Default.FilterList, contentDescription = "Menu")
+                        Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
 
                     Spacer(modifier = Modifier.width(4.dp))
