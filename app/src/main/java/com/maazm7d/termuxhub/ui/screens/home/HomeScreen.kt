@@ -138,8 +138,8 @@ fun HomeScreen(
                     when (currentSort) {
                         SortType.MOST_STARRED -> list.sortedByDescending { stars[it.id] ?: 0 }
                         SortType.LEAST_STARRED -> list.sortedBy { stars[it.id] ?: 0 }
-                        SortType.NEWEST_FIRST -> list.sortedByDescending { it.updatedAt }
-                        SortType.OLDEST_FIRST -> list.sortedBy { it.updatedAt }
+                        SortType.NEWEST_FIRST -> list.sortedByDescending { it.getPublishedDate }
+                        SortType.OLDEST_FIRST -> list.sortedBy { it.getPublishedDate() }
                     }
                 }
 
