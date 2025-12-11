@@ -63,14 +63,14 @@ fun HomeScreen(
             Column(
                 modifier = Modifier
                     .padding(padding)
-                    .padding(horizontal = 6.dp)
+                    .padding(horizontal = 4.dp)
             ) {
 
                 // SEARCH + DRAWER IN ONE LINE
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 6.dp),
+                        .padding(top = 4.dp),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -89,7 +89,7 @@ fun HomeScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
                 CategoryChips(
                     chips = chipsWithCounts,
@@ -111,7 +111,7 @@ fun HomeScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top = 4.dp)
+                        .padding(top = 2.dp)
                 ) {
                     items(filteredTools) { tool ->
                         ToolCard(
