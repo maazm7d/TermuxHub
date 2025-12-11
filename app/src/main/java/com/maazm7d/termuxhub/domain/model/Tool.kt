@@ -9,6 +9,7 @@ data class Tool(
     val category: String,
     val installCommand: String?,
     val repoUrl: String?,
+    val author: String? = "",
     val thumbnail: String?,
     val version: String?,
     val updatedAt: Long,
