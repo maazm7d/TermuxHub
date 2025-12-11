@@ -24,6 +24,7 @@ private fun ToolEntity.toDomain() = Tool(
     category = category,
     installCommand = installCommand,
     repoUrl = repoUrl,
+    author = author ?: "",
     thumbnail = thumbnail,
     version = version,
     updatedAt = updatedAt,
