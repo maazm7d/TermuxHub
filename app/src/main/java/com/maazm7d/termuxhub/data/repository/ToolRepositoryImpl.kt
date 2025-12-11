@@ -139,6 +139,7 @@ class ToolRepositoryImpl @Inject constructor(
             category = category ?: "Uncategorized",
             installCommand = install,
             repoUrl = repo,
+            author = author ?: "", 
             thumbnail = thumbnail,
             version = version,
             updatedAt = updatedAt ?: 0L,
