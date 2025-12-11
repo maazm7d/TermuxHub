@@ -87,21 +87,49 @@ fun ToolCard(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // DATE
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (!tool.publishedAt.isNullOrBlank()) {
-                        Icon(
-                            Icons.Default.CalendarMonth,
-                            contentDescription = "Published",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(tool.publishedAt, fontSize = 13.sp)
-                    }
-                }
+                // DATE + AUTHOR on same line
+Row(
+    modifier = Modifier.fillMaxWidth(),
+    verticalAlignment = Alignment.CenterVertically
+) {
+
+    // Published date
+    if (!tool.publishedAt.isNullOrBlank()) {
+        Icon(
+            Icons.Default.CalendarMonth,
+            contentDescription = "Published",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+
+        Text(
+            text = tool.publishedAt,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+
+    // Separator if both exist
+    if (!tool.publishedAt.isNullOrBlank() && !tool.author.isNullOrBlank()) {
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            "•",
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+    }
+
+    // Author
+    if (!tool.author.isNullOrBlank()) {
+        Text(
+            text = tool.author,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
 
                 Spacer(modifier = Modifier.height(10.dp))
 
