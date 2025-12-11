@@ -78,10 +78,11 @@ fun ToolCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = tool.category.ifBlank { "Utility" },
-                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+    text = tool.description.ifBlank { "No description available" },
+    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
+    color = MaterialTheme.colorScheme.onSurfaceVariant,
+    maxLines = 2
+)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
