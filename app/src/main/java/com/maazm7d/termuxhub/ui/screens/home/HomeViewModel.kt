@@ -28,13 +28,12 @@ class HomeViewModel @Inject constructor(
         .map { list -> HomeUiState(tools = list.map { it.toDomain() }) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState())
 
-    // starsMap: toolId -> star count
     private val _starsMap = MutableStateFlow<Map<String, Int>>(emptyMap())
     val starsMap: StateFlow<Map<String, Int>> = _starsMap.asStateFlow()
 
     init {
         viewModelScope.launch {
-            fetchStarsForAllTools() // ⭐ fetch immediately when ViewModel is created
+            fetchStarsForAllTools()
         }
     }
 
