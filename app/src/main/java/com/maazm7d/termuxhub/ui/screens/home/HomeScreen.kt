@@ -86,7 +86,6 @@ fun HomeScreen(
                         queryState = query,
                         modifier = Modifier
                             .weight(1f)
-                            .height(46.dp)
                     )
                 }
 
