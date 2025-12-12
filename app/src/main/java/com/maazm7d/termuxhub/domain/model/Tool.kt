@@ -10,12 +10,13 @@ data class Tool(
     val installCommand: String?,
     val repoUrl: String?,
     val author: String? = "",
+    val requireRoot: Boolean = false,
     val thumbnail: String?,
     val version: String?,
     val updatedAt: Long,
     val isFavorite: Boolean,
     val publishedAt: String?,
-    val tags: List<String> = emptyList()  // <-- Add this
+    val tags: List<String> = emptyList()  
 )
 
 fun Tool.getPublishedDate(): Date? {
