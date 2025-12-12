@@ -29,6 +29,20 @@
       "repo": "https://github.com/Findomain/Findomain",
       "author": "findomain",
       "publishedAt": "12-12-2025"
+    },
+    {
+      "id": "0003,
+      "name": "BruteX",
+      "description": "Automatically brute force all services running on a target",
+      "category": "Brute Force",
+      "install": "git clone https://github.com/1N3/BruteX
+                  cd BruteX
+                  ./install.sh",
+      "version": "2.3",
+      "thumbnail": "",
+      "repo": "https://github.com/1N3/BruteX",
+      "author": "1n3",
+      "publishedAt": "12-12-2025"
     }
   ]
 }
