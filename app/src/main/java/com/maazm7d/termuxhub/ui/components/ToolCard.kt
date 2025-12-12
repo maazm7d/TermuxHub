@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.maazm7d.termuxhub.domain.model.Tool
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.outlined.Security
 
 @Composable
 fun ToolCard(
@@ -89,12 +91,13 @@ fun ToolCard(
 
                 // DATE
                 // DATE + AUTHOR on same line
+
 Row(
     modifier = Modifier.fillMaxWidth(),
     verticalAlignment = Alignment.CenterVertically
 ) {
 
-    // Published date
+    // 📅 Published date
     if (!tool.publishedAt.isNullOrBlank()) {
         Icon(
             Icons.Default.CalendarMonth,
@@ -103,7 +106,6 @@ Row(
             modifier = Modifier.size(18.dp)
         )
         Spacer(modifier = Modifier.width(6.dp))
-
         Text(
             text = tool.publishedAt,
             fontSize = 13.sp,
@@ -111,24 +113,42 @@ Row(
         )
     }
 
-    // Separator if both exist
+    // • divider
     if (!tool.publishedAt.isNullOrBlank() && !tool.author.isNullOrBlank()) {
         Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            "•",
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        Text("•", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.width(8.dp))
     }
 
-    // Author
-    // Author
-if (!tool.author.isNullOrBlank()) {
+    // 👤 Author
+    if (!tool.author.isNullOrBlank()) {
+        Icon(
+            Icons.Default.Person,
+            contentDescription = "Author",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = tool.author,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+
+    // • second divider
+    if ((!tool.author.isNullOrBlank() || !tool.publishedAt.isNullOrBlank())) {
+        Spacer(modifier = Modifier.width(8.dp))
+        Text("•", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Spacer(modifier = Modifier.width(8.dp))
+    }
+
+    // 🔐 ROOT / NON-ROOT
+    val isRoot = tool.requireRoot == true
 
     Icon(
-        imageVector = Icons.Default.Person,
-        contentDescription = "Author",
+        imageVector = if (isRoot) Icons.Filled.Security else Icons.Outlined.Security,
+        contentDescription = if (isRoot) "Root Required" else "Non-Root",
         tint = MaterialTheme.colorScheme.primary,
         modifier = Modifier.size(18.dp)
     )
@@ -136,11 +156,10 @@ if (!tool.author.isNullOrBlank()) {
     Spacer(modifier = Modifier.width(6.dp))
 
     Text(
-        text = tool.author,
+        text = if (isRoot) "Root" else "Non-Root",
         fontSize = 13.sp,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
-}
 }
 
                 Spacer(modifier = Modifier.height(10.dp))
