@@ -93,73 +93,55 @@ fun ToolCard(
                 // DATE + AUTHOR on same line
 
 Row(
-    modifier = Modifier.fillMaxWidth(),
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 12.dp, vertical = 6.dp),
     verticalAlignment = Alignment.CenterVertically
 ) {
 
-    // 📅 Published date
-    if (!tool.publishedAt.isNullOrBlank()) {
+    // LEFT — Published At
+    Row(
+        modifier = Modifier.weight(1f),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Icon(
-            Icons.Default.CalendarMonth,
-            contentDescription = "Published",
-            tint = MaterialTheme.colorScheme.primary,
+            imageVector = Icons.Filled.CalendarMonth,
+            contentDescription = "Published At",
             modifier = Modifier.size(18.dp)
         )
-        Spacer(modifier = Modifier.width(6.dp))
-        Text(
-            text = tool.publishedAt,
-            fontSize = 13.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = tool.publishedAt ?: "N/A")
     }
 
-    // • divider
-    if (!tool.publishedAt.isNullOrBlank() && !tool.author.isNullOrBlank()) {
-        Spacer(modifier = Modifier.width(8.dp))
-        Text("•", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Spacer(modifier = Modifier.width(8.dp))
-    }
-
-    // 👤 Author
-    if (!tool.author.isNullOrBlank()) {
+    // CENTER — Author
+    Row(
+        modifier = Modifier.weight(1f),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Icon(
-            Icons.Default.Person,
+            imageVector = Icons.Filled.Person,
             contentDescription = "Author",
-            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(18.dp)
         )
-        Spacer(modifier = Modifier.width(6.dp))
-        Text(
-            text = tool.author,
-            fontSize = 13.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = tool.author ?: "Unknown")
+    }
+
+    // RIGHT — Require Root
+    Row(
+        modifier = Modifier.weight(1f),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = if (tool.requireRoot) Icons.Filled.Security else Icons.Outlined.Security,
+            contentDescription = if (tool.requireRoot) "Root Required" else "Non-Root",
+            modifier = Modifier.size(18.dp)
         )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = if (tool.requireRoot) "Root" else "No Root")
     }
-
-    // • second divider
-    if ((!tool.author.isNullOrBlank() || !tool.publishedAt.isNullOrBlank())) {
-        Spacer(modifier = Modifier.width(8.dp))
-        Text("•", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Spacer(modifier = Modifier.width(8.dp))
-    }
-
-    // 🔐 ROOT / NON-ROOT
-    val isRoot = tool.requireRoot == true
-
-    Icon(
-        imageVector = if (isRoot) Icons.Filled.Security else Icons.Outlined.Security,
-        contentDescription = if (isRoot) "Root Required" else "Non-Root",
-        tint = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.size(18.dp)
-    )
-
-    Spacer(modifier = Modifier.width(6.dp))
-
-    Text(
-        text = if (isRoot) "Root" else "Non-Root",
-        fontSize = 13.sp,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
 }
 
                 Spacer(modifier = Modifier.height(10.dp))
