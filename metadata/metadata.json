@@ -31,7 +31,7 @@
       "publishedAt": "12-12-2025"
     },
     {
-      "id": "0003,
+      "id": "0003",
       "name": "BruteX",
       "description": "Automatically brute force all services running on a target",
       "category": "Brute Force",
