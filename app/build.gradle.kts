@@ -115,7 +115,8 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // markdown
-    implementation("com.mikepenz:markdown-compose:0.6.0")
+    implementation("com.mikepenz:markdown:0.7.0")
+    implementation("com.mikepenz:markdown-compose:0.7.0-0.3.0")
 
 
     // Room (local DB)
