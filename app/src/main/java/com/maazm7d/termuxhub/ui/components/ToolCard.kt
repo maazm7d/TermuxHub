@@ -107,10 +107,17 @@ Row(
         Icon(
             imageVector = Icons.Filled.CalendarMonth,
             contentDescription = "Published At",
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(18.dp)
         )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = tool.publishedAt ?: "N/A")
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = tool.publishedAt ?: "N/A",
+            style = MaterialTheme.typography.bodySmall,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1
+        )
     }
 
     // CENTER — Author
@@ -122,10 +129,17 @@ Row(
         Icon(
             imageVector = Icons.Filled.Person,
             contentDescription = "Author",
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(18.dp)
         )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = tool.author ?: "Unknown")
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = tool.author ?: "Unknown",
+            style = MaterialTheme.typography.bodySmall,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1
+        )
     }
 
     // RIGHT — Require Root
@@ -134,13 +148,21 @@ Row(
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val isRoot = tool.requireRoot == true
         Icon(
-            imageVector = if (tool.requireRoot) Icons.Filled.Security else Icons.Outlined.Security,
-            contentDescription = if (tool.requireRoot) "Root Required" else "Non-Root",
+            imageVector = if (isRoot) Icons.Filled.Security else Icons.Outlined.Security,
+            contentDescription = if (isRoot) "Root Required" else "Non-Root",
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(18.dp)
         )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(text = if (tool.requireRoot) "Root" else "No Root")
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = if (isRoot) "Root" else "Non-Root",
+            style = MaterialTheme.typography.bodySmall,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1
+        )
     }
 }
 
