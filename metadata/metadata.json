@@ -17,14 +17,17 @@
     },
     {
       "id": "0002",
-      "name": "ADB Devices",
-      "description": "List connected devices",
-      "category": "fuck off man",
-      "install": "adb devices",
-      "version": "1.0",
+      "name": "Findomain",
+      "description": "The fastest and complete solution for domain recognition",
+      "category": "Recon",
+      "install": "pkg install rust make perl
+                  cargo install findomain
+                  cd $HOME/.cargo/bin
+                  ./findomain",
+      "version": "10.0.1",
       "thumbnail": "",
-      "repo": "",
-      "publishedAt": "01-12-2025"
+      "repo": "https://github.com/Findomain/Findomain",
+      "publishedAt": "12-12-2025"
     }
   ]
 }
