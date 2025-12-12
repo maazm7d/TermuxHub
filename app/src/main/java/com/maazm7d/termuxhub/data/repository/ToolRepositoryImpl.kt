@@ -140,6 +140,7 @@ class ToolRepositoryImpl @Inject constructor(
             installCommand = install,
             repoUrl = repo,
             author = author ?: "", 
+            requireRoot = requireRoot ?: false,
             thumbnail = thumbnail,
             version = version,
             updatedAt = updatedAt ?: 0L,
