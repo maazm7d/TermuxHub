@@ -25,6 +25,7 @@ import com.maazm7d.termuxhub.domain.model.Tool
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.outlined.Security
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun ToolCard(
@@ -75,7 +76,9 @@ fun ToolCard(
                 Text(
                     text = tool.name,
                     style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -84,7 +87,9 @@ fun ToolCard(
     text = tool.description.ifBlank { "No description available" },
     style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
     color = MaterialTheme.colorScheme.onSurfaceVariant,
-    maxLines = 2
+    maxLines = 2,
+                    modifier = Modifier.fillMaxWidth(),
+    textAlign = TextAlign.Center
 )
 
                 Spacer(modifier = Modifier.height(8.dp))
