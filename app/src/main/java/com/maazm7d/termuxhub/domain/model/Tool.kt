@@ -26,3 +26,12 @@ fun Tool.getPublishedDate(): Date? {
         null
     }
 }
+
+data class ToolDetails(
+    val id: String,
+    val title: String,
+    val description: String,
+    val readme: String,
+    val installCommands: String,
+    val repoUrl: String?
+)
