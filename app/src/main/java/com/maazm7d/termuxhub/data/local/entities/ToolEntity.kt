@@ -17,5 +17,6 @@ data class ToolEntity(
     @ColumnInfo(name = "updated_at") val updatedAt: Long = 0L,
     @ColumnInfo(name = "is_favorite") val isFavorite: Boolean = false,
     @ColumnInfo(name = "author") val author: String? = "",
+    @ColumnInfo(name = "require_root") val requireRoot: Boolean = false, 
     @ColumnInfo(name = "published_at") val publishedAt: String? = null
 )
