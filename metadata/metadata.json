@@ -13,6 +13,7 @@
       "thumbnail": "",
       "repo": "https://github.com/thewhiteh4t/seeker",
       "author": "thewhiteh4t",
+      "requireRoot": false,
       "publishedAt": "11-12-2025"
     },
     {
@@ -28,6 +29,7 @@
       "thumbnail": "",
       "repo": "https://github.com/Findomain/Findomain",
       "author": "findomain",
+      "requireRoot": false,
       "publishedAt": "12-12-2025"
     },
     {
@@ -42,6 +44,7 @@
       "thumbnail": "",
       "repo": "https://github.com/1N3/BruteX",
       "author": "1n3",
+      "requireRoot": false,
       "publishedAt": "12-12-2025"
     }
   ]
