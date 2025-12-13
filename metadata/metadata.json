@@ -46,6 +46,82 @@
       "author": "1n3",
       "requireRoot": false,
       "publishedAt": "12-12-2025"
+    },
+    {
+      "id": "0051",
+      "name": "trape",
+      "description": "People tracker on the Internet: OSINT analysis and research tool.",
+      "category": "Tracker",
+      "install": "git clone https://github.com/jofpin/trape.git
+                  cd trape
+                  python3 trape.py -h",
+      "version": "2.0",
+      "thumbnail": "",
+      "repo": "https://github.com/jofpin/trape",
+      "author": "jopfin",
+      "requireRoot": false,
+      "publishedAt": "12-12-2025"
+    },
+    {
+      "id": "0052",
+      "name": "gcat",
+      "description": "A PoC backdoor that uses Gmail as a C&C server.",
+      "category": "Backdoor",
+      "install": "git clone https://github.com/byt3bl33d3r/gcat
+                  cd gcat
+                  python3 gcat.py",
+      "version": "1.0.1",
+      "thumbnail": "",
+      "repo": "https://github.com/byt3bl33d3r/gcat",
+      "author": "byt3bl33d3r",
+      "requireRoot": false,
+      "publishedAt": "13-12-2025"
+    },
+    {
+      "id": "0053",
+      "name": "wfdroid-termux",
+      "description": "Android Terminal Web-Hacking Tools.",
+      "category": "Hacking",
+      "install": "wget https://raw.githubusercontent.com/bytezcrew/wfdroid-termux/master/wfdinstall
+                  chmod +x wfdinstall
+                  ./wfdinstall",
+      "version": "1.0",
+      "thumbnail": "",
+      "repo": "https://github.com/bytezcrew/wfdroid-termux",
+      "author": "bytezcrew",
+      "requireRoot": false,
+      "publishedAt": "13-12-2025"
+    },
+    {
+      "id": "0054",
+      "name": "FBHT",
+      "description": "Facebook Hacking Tool.",
+      "category": "Hacking",
+      "install": "git clone https://github.com/chinoogawa/fbht
+                  cd fbht
+                  python3 main.py",
+      "version": "2.0",
+      "thumbnail": "",
+      "repo": "https://github.com/chinoogawa/fbht",
+      "author": "chinoogawa",
+      "requireRoot": false,
+      "publishedAt": "13-12-2025"
+    },
+    {
+      "id": "0055",
+      "name": "netattack",
+      "description": "A simple python script to scan and attack wireless networks.",
+      "category": "Hacking",
+      "install": "git clone https://github.com/chrizator/netattack
+                  cd netattack
+                  python3 netattack.py",
+      "version": "1.0",
+      "thumbnail": "",
+      "repo": "https://github.com/chrizator/netattack",
+      "author": "chrizator",
+      "requireRoot": false,
+      "publishedAt": "13-12-2025"
     }
+
   ]
 }
