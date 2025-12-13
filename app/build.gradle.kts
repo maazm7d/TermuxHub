@@ -3,6 +3,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
+    id("kotlin-kapt")
     id("org.jetbrains.kotlin.plugin.compose")
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")   
@@ -66,6 +67,11 @@ android {
     // buildFeatures { viewBinding = true }
 }
 
+hilt {
+    enableAggregatingTask = false
+}
+
+
 
 
 
@@ -90,7 +96,7 @@ dependencies {
 
     // hilt injection
     implementation("androidx.hilt:hilt-work:1.2.0")
-    ksp("androidx.hilt:hilt-compiler:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
     implementation("androidx.work:work-runtime-ktx:2.9.1")
 
     //coil 
@@ -136,7 +142,7 @@ dependencies {
     
     // Hilt for Dependency Injection
     implementation("com.google.dagger:hilt-android:2.52")
-    ksp("com.google.dagger:hilt-compiler:2.52")
+    kapt("com.google.dagger:hilt-compiler:2.52")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // Optional: Material icons
