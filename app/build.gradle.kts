@@ -67,6 +67,11 @@ android {
     // buildFeatures { viewBinding = true }
 }
 
+    kapt {
+        correctErrorTypes = true
+        useBuildCache = true
+    }
+
 dependencies {
     // Compose BOM (manage compose versions from BOM)
     implementation(platform("androidx.compose:compose-bom:2024.02.00"))
@@ -98,7 +103,6 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.squareup.moshi:moshi:1.15.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
 
     // OkHttp logging (optional but useful)
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
