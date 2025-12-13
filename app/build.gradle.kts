@@ -45,12 +45,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-    jvmTarget = "17"
-    freeCompilerArgs = freeCompilerArgs + listOf(
-        "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
-    )
-}
+    kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        freeCompilerArgs.addAll(
+            "-Xcontext-receivers"
+        )
+      }
+    }
 
     buildFeatures {
         compose = true
@@ -67,10 +69,6 @@ android {
     // buildFeatures { viewBinding = true }
 }
 
-    kapt {
-        correctErrorTypes = true
-        useBuildCache = true
-    }
 
 dependencies {
     // Compose BOM (manage compose versions from BOM)
@@ -133,7 +131,7 @@ dependencies {
     
     // Hilt for Dependency Injection
     implementation("com.google.dagger:hilt-android:2.51.1")
-    kapt("com.google.dagger:hilt-compiler:2.51.1")
+    ksp("com.google.dagger:hilt-compiler:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // Optional: Material icons
