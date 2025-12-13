@@ -3,6 +3,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.kapt")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")   // ★ ADD THIS
 }
@@ -55,10 +56,6 @@ android {
         compose = true
     }
 
-    composeOptions {
-        // Compose compiler extension - keep in sync with your Kotlin plugin / Compose BOM
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
 
     packaging {
         resources {
