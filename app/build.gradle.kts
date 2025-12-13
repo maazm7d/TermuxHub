@@ -115,9 +115,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // markdown
-    implementation("com.mikepenz:markdown:0.7.0")
-    implementation("com.mikepenz:markdown-compose:0.7.0-0.3.0")
-
+    // Core (choose m2 or m3 based on your Material theme)
+    implementation("com.mikepenz:multiplatform-markdown-renderer-android:0.36.0")
+    implementation("com.mikepenz:multiplatform-markdown-renderer-m3:0.36.0")  // Or -m2 for Material 2
 
     // Room (local DB)
     implementation("androidx.room:room-runtime:2.6.1")
