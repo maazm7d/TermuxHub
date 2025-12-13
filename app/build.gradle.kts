@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.maazm7d.termuxhub"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.maazm7d.termuxhub"
-        minSdk = 28
-        targetSdk = 35
+        minSdk = 25
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0.0"
 
@@ -57,7 +57,7 @@ android {
 
     composeOptions {
         // Compose compiler extension - keep in sync with your Kotlin plugin / Compose BOM
-        kotlinCompilerExtensionVersion = "1.5.10"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     packaging {
