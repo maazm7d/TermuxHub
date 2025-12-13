@@ -114,10 +114,17 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
-    // markdown
-    // Core (choose m2 or m3 based on your Material theme)
-    implementation("com.mikepenz:multiplatform-markdown-renderer-android:0.36.0")
-    implementation("com.mikepenz:multiplatform-markdown-renderer-m3:0.36.0")  // Or -m2 for Material 2
+    // Core markdown engine
+    implementation("com.mikepenz:multiplatform-markdown-renderer:0.38.1")
+
+    // Material 3 UI (REQUIRED)
+    implementation("com.mikepenz:multiplatform-markdown-renderer-m3:0.38.1")
+
+    // OPTIONAL: syntax highlighting
+    implementation("com.mikepenz:multiplatform-markdown-renderer-code:0.38.1")
+
+    // OPTIONAL: image loading with Coil 3
+    implementation("com.mikepenz:multiplatform-markdown-renderer-coil3:0.38.1")
 
     // Room (local DB)
     implementation("androidx.room:room-runtime:2.6.1")
