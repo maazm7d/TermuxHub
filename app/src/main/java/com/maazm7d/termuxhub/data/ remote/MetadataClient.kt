@@ -16,6 +16,10 @@ class MetadataClient(private val apiService: ApiService) {
         return apiService.getMetadata()
     }
 
+    suspend fun fetchReadme(toolId: String): Response<String> {
+    return apiService.getToolReadme(toolId)
+    }
+
     companion object {
         private const val METADATA_REMOTE_BASE_URL =
             "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/"

@@ -13,23 +13,15 @@ import com.maazm7d.termuxhub.domain.mapper.toDomain
 
 @HiltViewModel
 class ToolDetailViewModel @Inject constructor(
-    private val repository: com.maazm7d.termuxhub.data.repository.ToolRepository
+    private val repository: ToolRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<Tool?>(null)
-    val uiState: StateFlow<Tool?> = _uiState
+    private val _uiState = MutableStateFlow<ToolDetails?>(null)
+    val uiState: StateFlow<ToolDetails?> = _uiState
 
     fun load(id: String) {
         viewModelScope.launch {
-            val entity = repository.getToolById(id)
-            _uiState.value = entity?.toDomain()
-        }
-    }
-
-    fun toggleFavorite(toolId: String) {
-        viewModelScope.launch {
-            val entity = repository.getToolById(toolId) ?: return@launch
-            repository.setFavorite(toolId, !entity.isFavorite)
+            _uiState.value = repository.getToolDetails(id)
         }
     }
 }

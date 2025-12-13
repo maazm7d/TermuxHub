@@ -148,4 +148,25 @@ class ToolRepositoryImpl @Inject constructor(
             publishedAt = publishedAt
         )
     }
+
+    override suspend fun getToolDetails(id: String): ToolDetails? {
+    val tool = toolDao.getToolById(id) ?: return null
+
+    val readmeText = try {
+        val resp = metadataClient.fetchReadme(id)
+        if (resp.isSuccessful) resp.body() ?: "" else ""
+    } catch (e: Exception) {
+        ""
+    }
+
+    return ToolDetails(
+        id = tool.id,
+        title = tool.name,
+        description = tool.description,
+        readme = readmeText,
+        installCommands = tool.installCommand ?: "",
+        repoUrl = tool.repoUrl
+       )
+    }
 }
+

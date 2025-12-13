@@ -12,4 +12,5 @@ interface ToolRepository {
 
     // NEW: fetch github stars for a repo url (returns null on parse/error)
     suspend fun fetchStarsForRepo(repoUrl: String): Int?
+    suspend fun getToolDetails(id: String): ToolDetails?
 }

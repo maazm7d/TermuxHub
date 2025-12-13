@@ -7,4 +7,9 @@ import retrofit2.http.GET
 interface ApiService {
     @GET("metadata/metadata.json")
     suspend fun getMetadata(): Response<MetadataDto>
+
+    @GET("metadata/readme/{id}.md")
+    suspend fun getToolReadme(
+        @Path("id") toolId: String
+    ): Response<String>
 }
