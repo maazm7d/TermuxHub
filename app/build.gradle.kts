@@ -114,9 +114,9 @@ dependencies {
     implementation("com.mikepenz:multiplatform-markdown-renderer-coil3:0.38.1")
 
     // Room (local DB)
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-runtime:2.7.0")
+    implementation("androidx.room:room-ktx:2.7.0")
+    ksp("androidx.room:room-compiler:2.7.0")
 
     // WorkManager (for periodic metadata sync)
     implementation("androidx.work:work-runtime-ktx:2.9.0")
