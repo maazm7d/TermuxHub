@@ -66,9 +66,7 @@ android {
     // buildFeatures { viewBinding = true }
 }
 
-ksp {
-    useKsp2 = false
-}
+
 
 
 dependencies {
