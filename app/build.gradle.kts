@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.maazm7d.termuxhub"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.maazm7d.termuxhub"
