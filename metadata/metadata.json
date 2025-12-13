@@ -20,7 +20,7 @@
       "id": "0002",
       "name": "Findomain",
       "description": "The fastest and complete solution for domain recognition",
-      "category": "Recon",
+      "category": "OSINT",
       "install": "pkg install rust make perl
                   cargo install findomain
                   cd $HOME/.cargo/bin
@@ -50,23 +50,23 @@
     {
       "id": "0051",
       "name": "trape",
-      "description": "People tracker on the Internet: OSINT analysis and research tool.",
-      "category": "Tracker",
+      "description": "Track and execute intelligent social engineering attacks in real time",
+      "category": "Social Engineering",
       "install": "git clone https://github.com/jofpin/trape.git
                   cd trape
                   python3 trape.py -h",
       "version": "2.0",
       "thumbnail": "",
       "repo": "https://github.com/jofpin/trape",
-      "author": "jopfin",
+      "author": "jofpin",
       "requireRoot": false,
-      "publishedAt": "12-12-2025"
+      "publishedAt": "13-12-2025"
     },
     {
       "id": "0052",
       "name": "gcat",
       "description": "A PoC backdoor that uses Gmail as a C&C server.",
-      "category": "Backdoor",
+      "category": "Command and Control",
       "install": "git clone https://github.com/byt3bl33d3r/gcat
                   cd gcat
                   python3 gcat.py",
@@ -80,7 +80,7 @@
     {
       "id": "0053",
       "name": "wfdroid-termux",
-      "description": "Android Terminal Web-Hacking Tools.",
+      "description": "Android Terminal Web-Hacking Tools",
       "category": "Hacking",
       "install": "wget https://raw.githubusercontent.com/bytezcrew/wfdroid-termux/master/wfdinstall
                   chmod +x wfdinstall
@@ -95,8 +95,8 @@
     {
       "id": "0054",
       "name": "FBHT",
-      "description": "Facebook Hacking Tool.",
-      "category": "Hacking",
+      "description": "Facebook Hacking Tool",
+      "category": "Social Engineering",
       "install": "git clone https://github.com/chinoogawa/fbht
                   cd fbht
                   python3 main.py",
@@ -111,7 +111,7 @@
       "id": "0055",
       "name": "netattack",
       "description": "A simple python script to scan and attack wireless networks.",
-      "category": "Hacking",
+      "category": "Wireless Attack",
       "install": "git clone https://github.com/chrizator/netattack
                   cd netattack
                   python3 netattack.py",
