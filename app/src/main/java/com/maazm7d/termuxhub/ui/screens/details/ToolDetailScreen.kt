@@ -15,7 +15,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import com.mikepenz.markdown.m3.Markdown
-import com.mikepenz.markdown.m3.MarkdownDefaults
 
 @Composable
 fun ToolDetailScreen(
