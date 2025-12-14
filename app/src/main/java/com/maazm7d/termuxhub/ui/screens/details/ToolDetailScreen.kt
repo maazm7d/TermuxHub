@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import com.halilibo.richtext.ui.material3.RichText  // Keep this (already correct)
 import com.halilibo.richtext.commonmark.Markdown   // Fixed package path
+
 @Composable
 fun ToolDetailScreen(
     toolId: String,
