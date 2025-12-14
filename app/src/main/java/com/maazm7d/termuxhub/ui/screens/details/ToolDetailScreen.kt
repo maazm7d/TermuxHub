@@ -14,9 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
-import com.halilibo.richtext.ui.RichText
-import com.halilibo.richtext.markdown.Markdown
-import com.halilibo.richtext.commonmark.CommonMark
+import com.jeziellago.compose.markdowntext.MarkdownText
 
 @Composable
 fun ToolDetailScreen(
@@ -78,24 +76,21 @@ fun ToolDetailScreen(
 
             /* 🔹 README (Markdown Rendered) */
             if (tool.readme.isNotBlank()) {
-                Text(
-                    text = "README",
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // FIXED: Using CommonMark composable
-                RichText {
-    Markdown(
-        markdown = tool.readme,
-        parser = CommonMark
+    Text(
+        text = "README",
+        style = MaterialTheme.typography.titleMedium
     )
-                }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-            }
 
+    Spacer(modifier = Modifier.height(8.dp))
+
+    MarkdownText(
+        markdown = tool.readme,
+        modifier = Modifier.fillMaxWidth(),
+        style = MaterialTheme.typography.bodyMedium,
+    )
+
+    Spacer(modifier = Modifier.height(24.dp))
+            }
             /* 🔹 Installation Commands */
             if (tool.installCommands.isNotBlank()) {
                 Text(
