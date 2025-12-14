@@ -27,13 +27,19 @@ class ToolRepositoryImpl @Inject constructor(
     private val loading = MutableStateFlow(false)
 
     override fun observeLoading(): Flow<Boolean> = loading
+
     override fun setLoading(loading: Boolean) {
         this.loading.value = loading
     }
 
-    override fun observeAll(): Flow<List<ToolEntity>> = toolDao.getAllToolsFlow()
-    override fun observeFavorites(): Flow<List<ToolEntity>> = toolDao.getFavoritesFlow()
-    override suspend fun getToolById(id: String): ToolEntity? = toolDao.getToolById(id)
+    override fun observeAll(): Flow<List<ToolEntity>> =
+        toolDao.getAllToolsFlow()
+
+    override fun observeFavorites(): Flow<List<ToolEntity>> =
+        toolDao.getFavoritesFlow()
+
+    override suspend fun getToolById(id: String): ToolEntity? =
+        toolDao.getToolById(id)
 
     override suspend fun setFavorite(toolId: String, isFav: Boolean) {
         toolDao.getToolById(toolId)?.let {
@@ -47,10 +53,15 @@ class ToolRepositoryImpl @Inject constructor(
             if (response.isSuccessful) {
                 response.body()?.tools?.forEach { dto ->
                     val existing = toolDao.getToolById(dto.id)
-                    dto.toEntity(existing)?.let { toolDao.insert(it) }
+                    val entity = dto.toEntity(existing)
+                    if (entity != null) {
+                        toolDao.insert(entity)
+                    }
                 }
                 true
-            } else loadFromAssets()
+            } else {
+                loadFromAssets()
+            }
         } catch (e: Exception) {
             loadFromAssets()
         }
@@ -60,7 +71,10 @@ class ToolRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             try {
                 val (owner, repo) = parseOwnerRepo(repoUrl) ?: return@withContext null
-                githubClient.api.getRepo(owner, repo).body()?.stargazers_count
+                githubClient.api
+                    .getRepo(owner, repo)
+                    .body()
+                    ?.stargazers_count
             } catch (e: Exception) {
                 null
             }
@@ -72,26 +86,35 @@ class ToolRepositoryImpl @Inject constructor(
         return if (parts.size >= 2) parts[0] to parts[1] else null
     }
 
-    private suspend fun loadFromAssets(): Boolean = withContext(Dispatchers.IO) {
-        try {
-            val text = BufferedReader(
-                InputStreamReader(appContext.assets.open(assetsFileName))
-            ).use { it.readText() }
+    private suspend fun loadFromAssets(): Boolean =
+        withContext(Dispatchers.IO) {
+            try {
+                val text = BufferedReader(
+                    InputStreamReader(appContext.assets.open(assetsFileName))
+                ).use { it.readText() }
 
-            val moshi = com.squareup.moshi.Moshi.Builder()
-                .addLast(com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory())
-                .build()
+                val moshi = com.squareup.moshi.Moshi.Builder()
+                    .addLast(
+                        com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory()
+                    )
+                    .build()
 
-            val dto = moshi.adapter(MetadataDto::class.java).fromJson(text)
-            dto?.tools?.forEach {
-                val existing = toolDao.getToolById(it.id)
-                it.toEntity(existing)?.let(toolDao::insert)
+                val dto = moshi
+                    .adapter(MetadataDto::class.java)
+                    .fromJson(text)
+
+                dto?.tools?.forEach {
+                    val existing = toolDao.getToolById(it.id)
+                    val entity = it.toEntity(existing)
+                    if (entity != null) {
+                        toolDao.insert(entity)
+                    }
+                }
+                true
+            } catch (e: Exception) {
+                false
             }
-            true
-        } catch (e: Exception) {
-            false
         }
-    }
 
     private fun ToolDto.toEntity(existing: ToolEntity?): ToolEntity? {
         if (id.isBlank()) return null
