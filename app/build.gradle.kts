@@ -1,6 +1,15 @@
-// app/build.gradle.kts (FIXED & CLEAN) plugins { id("com.android.application") id("org.jetbrains.kotlin.android") id("org.jetbrains.kotlin.plugin.compose") id("com.google.devtools.ksp") id("kotlin-parcelize") id("com.google.dagger.hilt.android") }
+// app/build.gradle.kts (FIXED & CLEAN) 
+plugins { 
+id("com.android.application") 
+id("org.jetbrains.kotlin.android") 
+id("org.jetbrains.kotlin.plugin.compose") 
+id("com.google.devtools.ksp") id("kotlin-parcelize") 
+id("com.google.dagger.hilt.android") 
+}
 
-android { namespace = "com.maazm7d.termuxhub" compileSdk = 36
+android { 
+namespace = "com.maazm7d.termuxhub" 
+compileSdk = 36
 
 defaultConfig {
     applicationId = "com.maazm7d.termuxhub"
