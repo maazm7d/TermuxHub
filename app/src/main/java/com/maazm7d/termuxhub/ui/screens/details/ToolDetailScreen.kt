@@ -14,8 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
-import com.halilibo.richtext.ui.material3.RichText  // Keep this (already correct)
-import com.halilibo.richtext.commonmark.Markdown   // Fixed package path
+// FIXED IMPORTS for compose-richtext 0.17.0
+import com.halilibo.richtext.ui.RichText
+import com.halilibo.richtext.ui.RichTextScope
+import com.halilibo.richtext.ui.string.RichTextStringStyle
+import com.halilibo.richtext.commonmark.CommonMark
 
 @Composable
 fun ToolDetailScreen(
@@ -84,8 +87,9 @@ fun ToolDetailScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
+                // FIXED: Using CommonMark composable
                 RichText {
-    Markdown(tool.readme)
+                    CommonMark(tool.readme)
                 }
                 
                 Spacer(modifier = Modifier.height(24.dp))
