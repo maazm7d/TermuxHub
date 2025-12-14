@@ -5,18 +5,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
-import kotlinx.coroutines.launch
-import com.maazm7d.termuxhub.ui.components.*
-import com.maazm7d.termuxhub.domain.model.Tool
 import com.maazm7d.termuxhub.domain.model.getPublishedDate
+import com.maazm7d.termuxhub.ui.components.*
+import kotlinx.coroutines.launch
 
 enum class SortType(val label: String) {
     MOST_STARRED("Most starred"),
@@ -36,7 +37,7 @@ fun HomeScreen(
     val state by viewModel.uiState.collectAsState()
     val stars by viewModel.starsMap.collectAsState()
 
-    LaunchedEffect(Unit) { viewModel.refresh() }
+    val pullRefreshState = rememberPullToRefreshState()
 
     val query = remember { mutableStateOf("") }
     var selectedChip by remember { mutableStateOf(0) }
@@ -69,7 +70,7 @@ fun HomeScreen(
             }
         }
     ) {
-        Scaffold(topBar = {}) { padding ->
+        Scaffold { padding ->
 
             Column(
                 modifier = Modifier
@@ -77,16 +78,15 @@ fun HomeScreen(
                     .padding(horizontal = 4.dp)
             ) {
 
-                // SEARCH + DRAWER + SORT IN ONE LINE
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(
-                        onClick = { scope.launch { drawerState.open() } }
-                    ) {
+                    IconButton(onClick = {
+                        scope.launch { drawerState.open() }
+                    }) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
 
@@ -97,7 +97,7 @@ fun HomeScreen(
 
                     Box {
                         IconButton(onClick = { sortMenuExpanded = true }) {
-                            Icon(Icons.Default.FilterList, contentDescription = "Sort & Filter")
+                            Icon(Icons.Default.FilterList, contentDescription = "Sort")
                         }
 
                         DropdownMenu(
@@ -117,7 +117,7 @@ fun HomeScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 CategoryChips(
                     chips = chipsWithCounts,
@@ -125,39 +125,56 @@ fun HomeScreen(
                     onChipSelected = { selectedChip = it }
                 )
 
-                // FILTER + SORT TOOLS
-                val filteredTools = state.tools.filter { tool ->
-                    val byQuery = query.value.isBlank() ||
-                            tool.name.contains(query.value, true) ||
-                            tool.description.contains(query.value, true)
+                val filteredTools = state.tools
+                    .filter { tool ->
+                        val byQuery =
+                            query.value.isBlank() ||
+                                    tool.name.contains(query.value, true) ||
+                                    tool.description.contains(query.value, true)
 
-                    val byCategory = selectedChip == 0 ||
-                            tool.category.equals(chipsWithCounts[selectedChip].first, true)
+                        val byCategory =
+                            selectedChip == 0 ||
+                                    tool.category.equals(
+                                        chipsWithCounts[selectedChip].first,
+                                        true
+                                    )
 
-                    byQuery && byCategory
-                }.let { list ->
-                    when (currentSort) {
-                        SortType.MOST_STARRED -> list.sortedByDescending { stars[it.id] ?: 0 }
-                        SortType.LEAST_STARRED -> list.sortedBy { stars[it.id] ?: 0 }
-                        SortType.NEWEST_FIRST -> list.sortedByDescending { it.getPublishedDate() }
-                        SortType.OLDEST_FIRST -> list.sortedBy { it.getPublishedDate() }
+                        byQuery && byCategory
                     }
-                }
+                    .let { list ->
+                        when (currentSort) {
+                            SortType.MOST_STARRED ->
+                                list.sortedByDescending { stars[it.id] ?: 0 }
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 2.dp)
+                            SortType.LEAST_STARRED ->
+                                list.sortedBy { stars[it.id] ?: 0 }
+
+                            SortType.NEWEST_FIRST ->
+                                list.sortedByDescending { it.getPublishedDate() }
+
+                            SortType.OLDEST_FIRST ->
+                                list.sortedBy { it.getPublishedDate() }
+                        }
+                    }
+
+                PullToRefreshBox(
+                    state = pullRefreshState,
+                    isRefreshing = state.isLoading,
+                    onRefresh = { viewModel.refresh() }
                 ) {
-                    items(filteredTools) { tool ->
-                        ToolCard(
-                            tool = tool,
-                            stars = stars[tool.id],
-                            onOpenDetails = onOpenDetails,
-                            onToggleFavorite = { viewModel.toggleFavorite(it) },
-                            onSave = { viewModel.toggleFavorite(it) },
-                            onShare = {}
-                        )
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        items(filteredTools) { tool ->
+                            ToolCard(
+                                tool = tool,
+                                stars = stars[tool.id],
+                                onOpenDetails = onOpenDetails,
+                                onToggleFavorite = { viewModel.toggleFavorite(it) },
+                                onSave = { viewModel.toggleFavorite(it) },
+                                onShare = {}
+                            )
+                        }
                     }
                 }
             }
