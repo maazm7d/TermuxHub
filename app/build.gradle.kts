@@ -91,9 +91,9 @@ implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
 ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
 
 /* -------------------- Markdown (Compose RichText) -------------------- */
-implementation("com.halilibo.compose-richtext:richtext-ui-material3:0.17.0")
-implementation("com.halilibo.compose-richtext:richtext-markdown:0.17.0")
-implementation("com.halilibo.compose-richtext:richtext-commonmark:0.17.0")
+implementation("com.halilibo.compose-richtext:richtext-ui-material3:0.20.0")
+implementation("com.halilibo.compose-richtext:richtext-markdown:0.20.0")
+implementation("com.halilibo.compose-richtext:richtext-commonmark:0.20.0")
 
 /* -------------------- Image Loading -------------------- */
 implementation("io.coil-kt:coil-compose:2.6.0")
