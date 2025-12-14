@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import com.mikepenz.markdown.compose.Markdown
+import com.mikepenz.markdown.compose.MarkdownDefaults
 
 @Composable
 fun ToolDetailScreen(
@@ -84,9 +85,20 @@ fun ToolDetailScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Markdown(
-                    content = tool.readme,
-                    modifier = Modifier.fillMaxWidth()
-                )
+    content = tool.readme,
+    colors = MarkdownDefaults.colors(
+        text = MaterialTheme.colorScheme.onBackground,
+        codeText = MaterialTheme.colorScheme.onSurface
+    ),
+    typography = MarkdownDefaults.typography(
+        h1 = MaterialTheme.typography.headlineSmall,
+        h2 = MaterialTheme.typography.titleLarge,
+        h3 = MaterialTheme.typography.titleMedium,
+        body = MaterialTheme.typography.bodyMedium,
+        code = MaterialTheme.typography.bodySmall
+    ),
+    modifier = Modifier.fillMaxWidth()
+)
 
                 Spacer(modifier = Modifier.height(24.dp))
             }
