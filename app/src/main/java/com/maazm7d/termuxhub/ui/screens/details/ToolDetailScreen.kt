@@ -84,7 +84,7 @@ fun ToolDetailScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Markdown(
-                    markdown = tool.readme,
+                    content = tool.readme,
                     modifier = Modifier.fillMaxWidth()
                 )
 
