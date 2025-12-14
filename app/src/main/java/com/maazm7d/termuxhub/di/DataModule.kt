@@ -46,13 +46,18 @@ object DataModule {
 
     // Retrofit for metadata
     @Provides
-    @Singleton
-    fun provideRetrofit(moshi: Moshi, okHttp: OkHttpClient): Retrofit =
-        Retrofit.Builder()
-            .baseUrl(METADATA_BASE_URL)
-            .client(okHttp)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
+@Singleton
+fun provideRetrofit(
+    moshi: Moshi,
+    okHttp: OkHttpClient
+): Retrofit =
+    Retrofit.Builder()
+        .baseUrl(METADATA_BASE_URL)
+        .client(okHttp)
+        // 👇 ORDER MATTERS
+        .addConverterFactory(retrofit2.converter.scalars.ScalarsConverterFactory.create())
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .build()
 
     @Provides
     @Singleton
