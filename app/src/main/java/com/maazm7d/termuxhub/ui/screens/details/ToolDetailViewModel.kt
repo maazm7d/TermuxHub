@@ -6,9 +6,11 @@ import com.maazm7d.termuxhub.data.repository.ToolRepository
 import com.maazm7d.termuxhub.domain.model.Tool
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.maazm7d.termuxhub.domain.model.ToolDetails
 import com.maazm7d.termuxhub.domain.mapper.toDomain
 
 @HiltViewModel
@@ -17,7 +19,7 @@ class ToolDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ToolDetails?>(null)
-    val uiState: StateFlow<ToolDetails?> = _uiState
+    val uiState = _uiState.asStateFlow()
 
     fun load(id: String) {
         viewModelScope.launch {

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import com.maazm7d.termuxhub.domain.model.ToolDetails
 import javax.inject.Inject
 
 class ToolRepositoryImpl @Inject constructor(

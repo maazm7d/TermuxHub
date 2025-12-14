@@ -2,6 +2,7 @@ package com.maazm7d.termuxhub.data.repository
 
 import com.maazm7d.termuxhub.data.local.entities.ToolEntity
 import kotlinx.coroutines.flow.Flow
+import com.maazm7d.termuxhub.domain.model.ToolDetails
 
 interface ToolRepository {
     fun observeAll(): Flow<List<ToolEntity>>
