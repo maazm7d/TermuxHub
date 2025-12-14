@@ -90,10 +90,10 @@ implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
 ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
 
 /* -------------------- Markdown (Compose compatible) -------------------- */
-implementation("com.mikepenz:multiplatform-markdown-renderer:0.39.0")
-implementation("com.mikepenz:multiplatform-markdown-renderer-m3:0.39.0")
-implementation("com.mikepenz:multiplatform-markdown-renderer-code:0.39.0")
-implementation("com.mikepenz:multiplatform-markdown-renderer-coil3:0.39.0")
+implementation("com.mikepenz:multiplatform-markdown-renderer:0.38.1")
+implementation("com.mikepenz:multiplatform-markdown-renderer-m3:0.38.1")
+implementation("com.mikepenz:multiplatform-markdown-renderer-code:0.38.1")
+implementation("com.mikepenz:multiplatform-markdown-renderer-coil3:0.38.1")
 
 /* -------------------- Image Loading -------------------- */
 implementation("io.coil-kt:coil-compose:2.6.0")
