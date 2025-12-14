@@ -14,7 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
-import com.mikepenz.markdown.m3.Markdown
+import com.halilibo.richtext.commonmark.Markdown
+import com.halilibo.richtext.ui.material3.RichText
 
 @Composable
 fun ToolDetailScreen(
@@ -83,10 +84,10 @@ fun ToolDetailScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Markdown(
-    content = tool.readme,
-    modifier = Modifier.fillMaxWidth()
-)
+                RichText {
+    Markdown(tool.readme)
+                }
+                
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
