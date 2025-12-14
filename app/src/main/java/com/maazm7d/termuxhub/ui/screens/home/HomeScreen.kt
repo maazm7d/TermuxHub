@@ -7,9 +7,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +27,6 @@ enum class SortType(val label: String) {
     OLDEST_FIRST("Oldest first")
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
@@ -37,7 +37,10 @@ fun HomeScreen(
     val state by viewModel.uiState.collectAsState()
     val stars by viewModel.starsMap.collectAsState()
 
-    val pullRefreshState = rememberPullToRefreshState()
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = { viewModel.refresh() }
+    )
 
     val query = remember { mutableStateOf("") }
     var selectedChip by remember { mutableStateOf(0) }
@@ -71,7 +74,6 @@ fun HomeScreen(
         }
     ) {
         Scaffold { padding ->
-
             Column(
                 modifier = Modifier
                     .padding(padding)
@@ -145,22 +147,19 @@ fun HomeScreen(
                         when (currentSort) {
                             SortType.MOST_STARRED ->
                                 list.sortedByDescending { stars[it.id] ?: 0 }
-
                             SortType.LEAST_STARRED ->
                                 list.sortedBy { stars[it.id] ?: 0 }
-
                             SortType.NEWEST_FIRST ->
                                 list.sortedByDescending { it.getPublishedDate() }
-
                             SortType.OLDEST_FIRST ->
                                 list.sortedBy { it.getPublishedDate() }
                         }
                     }
 
-                PullToRefreshBox(
-                    state = pullRefreshState,
-                    isRefreshing = state.isLoading,
-                    onRefresh = { viewModel.refresh() }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pullRefresh(pullRefreshState)
                 ) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize()
@@ -176,6 +175,12 @@ fun HomeScreen(
                             )
                         }
                     }
+
+                    PullRefreshIndicator(
+                        refreshing = state.isLoading,
+                        state = pullRefreshState,
+                        modifier = Modifier.align(Alignment.TopCenter)
+                    )
                 }
             }
         }
