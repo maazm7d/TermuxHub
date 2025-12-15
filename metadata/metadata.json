@@ -22,9 +22,9 @@ chmod +x install.sh
       "description": "The fastest and complete solution for domain recognition",
       "category": "OSINT",
       "install": "pkg install rust make perl
-                  cargo install findomain
-                  cd $HOME/.cargo/bin
-                  ./findomain",
+cargo install findomain
+cd $HOME/.cargo/bin
+./findomain",
       "version": "10.0.1",
       "thumbnail": "",
       "repo": "https://github.com/Findomain/Findomain",
@@ -38,8 +38,8 @@ chmod +x install.sh
       "description": "Automatically brute force all services running on a target",
       "category": "Brute Force",
       "install": "git clone https://github.com/1N3/BruteX
-                  cd BruteX
-                  ./install.sh",
+cd BruteX
+./install.sh",
       "version": "2.3",
       "thumbnail": "",
       "repo": "https://github.com/1N3/BruteX",
@@ -53,8 +53,8 @@ chmod +x install.sh
       "description": "Track and execute intelligent social engineering attacks in real time",
       "category": "Social Engineering",
       "install": "git clone https://github.com/jofpin/trape.git
-                  cd trape
-                  python3 trape.py -h",
+cd trape
+python3 trape.py -h",
       "version": "2.0",
       "thumbnail": "",
       "repo": "https://github.com/jofpin/trape",
@@ -68,8 +68,8 @@ chmod +x install.sh
       "description": "A PoC backdoor that uses Gmail as a C&C server.",
       "category": "Command and Control",
       "install": "git clone https://github.com/byt3bl33d3r/gcat
-                  cd gcat
-                  python3 gcat.py",
+cd gcat
+python3 gcat.py",
       "version": "1.0.1",
       "thumbnail": "",
       "repo": "https://github.com/byt3bl33d3r/gcat",
@@ -83,8 +83,8 @@ chmod +x install.sh
       "description": "Android Terminal Web-Hacking Tools",
       "category": "Hacking",
       "install": "wget https://raw.githubusercontent.com/bytezcrew/wfdroid-termux/master/wfdinstall
-                  chmod +x wfdinstall
-                  ./wfdinstall",
+chmod +x wfdinstall
+./wfdinstall",
       "version": "1.0",
       "thumbnail": "",
       "repo": "https://github.com/bytezcrew/wfdroid-termux",
@@ -98,8 +98,8 @@ chmod +x install.sh
       "description": "Facebook Hacking Tool",
       "category": "Social Engineering",
       "install": "git clone https://github.com/chinoogawa/fbht
-                  cd fbht
-                  python3 main.py",
+cd fbht
+python3 main.py",
       "version": "2.0",
       "thumbnail": "",
       "repo": "https://github.com/chinoogawa/fbht",
@@ -113,8 +113,8 @@ chmod +x install.sh
       "description": "A simple python script to scan and attack wireless networks.",
       "category": "Wireless Attack",
       "install": "git clone https://github.com/chrizator/netattack
-                  cd netattack
-                  python3 netattack.py",
+cd netattack
+python3 netattack.py",
       "version": "1.0",
       "thumbnail": "",
       "repo": "https://github.com/chrizator/netattack",
