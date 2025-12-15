@@ -91,7 +91,7 @@ implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
 ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
 
 /* -------------------- Markdown (Compose RichText) -------------------- */
-implementation("dev.jeziellago:compose-markdown:0.5.8")
+implementation("com.github.jeziellago:compose-markdown:0.5.8")
 
 /* -------------------- Image Loading -------------------- */
 implementation("io.coil-kt:coil-compose:2.6.0")
