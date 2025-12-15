@@ -44,9 +44,7 @@ fun InstallCommandRow(command: String) {
         ) {
             Text(
                 text = command,
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+                modifier = Modifier.weight(1f),
                 fontFamily = FontFamily.Monospace,
                 style = MaterialTheme.typography.bodyMedium
             )
