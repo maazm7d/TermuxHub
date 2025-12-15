@@ -15,6 +15,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import dev.jeziellago.compose.markdowntext.MarkdownText
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.ui.platform.LocalUriHandler
 
 @Composable
 fun ToolDetailScreen(
@@ -103,4 +106,46 @@ fun ToolDetailScreen(
             }
         }
     }
+    Spacer(modifier = Modifier.height(24.dp))
+
+/* 🔹 Source / Report Row */
+val uriHandler = LocalUriHandler.current
+
+Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.spacedBy(12.dp)
+) {
+
+    OutlinedButton(
+        onClick = {
+            tool.repoUrl?.let { uriHandler.openUri(it) }
+        },
+        modifier = Modifier.weight(1f)
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Code,
+            contentDescription = "Source Code",
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text("Source Code")
+    }
+
+    OutlinedButton(
+        onClick = {
+            tool.repoUrl?.let {
+                uriHandler.openUri("$it/issues")
+            }
+        },
+        modifier = Modifier.weight(1f)
+    ) {
+        Icon(
+            imageVector = Icons.Filled.BugReport,
+            contentDescription = "Report Issue",
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text("Report Issue")
+    }
+}
 }
