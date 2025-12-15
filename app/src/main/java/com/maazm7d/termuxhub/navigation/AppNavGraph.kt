@@ -7,7 +7,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.maazm7d.termuxhub.ui.screens.blogs.BlogsScreen
 import com.maazm7d.termuxhub.ui.screens.details.ToolDetailScreen
 import com.maazm7d.termuxhub.ui.screens.details.ToolDetailViewModel
 import com.maazm7d.termuxhub.ui.screens.home.HomeScreen
@@ -59,7 +58,6 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
             SavedScreen(viewModel = vm, onBack = { navController.popBackStack() })
         }
 
-        composable(Destinations.BLOGS) { BlogsScreen() }
         composable(Destinations.SETTINGS) { SettingsScreen(onBack = { navController.popBackStack() }) }
     }
 }
