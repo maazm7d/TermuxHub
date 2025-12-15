@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
-import com.jeziellago.compose.markdowntext.MarkdownText
+import dev.jeziellago.compose.markdowntext.MarkdownText
 
 @Composable
 fun ToolDetailScreen(
