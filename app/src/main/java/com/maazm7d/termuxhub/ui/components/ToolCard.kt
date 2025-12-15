@@ -26,6 +26,8 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.outlined.Security
 import androidx.compose.ui.text.style.TextAlign
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun ToolCard(
@@ -44,6 +46,7 @@ fun ToolCard(
     val favScale by animateFloatAsState(targetValue = if (isFav) 1.05f else 1f)
 
     val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
 
     // dialog state for star action
     var showStarDialog by remember { mutableStateOf(false) }
@@ -215,14 +218,20 @@ Row(
 
                     // SAVE (favorite)
                     Row(
-                        modifier = Modifier
-                            .clickable {
-                                isFav = !isFav
-                                onToggleFavorite(tool.id)
-                            }
-                            .scale(favScale),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+    modifier = Modifier
+        .clickable {
+            isFav = !isFav
+            onToggleFavorite(tool.id)
+
+            Toast.makeText(
+                context,
+                if (isFav) "Saved" else "Removed from saved",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        .scale(favScale),
+    verticalAlignment = Alignment.CenterVertically
+) {
                         Icon(
                             imageVector = if (isFav) Icons.Filled.Save else Icons.Filled.Save,
                             contentDescription = "Save",
