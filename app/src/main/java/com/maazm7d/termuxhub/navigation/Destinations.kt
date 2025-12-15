@@ -5,6 +5,5 @@ object Destinations {
     const val HOME = "home"
     const val DETAILS = "details"
     const val SAVED = "saved"
-    const val BLOGS = "blogs"
     const val SETTINGS = "settings"
 }
