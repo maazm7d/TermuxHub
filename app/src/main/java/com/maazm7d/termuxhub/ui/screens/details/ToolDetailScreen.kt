@@ -76,12 +76,6 @@ fun ToolDetailScreen(
 
             /* 🔹 README (Markdown Rendered) */
             if (tool.readme.isNotBlank()) {
-    Text(
-        text = "README",
-        style = MaterialTheme.typography.titleMedium
-    )
-
-    Spacer(modifier = Modifier.height(8.dp))
 
     MarkdownText(
         markdown = tool.readme,
