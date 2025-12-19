@@ -33,10 +33,10 @@ fun SplashScreen(onFinished: () -> Unit) {
 
     LaunchedEffect(Unit) {
         delay(200)
-        showIcon = true          // icon appears
-        delay(350)
-        showText = true          // text appears after
-        delay(700)
+        showIcon = true
+        delay(400)
+        showText = true
+        delay(800)
         onFinished()
     }
 
@@ -50,24 +50,25 @@ fun SplashScreen(onFinished: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // Termux-like icon
+            // BIG Termux symbol (monospace)
             Text(
                 text = ">_",
-                fontSize = 56.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 100.sp,
+                fontWeight = FontWeight.ExtraBold,
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
                 color = Color.Black,
                 modifier = Modifier.alpha(iconAlpha)
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            // App name
+            // App name (monospace)
             Text(
                 text = "Termux Hub",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
                 color = Color.Black,
-                textAlign = TextAlign.Center,
                 modifier = Modifier.alpha(textAlpha)
             )
         }
