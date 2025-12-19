@@ -9,7 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.NewReleases
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -82,10 +82,10 @@ fun AppDrawer(onAction: (String) -> Unit) {
         ) { onAction("whats_new") }
 
         DrawerItem(
-            icon = Icons.Default.Settings,
-            label = "Settings",
-            desc = "Themes, preferences & appearance"
-        ) { onAction("settings") }
+    icon = Icons.Default.Info,
+    label = "About",
+    desc = "App info, version & open-source details"
+) { onAction("about") }
 
         Spacer(modifier = Modifier.weight(1f))
         Text("v1.0.0 (1)", style = MaterialTheme.typography.bodySmall)

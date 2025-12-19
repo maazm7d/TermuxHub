@@ -13,7 +13,7 @@ import com.maazm7d.termuxhub.ui.screens.home.HomeScreen
 import com.maazm7d.termuxhub.ui.screens.home.HomeViewModel
 import com.maazm7d.termuxhub.ui.screens.saved.SavedScreen
 import com.maazm7d.termuxhub.ui.screens.saved.SavedViewModel
-import com.maazm7d.termuxhub.ui.screens.settings.SettingsScreen
+import com.maazm7d.termuxhub.ui.screens.about.AboutScreen
 import com.maazm7d.termuxhub.ui.screens.splash.SplashScreen
 
 @Composable
@@ -43,7 +43,7 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
                 viewModel = vm,
                 onOpenDetails = { id -> navController.navigate("${Destinations.DETAILS}/$id") },
                 onOpenSaved = { navController.navigate(Destinations.SAVED) },
-                onOpenSettings = { navController.navigate(Destinations.SETTINGS) }
+                onOpenSettings = { navController.navigate(Destinations.ABOUT) }
             )
         }
 
@@ -58,6 +58,6 @@ fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) 
             SavedScreen(viewModel = vm, onBack = { navController.popBackStack() })
         }
 
-        composable(Destinations.SETTINGS) { SettingsScreen(onBack = { navController.popBackStack() }) }
+        composable(Destinations.ABOUT) { AboutScreen(onBack = { navController.popBackStack() }) }
     }
 }
