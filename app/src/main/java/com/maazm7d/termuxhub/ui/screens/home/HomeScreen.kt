@@ -62,7 +62,7 @@ fun HomeScreen(
                 AppDrawer { action ->
                     when (action) {
                         "saved" -> onOpenSaved()
-                        "settings" -> onOpenSettings()
+                        "about" -> onOpenSettings()
                     }
                     scope.launch { drawerState.close() }
                 }
