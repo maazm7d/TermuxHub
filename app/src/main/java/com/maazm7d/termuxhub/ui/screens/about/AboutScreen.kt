@@ -17,7 +17,8 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.maazm7d.termuxhub.BuildConfig
+import androidx.compose.ui.platform.LocalContext
+import android.content.pm.PackageManager
 import com.maazm7d.termuxhub.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,7 +26,17 @@ import com.maazm7d.termuxhub.R
 fun AboutScreen(
     onBack: () -> Unit
 ) {
-    val appVersion = BuildConfig.VERSION_NAME
+    val context = LocalContext.current
+
+val appVersion = remember {
+    try {
+        context.packageManager
+            .getPackageInfo(context.packageName, 0)
+            .versionName ?: "Unknown"
+    } catch (e: PackageManager.NameNotFoundException) {
+        "Unknown"
+    }
+}
 
     Scaffold(
         topBar = {
