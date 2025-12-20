@@ -28,14 +28,12 @@ fun AboutScreen(
 ) {
     val context = LocalContext.current
 
-val appVersion = remember {
-    try {
-        context.packageManager
-            .getPackageInfo(context.packageName, 0)
-            .versionName ?: "Unknown"
-    } catch (e: PackageManager.NameNotFoundException) {
-        "Unknown"
-    }
+val appVersion = try {
+    context.packageManager
+        .getPackageInfo(context.packageName, 0)
+        .versionName ?: "Unknown"
+} catch (e: PackageManager.NameNotFoundException) {
+    "Unknown"
 }
 
     Scaffold(
