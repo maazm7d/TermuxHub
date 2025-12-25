@@ -90,7 +90,7 @@ fun AboutScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // App Information Card
+            // App Information
             SectionCard(
                 title = "App Information",
                 icon = Icons.Default.Info
@@ -102,7 +102,7 @@ fun AboutScreen(
                 InfoItem(Icons.Default.Public, "Open Source", "Yes")
             }
 
-            // Links Card (includes Donations)
+            // Links (includes donations)
             SectionCard(
                 title = "Links",
                 icon = Icons.Default.Link
@@ -155,7 +155,7 @@ private fun SectionCard(
             .padding(bottom = 16.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
         )
     ) {
         Column(
@@ -218,12 +218,20 @@ private fun LinkItem(
 ) {
     TextButton(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
             Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(12.dp))
-            Text(text, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
