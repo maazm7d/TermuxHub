@@ -13,14 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.maazm7d.termuxhub.R
-import androidx.compose.ui.graphics.vector.ImageVector
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,8 +90,11 @@ fun AboutScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // App Info Card
-            SectionCard(title = "App Information", icon = Icons.Default.Info) {
+            // App Information Card
+            SectionCard(
+                title = "App Information",
+                icon = Icons.Default.Info
+            ) {
                 InfoItem(Icons.Default.Android, "Version", appVersion)
                 InfoItem(Icons.Default.Update, "Last Updated", "Dec 2025")
                 InfoItem(Icons.Default.Person, "Main Developer", "Maaz M")
@@ -100,54 +102,30 @@ fun AboutScreen(
                 InfoItem(Icons.Default.Public, "Open Source", "Yes")
             }
 
-            // Links Card
-            SectionCard(title = "Links", icon = Icons.Default.Link) {
-                LinkItem(
-                    Icons.Default.Code,
-                    "Open Source Repository"
-                ) { uriHandler.openUri("https://github.com/maazm7d/TermuxHub") }
+            // Links Card (includes Donations)
+            SectionCard(
+                title = "Links",
+                icon = Icons.Default.Link
+            ) {
+                LinkItem(Icons.Default.Code, "Open Source Repository") {
+                    uriHandler.openUri("https://github.com/maazm7d/TermuxHub")
+                }
 
-                LinkItem(
-                    Icons.Default.BugReport,
-                    "Issue Tracker"
-                ) { uriHandler.openUri("https://github.com/maazm7d/TermuxHub/issues") }
+                LinkItem(Icons.Default.BugReport, "Issue Tracker") {
+                    uriHandler.openUri("https://github.com/maazm7d/TermuxHub/issues")
+                }
 
-                LinkItem(
-                    Icons.Default.Person,
-                    "Developer GitHub"
-                ) { uriHandler.openUri("https://github.com/maazm7d") }
-            }
+                LinkItem(Icons.Default.Person, "Developer GitHub") {
+                    uriHandler.openUri("https://github.com/maazm7d")
+                }
 
-            // License Card
-            SectionCard(title = "License", icon = Icons.Default.Gavel) {
-                InfoItem(
-                    Icons.Default.Description,
-                    "License Type",
-                    "AGPL v3"
-                )
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
 
-                Text(
-                    text = "This app is licensed under the GNU AGPL v3. " +
-                            "Any modified version must also be open-sourced.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
-            }
-
-            // Donation Card
-            SectionCard(title = "Support Development", icon = Icons.Default.Favorite) {
-                LinkItem(
-                    Icons.Default.AttachMoney,
-                    "Donate via PayPal"
-                ) {
+                LinkItem(Icons.Default.AttachMoney, "Donate via PayPal") {
                     uriHandler.openUri("https://paypal.me/yourlink")
                 }
 
-                LinkItem(
-                    Icons.Default.Coffee,
-                    "Buy Me a Coffee"
-                ) {
+                LinkItem(Icons.Default.Coffee, "Buy Me a Coffee") {
                     uriHandler.openUri("https://buymeacoffee.com/yourlink")
                 }
             }
@@ -163,7 +141,7 @@ fun AboutScreen(
     }
 }
 
-/* ---------- Reusable Components ---------- */
+/* ───────────── Reusable Components ───────────── */
 
 @Composable
 private fun SectionCard(
@@ -180,9 +158,16 @@ private fun SectionCard(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            // Center-aligned header
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
                 Icon(icon, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -191,8 +176,15 @@ private fun SectionCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
-            content()
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Left-aligned content
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                content()
+            }
         }
     }
 }
