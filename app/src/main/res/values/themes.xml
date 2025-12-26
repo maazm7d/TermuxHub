@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.TermuxHub" parent="Theme.Material3.DayNight.NoActionBar"/>
+
+    <style name="Theme.TermuxHub" parent="Theme.Material3.DayNight.NoActionBar">
+
+        <!-- REQUIRED to prevent pink / magenta flash -->
+        <item name="android:windowBackground">@android:color/white</item>
+
+        <!-- Edge-to-edge support -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <!-- Disable default animations that cause flashes -->
+        <item name="android:windowAnimationStyle">@null</item>
+
+        <!-- Material defaults -->
+        <item name="android:forceDarkAllowed">true</item>
+
+    </style>
+
 </resources>
