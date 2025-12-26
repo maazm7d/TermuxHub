@@ -122,11 +122,11 @@ fun AboutScreen(
                 Divider(modifier = Modifier.padding(vertical = 8.dp))
 
                 LinkItem(Icons.Default.AttachMoney, "Donate via PayPal") {
-                    uriHandler.openUri("https://paypal.me/yourlink")
+                    uriHandler.openUri("https://paypal.me/maazm7d")
                 }
 
                 LinkItem(Icons.Default.Coffee, "Buy Me a Coffee") {
-                    uriHandler.openUri("https://buymeacoffee.com/yourlink")
+                    uriHandler.openUri("https://buymeacoffee.com/maazm7d")
                 }
             }
 
