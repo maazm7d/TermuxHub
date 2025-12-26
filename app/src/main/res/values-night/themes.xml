@@ -1,9 +1,17 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-  <!-- Base application theme. -->
-  <style name="Base.AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
-    <!-- Customize your theme here. -->
-    <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-  </style>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
 
-  <style name="AppTheme" parent="Base.AppTheme" />
+    <style name="Theme.TermuxHub" parent="Theme.Material3.DayNight.NoActionBar">
+
+        <!-- Dark-safe background -->
+        <item name="android:windowBackground">@android:color/black</item>
+
+        <!-- Edge-to-edge -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <item name="android:windowAnimationStyle">@null</item>
+
+    </style>
+
 </resources>
