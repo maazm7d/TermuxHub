@@ -1,23 +1,23 @@
 package com.maazm7d.termuxhub.ui.screens.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.GridView
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
 import com.maazm7d.termuxhub.ui.components.*
-import com.maazm7d.termuxhub.domain.model.Tool
 import com.maazm7d.termuxhub.domain.model.getPublishedDate
-import androidx.compose.material.icons.filled.GridView
 
 enum class SortType(val label: String) {
     MOST_STARRED("Most starred"),
@@ -34,80 +34,144 @@ fun HomeScreen(
     onOpenSaved: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
-    val state by viewModel.uiState.collectAsState()
-    val stars by viewModel.starsMap.collectAsState()
+    /* -------------------- STATE -------------------- */
 
-    LaunchedEffect(Unit) { viewModel.refresh() }
+    val uiState by viewModel.uiState.collectAsState()
+    val starsMap by viewModel.starsMap.collectAsState()
 
-    val query = remember { mutableStateOf("") }
-    var selectedChip by remember { mutableStateOf(0) }
+    val scope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    var query by rememberSaveable { mutableStateOf("") }
+    var selectedCategoryIndex by rememberSaveable { mutableStateOf(0) }
+    var currentSort by rememberSaveable { mutableStateOf(SortType.MOST_STARRED) }
+
     var sortMenuExpanded by remember { mutableStateOf(false) }
-    var currentSort by remember { mutableStateOf(SortType.MOST_STARRED) }
     var categoryMenuExpanded by remember { mutableStateOf(false) }
 
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
+    /* -------------------- EFFECTS -------------------- */
 
-    val categoryCounts = state.tools.groupingBy { it.category }.eachCount()
-    val chipsWithCounts = listOf("All" to state.tools.size) +
-            categoryCounts.keys.sorted().map { it to (categoryCounts[it] ?: 0) }
+    LaunchedEffect(Unit) {
+        viewModel.refresh()
+        drawerState.close() // always start clean
+    }
+
+    BackHandler(drawerState.isOpen) {
+        scope.launch { drawerState.close() }
+    }
+
+    /* -------------------- DERIVED DATA -------------------- */
+
+    val categoryCounts = remember(uiState.tools) {
+        uiState.tools.groupingBy { it.category }.eachCount()
+    }
+
+    val categories = remember(categoryCounts, uiState.tools.size) {
+        listOf("All" to uiState.tools.size) +
+                categoryCounts.keys.sorted().map {
+                    it to (categoryCounts[it] ?: 0)
+                }
+    }
+
+    val filteredTools = remember(
+        uiState.tools,
+        query,
+        selectedCategoryIndex,
+        currentSort,
+        starsMap
+    ) {
+        uiState.tools
+            .asSequence()
+            .filter { tool ->
+                val matchesQuery =
+                    query.isBlank() ||
+                            tool.name.contains(query, true) ||
+                            tool.description.contains(query, true)
+
+                val matchesCategory =
+                    selectedCategoryIndex == 0 ||
+                            tool.category.equals(
+                                categories[selectedCategoryIndex].first,
+                                true
+                            )
+
+                matchesQuery && matchesCategory
+            }
+            .let { seq ->
+                when (currentSort) {
+                    SortType.MOST_STARRED ->
+                        seq.sortedByDescending { starsMap[it.id] ?: 0 }
+                    SortType.LEAST_STARRED ->
+                        seq.sortedBy { starsMap[it.id] ?: 0 }
+                    SortType.NEWEST_FIRST ->
+                        seq.sortedByDescending { it.getPublishedDate() }
+                    SortType.OLDEST_FIRST ->
+                        seq.sortedBy { it.getPublishedDate() }
+                }
+            }
+            .toList()
+    }
+
+    /* -------------------- UI -------------------- */
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(280.dp)
-                    .background(Color.White)
+            ModalDrawerSheet(
+                modifier = Modifier.width(280.dp),
+                drawerContainerColor = Color.White
             ) {
-
-
-                
-               AppDrawer { action ->
-    scope.launch {
-        drawerState.close()   
-        when (action) {
-            "saved" -> onOpenSaved()
-            "about" -> onOpenSettings()
-        }
-    }
-               } 
-
-            
+                AppDrawer { action ->
+                    scope.launch {
+                        drawerState.close()
+                        when (action) {
+                            "saved" -> onOpenSaved()
+                            "about" -> onOpenSettings()
+                        }
+                    }
+                }
             }
         }
     ) {
-        Scaffold(topBar = {}) { padding ->
-
+        Scaffold { padding ->
             Column(
                 modifier = Modifier
+                    .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = 4.dp)
+                    .padding(horizontal = 6.dp)
             ) {
 
-                // SEARCH + DRAWER + SORT IN ONE LINE
+                /* ---------- TOP BAR ---------- */
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 6.dp),
+                        .padding(top = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-    enabled = !drawerState.isAnimationRunning,
-    onClick = { scope.launch { drawerState.open() } }
-) {
-    Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        enabled = !drawerState.isAnimationRunning,
+                        onClick = {
+                            scope.launch { drawerState.open() }
+                        }
+                    ) {
+                        Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
 
                     SearchBar(
-                        queryState = query,
-                        modifier = Modifier.weight(1f)
+                        queryState = remember { mutableStateOf(query) }.also {
+                            it.value = query
+                        },
+                        modifier = Modifier.weight(1f),
+                        onQueryChange = { query = it }
                     )
 
                     Box {
                         IconButton(onClick = { sortMenuExpanded = true }) {
-                            Icon(Icons.Default.FilterList, contentDescription = "Sort & Filter")
+                            Icon(
+                                Icons.Default.FilterList,
+                                contentDescription = "Sort"
+                            )
                         }
 
                         DropdownMenu(
@@ -127,81 +191,65 @@ fun HomeScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(4.dp))
+
+                /* ---------- CATEGORY ROW ---------- */
 
                 Row(
-    modifier = Modifier.fillMaxWidth(),
-    verticalAlignment = Alignment.CenterVertically
-) {
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box {
+                        IconButton(onClick = { categoryMenuExpanded = true }) {
+                            Icon(
+                                Icons.Default.GridView,
+                                contentDescription = "Categories"
+                            )
+                        }
 
-    // CATEGORY MENU ICON
-    Box {
-        IconButton(
-            onClick = { categoryMenuExpanded = true }
-        ) {
-            Icon(
-                imageVector = Icons.Default.GridView,
-                contentDescription = "Categories"
-            )
-        }
-
-        DropdownMenu(
-            expanded = categoryMenuExpanded,
-            onDismissRequest = { categoryMenuExpanded = false }
-        ) {
-            chipsWithCounts.forEachIndexed { index, item ->
-                DropdownMenuItem(
-                    text = {
-                        Text("${item.first} (${item.second})")
-                    },
-                    onClick = {
-                        selectedChip = index
-                        categoryMenuExpanded = false
+                        DropdownMenu(
+                            expanded = categoryMenuExpanded,
+                            onDismissRequest = { categoryMenuExpanded = false }
+                        ) {
+                            categories.forEachIndexed { index, item ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text("${item.first} (${item.second})")
+                                    },
+                                    onClick = {
+                                        selectedCategoryIndex = index
+                                        categoryMenuExpanded = false
+                                    }
+                                )
+                            }
+                        }
                     }
-                )
-            }
-        }
-    }
 
-    // EXISTING CHIPS (UNCHANGED)
-    CategoryChips(
-        chips = chipsWithCounts,
-        selectedIndex = selectedChip,
-        onChipSelected = { selectedChip = it }
-    )
+                    CategoryChips(
+                        chips = categories,
+                        selectedIndex = selectedCategoryIndex,
+                        onChipSelected = { selectedCategoryIndex = it }
+                    )
                 }
 
-                // FILTER + SORT TOOLS
-                val filteredTools = state.tools.filter { tool ->
-                    val byQuery = query.value.isBlank() ||
-                            tool.name.contains(query.value, true) ||
-                            tool.description.contains(query.value, true)
+                Spacer(modifier = Modifier.height(4.dp))
 
-                    val byCategory = selectedChip == 0 ||
-                            tool.category.equals(chipsWithCounts[selectedChip].first, true)
-
-                    byQuery && byCategory
-                }.let { list ->
-                    when (currentSort) {
-                        SortType.MOST_STARRED -> list.sortedByDescending { stars[it.id] ?: 0 }
-                        SortType.LEAST_STARRED -> list.sortedBy { stars[it.id] ?: 0 }
-                        SortType.NEWEST_FIRST -> list.sortedByDescending { it.getPublishedDate() }
-                        SortType.OLDEST_FIRST -> list.sortedBy { it.getPublishedDate() }
-                    }
-                }
+                /* ---------- LIST ---------- */
 
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 2.dp)
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 12.dp)
                 ) {
-                    items(filteredTools) { tool ->
+                    items(
+                        items = filteredTools,
+                        key = { it.id } // 🔑 stable keys
+                    ) { tool ->
                         ToolCard(
                             tool = tool,
-                            stars = stars[tool.id],
+                            stars = starsMap[tool.id],
                             onOpenDetails = onOpenDetails,
-                            onToggleFavorite = { viewModel.toggleFavorite(it) },
-                            onSave = { viewModel.toggleFavorite(it) },
+                            onToggleFavorite = viewModel::toggleFavorite,
+                            onSave = viewModel::toggleFavorite,
                             onShare = {}
                         )
                     }
