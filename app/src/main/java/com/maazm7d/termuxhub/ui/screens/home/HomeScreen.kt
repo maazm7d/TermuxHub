@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,10 +40,10 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val starsMap by viewModel.starsMap.collectAsState()
 
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    var query by rememberSaveable { mutableStateOf("") }
+    val searchQuery = rememberSaveable { mutableStateOf("") }
     var selectedCategoryIndex by rememberSaveable { mutableStateOf(0) }
     var currentSort by rememberSaveable { mutableStateOf(SortType.MOST_STARRED) }
 
@@ -53,7 +54,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.refresh()
-        drawerState.close() // always start clean
+        drawerState.close()
     }
 
     BackHandler(drawerState.isOpen) {
@@ -66,7 +67,7 @@ fun HomeScreen(
         uiState.tools.groupingBy { it.category }.eachCount()
     }
 
-    val categories = remember(categoryCounts, uiState.tools.size) {
+    val categories = remember(uiState.tools, categoryCounts) {
         listOf("All" to uiState.tools.size) +
                 categoryCounts.keys.sorted().map {
                     it to (categoryCounts[it] ?: 0)
@@ -75,18 +76,17 @@ fun HomeScreen(
 
     val filteredTools = remember(
         uiState.tools,
-        query,
+        searchQuery.value,
         selectedCategoryIndex,
         currentSort,
         starsMap
     ) {
         uiState.tools
-            .asSequence()
             .filter { tool ->
                 val matchesQuery =
-                    query.isBlank() ||
-                            tool.name.contains(query, true) ||
-                            tool.description.contains(query, true)
+                    searchQuery.value.isBlank() ||
+                            tool.name.contains(searchQuery.value, true) ||
+                            tool.description.contains(searchQuery.value, true)
 
                 val matchesCategory =
                     selectedCategoryIndex == 0 ||
@@ -97,19 +97,18 @@ fun HomeScreen(
 
                 matchesQuery && matchesCategory
             }
-            .let { seq ->
+            .let { list ->
                 when (currentSort) {
                     SortType.MOST_STARRED ->
-                        seq.sortedByDescending { starsMap[it.id] ?: 0 }
+                        list.sortedByDescending { starsMap[it.id] ?: 0 }
                     SortType.LEAST_STARRED ->
-                        seq.sortedBy { starsMap[it.id] ?: 0 }
+                        list.sortedBy { starsMap[it.id] ?: 0 }
                     SortType.NEWEST_FIRST ->
-                        seq.sortedByDescending { it.getPublishedDate() }
+                        list.sortedByDescending { it.getPublishedDate() }
                     SortType.OLDEST_FIRST ->
-                        seq.sortedBy { it.getPublishedDate() }
+                        list.sortedBy { it.getPublishedDate() }
                 }
             }
-            .toList()
     }
 
     /* -------------------- UI -------------------- */
@@ -141,7 +140,7 @@ fun HomeScreen(
                     .padding(horizontal = 6.dp)
             ) {
 
-                /* ---------- TOP BAR ---------- */
+                /* ---------- TOP ROW ---------- */
 
                 Row(
                     modifier = Modifier
@@ -151,27 +150,19 @@ fun HomeScreen(
                 ) {
                     IconButton(
                         enabled = !drawerState.isAnimationRunning,
-                        onClick = {
-                            scope.launch { drawerState.open() }
-                        }
+                        onClick = { scope.launch { drawerState.open() } }
                     ) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
 
                     SearchBar(
-                        queryState = remember { mutableStateOf(query) }.also {
-                            it.value = query
-                        },
-                        modifier = Modifier.weight(1f),
-                        onQueryChange = { query = it }
+                        queryState = searchQuery,
+                        modifier = Modifier.weight(1f)
                     )
 
                     Box {
                         IconButton(onClick = { sortMenuExpanded = true }) {
-                            Icon(
-                                Icons.Default.FilterList,
-                                contentDescription = "Sort"
-                            )
+                            Icon(Icons.Default.FilterList, contentDescription = "Sort")
                         }
 
                         DropdownMenu(
@@ -201,10 +192,7 @@ fun HomeScreen(
                 ) {
                     Box {
                         IconButton(onClick = { categoryMenuExpanded = true }) {
-                            Icon(
-                                Icons.Default.GridView,
-                                contentDescription = "Categories"
-                            )
+                            Icon(Icons.Default.GridView, contentDescription = "Categories")
                         }
 
                         DropdownMenu(
@@ -213,9 +201,7 @@ fun HomeScreen(
                         ) {
                             categories.forEachIndexed { index, item ->
                                 DropdownMenuItem(
-                                    text = {
-                                        Text("${item.first} (${item.second})")
-                                    },
+                                    text = { Text("${item.first} (${item.second})") },
                                     onClick = {
                                         selectedCategoryIndex = index
                                         categoryMenuExpanded = false
@@ -242,7 +228,7 @@ fun HomeScreen(
                 ) {
                     items(
                         items = filteredTools,
-                        key = { it.id } // 🔑 stable keys
+                        key = { tool -> tool.id }
                     ) { tool ->
                         ToolCard(
                             tool = tool,
