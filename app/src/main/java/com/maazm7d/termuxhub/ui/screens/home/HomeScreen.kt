@@ -94,9 +94,10 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = { scope.launch { drawerState.open() } }
-                    ) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+    enabled = !drawerState.isAnimationRunning,
+    onClick = { scope.launch { drawerState.open() } }
+) {
+    Icon(Icons.Default.Menu, contentDescription = "Menu")
                     }
 
                     SearchBar(
