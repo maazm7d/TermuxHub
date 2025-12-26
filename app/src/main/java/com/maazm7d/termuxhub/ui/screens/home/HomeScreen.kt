@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import com.maazm7d.termuxhub.ui.components.*
 import com.maazm7d.termuxhub.domain.model.Tool
 import com.maazm7d.termuxhub.domain.model.getPublishedDate
-import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.GridView
 
 enum class SortType(val label: String) {
     MOST_STARRED("Most starred"),
@@ -132,7 +132,7 @@ fun HomeScreen(
             onClick = { categoryMenuExpanded = true }
         ) {
             Icon(
-                imageVector = Icons.Default.Category,
+                imageVector = Icons.Default.GridView,
                 contentDescription = "Categories"
             )
         }
