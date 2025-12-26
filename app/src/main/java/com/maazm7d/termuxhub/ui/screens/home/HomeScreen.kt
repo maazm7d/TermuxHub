@@ -61,13 +61,20 @@ fun HomeScreen(
                     .width(280.dp)
                     .background(Color.White)
             ) {
-                AppDrawer { action ->
-                    when (action) {
-                        "saved" -> onOpenSaved()
-                        "about" -> onOpenSettings()
-                    }
-                    scope.launch { drawerState.close() }
-                }
+
+
+                
+               AppDrawer { action ->
+    scope.launch {
+        drawerState.close()   
+        when (action) {
+            "saved" -> onOpenSaved()
+            "about" -> onOpenSettings()
+        }
+    }
+               } 
+
+            
             }
         }
     ) {
