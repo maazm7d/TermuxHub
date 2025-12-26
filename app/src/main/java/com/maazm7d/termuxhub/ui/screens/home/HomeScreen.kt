@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import com.maazm7d.termuxhub.ui.components.*
 import com.maazm7d.termuxhub.domain.model.Tool
 import com.maazm7d.termuxhub.domain.model.getPublishedDate
+import androidx.compose.material.icons.filled.FilterList
 
 enum class SortType(val label: String) {
     MOST_STARRED("Most starred"),
@@ -42,6 +43,7 @@ fun HomeScreen(
     var selectedChip by remember { mutableStateOf(0) }
     var sortMenuExpanded by remember { mutableStateOf(false) }
     var currentSort by remember { mutableStateOf(SortType.MOST_STARRED) }
+    var categoryMenuExpanded by remember { mutableStateOf(false) }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -119,11 +121,47 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(2.dp))
 
-                CategoryChips(
-                    chips = chipsWithCounts,
-                    selectedIndex = selectedChip,
-                    onChipSelected = { selectedChip = it }
+                Row(
+    modifier = Modifier.fillMaxWidth(),
+    verticalAlignment = Alignment.CenterVertically
+) {
+
+    // CATEGORY MENU ICON
+    Box {
+        IconButton(
+            onClick = { categoryMenuExpanded = true }
+        ) {
+            Icon(
+                imageVector = Icons.Default.FilterList,
+                contentDescription = "Categories"
+            )
+        }
+
+        DropdownMenu(
+            expanded = categoryMenuExpanded,
+            onDismissRequest = { categoryMenuExpanded = false }
+        ) {
+            chipsWithCounts.forEachIndexed { index, item ->
+                DropdownMenuItem(
+                    text = {
+                        Text("${item.first} (${item.second})")
+                    },
+                    onClick = {
+                        selectedChip = index
+                        categoryMenuExpanded = false
+                    }
                 )
+            }
+        }
+    }
+
+    // EXISTING CHIPS (UNCHANGED)
+    CategoryChips(
+        chips = chipsWithCounts,
+        selectedIndex = selectedChip,
+        onChipSelected = { selectedChip = it }
+    )
+                }
 
                 // FILTER + SORT TOOLS
                 val filteredTools = state.tools.filter { tool ->
