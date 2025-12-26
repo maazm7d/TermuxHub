@@ -26,14 +26,10 @@ class MainActivity : ComponentActivity() {
                 val systemUiController = rememberSystemUiController()
 
                 SideEffect {
-                    // Set status bar white
-                    systemUiController.setStatusBarColor(
-                        color = Color.White,
-                        darkIcons = true      // enable dark icons
-                    )
-
-                    // Remove the default scrim tint
-                    window.statusBarColor = Color.White.toArgb()
+    systemUiController.setStatusBarColor(
+        color = Color.White,
+        darkIcons = true
+    )
                 }
 
                 TermuxHubAppNav()
