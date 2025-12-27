@@ -1,7 +1,6 @@
 package com.maazm7d.termuxhub.ui.screens.home
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import com.maazm7d.termuxhub.ui.components.*
@@ -43,6 +41,9 @@ fun HomeScreen(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    // 🔒 Prevent menu spam during navigation
+    var navigationLocked by remember { mutableStateOf(false) }
+
     val searchQuery = rememberSaveable { mutableStateOf("") }
     var selectedCategoryIndex by rememberSaveable { mutableStateOf(0) }
     var currentSort by rememberSaveable { mutableStateOf(SortType.MOST_STARRED) }
@@ -55,9 +56,13 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         viewModel.refresh()
         drawerState.close()
+        navigationLocked = false
     }
 
-    BackHandler(drawerState.isOpen) {
+    // 🚫 Block back while drawer is animating
+    BackHandler(
+        enabled = drawerState.isOpen && !drawerState.isAnimationRunning
+    ) {
         scope.launch { drawerState.close() }
     }
 
@@ -115,14 +120,19 @@ fun HomeScreen(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+
+        // 🚫 Disable gestures during animation
+        gesturesEnabled = !drawerState.isAnimationRunning,
+
         drawerContent = {
             ModalDrawerSheet(
-                modifier = Modifier.width(280.dp),
-                drawerContainerColor = Color.White
+                modifier = Modifier.width(280.dp)
             ) {
                 AppDrawer { action ->
                     scope.launch {
+                        navigationLocked = true
                         drawerState.close()
+
                         when (action) {
                             "saved" -> onOpenSaved()
                             "about" -> onOpenSettings()
@@ -133,111 +143,119 @@ fun HomeScreen(
         }
     ) {
         Scaffold { padding ->
-            Column(
+            Surface(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
-                    .padding(horizontal = 6.dp)
+                    .padding(padding),
+                color = MaterialTheme.colorScheme.background
             ) {
-
-                /* ---------- TOP ROW ---------- */
-
-                Row(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxSize()
+                        .padding(horizontal = 6.dp)
                 ) {
-                    IconButton(
-                        enabled = !drawerState.isAnimationRunning,
-                        onClick = { scope.launch { drawerState.open() } }
+
+                    /* ---------- TOP ROW ---------- */
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
-                    }
-
-                    SearchBar(
-                        queryState = searchQuery,
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    Box {
-                        IconButton(onClick = { sortMenuExpanded = true }) {
-                            Icon(Icons.Default.FilterList, contentDescription = "Sort")
-                        }
-
-                        DropdownMenu(
-                            expanded = sortMenuExpanded,
-                            onDismissRequest = { sortMenuExpanded = false }
-                        ) {
-                            SortType.values().forEach { sort ->
-                                DropdownMenuItem(
-                                    text = { Text(sort.label) },
-                                    onClick = {
-                                        currentSort = sort
-                                        sortMenuExpanded = false
-                                    }
-                                )
+                        IconButton(
+                            enabled = !drawerState.isAnimationRunning && !navigationLocked,
+                            onClick = {
+                                scope.launch { drawerState.open() }
                             }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                /* ---------- CATEGORY ROW ---------- */
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box {
-                        IconButton(onClick = { categoryMenuExpanded = true }) {
-                            Icon(Icons.Default.GridView, contentDescription = "Categories")
-                        }
-
-                        DropdownMenu(
-                            expanded = categoryMenuExpanded,
-                            onDismissRequest = { categoryMenuExpanded = false }
                         ) {
-                            categories.forEachIndexed { index, item ->
-                                DropdownMenuItem(
-                                    text = { Text("${item.first} (${item.second})") },
-                                    onClick = {
-                                        selectedCategoryIndex = index
-                                        categoryMenuExpanded = false
-                                    }
-                                )
-                            }
+                            Icon(Icons.Default.Menu, contentDescription = "Menu")
                         }
-                    }
 
-                    CategoryChips(
-                        chips = categories,
-                        selectedIndex = selectedCategoryIndex,
-                        onChipSelected = { selectedCategoryIndex = it }
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                /* ---------- LIST ---------- */
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 12.dp)
-                ) {
-                    items(
-                        items = filteredTools,
-                        key = { tool -> tool.id }
-                    ) { tool ->
-                        ToolCard(
-                            tool = tool,
-                            stars = starsMap[tool.id],
-                            onOpenDetails = onOpenDetails,
-                            onToggleFavorite = viewModel::toggleFavorite,
-                            onSave = viewModel::toggleFavorite,
-                            onShare = {}
+                        SearchBar(
+                            queryState = searchQuery,
+                            modifier = Modifier.weight(1f)
                         )
+
+                        Box {
+                            IconButton(onClick = { sortMenuExpanded = true }) {
+                                Icon(Icons.Default.FilterList, contentDescription = "Sort")
+                            }
+
+                            DropdownMenu(
+                                expanded = sortMenuExpanded,
+                                onDismissRequest = { sortMenuExpanded = false }
+                            ) {
+                                SortType.values().forEach { sort ->
+                                    DropdownMenuItem(
+                                        text = { Text(sort.label) },
+                                        onClick = {
+                                            currentSort = sort
+                                            sortMenuExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    /* ---------- CATEGORY ROW ---------- */
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box {
+                            IconButton(onClick = { categoryMenuExpanded = true }) {
+                                Icon(Icons.Default.GridView, contentDescription = "Categories")
+                            }
+
+                            DropdownMenu(
+                                expanded = categoryMenuExpanded,
+                                onDismissRequest = { categoryMenuExpanded = false }
+                            ) {
+                                categories.forEachIndexed { index, item ->
+                                    DropdownMenuItem(
+                                        text = { Text("${item.first} (${item.second})") },
+                                        onClick = {
+                                            selectedCategoryIndex = index
+                                            categoryMenuExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+
+                        CategoryChips(
+                            chips = categories,
+                            selectedIndex = selectedCategoryIndex,
+                            onChipSelected = { selectedCategoryIndex = it }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    /* ---------- LIST ---------- */
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 12.dp)
+                    ) {
+                        items(
+                            items = filteredTools,
+                            key = { tool -> tool.id }
+                        ) { tool ->
+                            ToolCard(
+                                tool = tool,
+                                stars = starsMap[tool.id],
+                                onOpenDetails = onOpenDetails,
+                                onToggleFavorite = viewModel::toggleFavorite,
+                                onSave = viewModel::toggleFavorite,
+                                onShare = {}
+                            )
+                        }
                     }
                 }
             }
