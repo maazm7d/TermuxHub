@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.maazm7d.termuxhub.domain.model.getPublishedDate
 import com.maazm7d.termuxhub.ui.components.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 enum class SortType(val label: String) {
@@ -51,19 +50,17 @@ fun HomeScreen(
     var sortMenuExpanded by remember { mutableStateOf(false) }
     var categoryMenuExpanded by remember { mutableStateOf(false) }
 
-    // 🔒 Menu cooldown
-    var isMenuEnabled by rememberSaveable { mutableStateOf(true) }
+    // 🔒 Menu cooldown timestamp (THE FIX)
+    var menuCooldownUntil by rememberSaveable { mutableLongStateOf(0L) }
+
+    val isMenuEnabled =
+        System.currentTimeMillis() > menuCooldownUntil
 
     /* -------------------- EFFECTS -------------------- */
 
     LaunchedEffect(Unit) {
         viewModel.refresh()
         drawerState.close()
-
-        // Disable menu for 2 seconds when HomeScreen appears
-        isMenuEnabled = false
-        delay(2000)
-        isMenuEnabled = true
     }
 
     BackHandler(drawerState.isOpen) {
@@ -131,7 +128,11 @@ fun HomeScreen(
             ) {
                 AppDrawer { action ->
                     scope.launch {
+                        // 🔒 START cooldown BEFORE leaving HomeScreen
+                        menuCooldownUntil = System.currentTimeMillis() + 1500
+
                         drawerState.close()
+
                         when (action) {
                             "saved" -> onOpenSaved()
                             "about" -> onOpenSettings()
@@ -252,7 +253,11 @@ fun HomeScreen(
                         ToolCard(
                             tool = tool,
                             stars = starsMap[tool.id],
-                            onOpenDetails = onOpenDetails,
+                            onOpenDetails = {
+                                // 🔒 Also start cooldown when opening details
+                                menuCooldownUntil = System.currentTimeMillis() + 1500
+                                onOpenDetails(it)
+                            },
                             onToggleFavorite = viewModel::toggleFavorite,
                             onSave = viewModel::toggleFavorite,
                             onShare = {}
