@@ -24,12 +24,15 @@ defaultConfig {
 signingConfigs {
     create("release") {
         val keystorePath = System.getenv("KEYSTORE_FILE")
-        if (keystorePath != null) {
-            storeFile = file(keystorePath)
-            storePassword = System.getenv("KEYSTORE_PASSWORD")
-            keyAlias = System.getenv("KEY_ALIAS")
-            keyPassword = System.getenv("KEY_PASSWORD")
+
+        require(!keystorePath.isNullOrBlank()) {
+            "KEYSTORE_FILE env var is missing"
         }
+
+        storeFile = file("${rootProject.projectDir}/$keystorePath")
+        storePassword = System.getenv("KEYSTORE_PASSWORD")
+        keyAlias = System.getenv("KEY_ALIAS")
+        keyPassword = System.getenv("KEY_PASSWORD")
     }
 }
 
