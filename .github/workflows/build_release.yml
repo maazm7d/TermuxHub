@@ -2,13 +2,11 @@ name: Build Release APK
 
 on:
   push:
-    branches:
-      - main  # or your default branch
-  workflow_dispatch:  # allows manual triggering
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
-    name: Build Release APK
     runs-on: ubuntu-latest
 
     steps:
@@ -21,15 +19,17 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Cache Gradle packages
+      - name: Cache Gradle
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
-            ~/.gradle/wrapper/
+            ~/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
       - name: Build Release APK
         run: ./gradlew assembleRelease
@@ -38,4 +38,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
-          path: app/build/outputs/apk/release/app-release.apk
+          path: app/build/outputs/apk/release/*.apk
