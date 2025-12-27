@@ -21,6 +21,9 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
 
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
+
       - name: Build Release APK
         env:
           KEYSTORE_FILE: keystore.jks
