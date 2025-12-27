@@ -20,37 +20,46 @@ defaultConfig {
     versionName = "1.0.0"
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 }
-
 signingConfigs {
-    create("release") {
-        val keystorePath = System.getenv("KEYSTORE_FILE")
+        // Do NOT validate here
+        create("release") {
+            val keystorePath = System.getenv("KEYSTORE_FILE")
+            if (!keystorePath.isNullOrBlank()) {
+                storeFile = file("${rootProject.projectDir}/$keystorePath")
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
 
-        require(!keystorePath.isNullOrBlank()) {
-            "KEYSTORE_FILE env var is missing"
+    buildTypes {
+
+        getByName("debug") {
+            // ✅ Debug uses default debug keystore
+            signingConfig = null
+            isMinifyEnabled = false
         }
 
-        storeFile = file("${rootProject.projectDir}/$keystorePath")
-        storePassword = System.getenv("KEYSTORE_PASSWORD")
-        keyAlias = System.getenv("KEY_ALIAS")
-        keyPassword = System.getenv("KEY_PASSWORD")
-    }
-}
+        getByName("release") {
 
-buildTypes {
-    getByName("release") {
-        signingConfig = signingConfigs.getByName("release")
-        isMinifyEnabled = true
-        isShrinkResources = false
-        proguardFiles(
-            getDefaultProguardFile("proguard-android-optimize.txt"),
-            "proguard-rules.pro"
-        )
+            val keystorePath = System.getenv("KEYSTORE_FILE")
+
+            if (!keystorePath.isNullOrBlank()) {
+                // ✅ Sign only if env vars exist
+                signingConfig = signingConfigs.getByName("release")
+            }
+
+            isMinifyEnabled = true
+            isShrinkResources = false
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
     }
 
-    getByName("debug") {
-        isMinifyEnabled = false
-    }
-}
 
 compileOptions {
     sourceCompatibility = JavaVersion.VERSION_17
