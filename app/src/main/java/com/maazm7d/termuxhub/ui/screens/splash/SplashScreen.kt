@@ -15,28 +15,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
+
 @Composable
 fun SplashScreen(onFinished: () -> Unit) {
 
-    var showIcon by remember { mutableStateOf(false) }
-    var showText by remember { mutableStateOf(false) }
-
-    val iconAlpha by animateFloatAsState(
-        targetValue = if (showIcon) 1f else 0f,
-        label = "iconAlpha"
-    )
-
-    val textAlpha by animateFloatAsState(
-        targetValue = if (showText) 1f else 0f,
-        label = "textAlpha"
-    )
-
     LaunchedEffect(Unit) {
-        delay(200)
-        showIcon = true
-        delay(400)
-        showText = true
-        delay(800)
         onFinished()
     }
 
@@ -46,30 +29,24 @@ fun SplashScreen(onFinished: () -> Unit) {
             .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            // BIG Termux symbol (monospace)
             Text(
                 text = ">_",
                 fontSize = 100.sp,
                 fontWeight = FontWeight.ExtraBold,
                 fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                color = Color.Black,
-                modifier = Modifier.alpha(iconAlpha)
+                color = Color.Black
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // App name (monospace)
             Text(
                 text = "Termux Hub",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Medium,
                 fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                color = Color.Black,
-                modifier = Modifier.alpha(textAlpha)
+                color = Color.Black
             )
         }
     }
