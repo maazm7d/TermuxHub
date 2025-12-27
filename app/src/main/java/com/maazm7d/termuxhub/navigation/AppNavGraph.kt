@@ -17,9 +17,12 @@ import com.maazm7d.termuxhub.ui.screens.about.AboutScreen
 import com.maazm7d.termuxhub.ui.screens.splash.SplashScreen
 
 @Composable
-fun TermuxHubAppNav(modifier: Modifier = Modifier) {
+fun TermuxHubAppNav() {
     val navController = rememberNavController()
-    AppNavHost(navController = navController, modifier = modifier)
+
+    MainScaffold(navController = navController) {
+        AppNavHost(navController = navController)
+    }
 }
 
 @Composable
