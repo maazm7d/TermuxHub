@@ -1,7 +1,6 @@
 package com.maazm7d.termuxhub.ui.screens.home
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,9 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
-import com.maazm7d.termuxhub.ui.components.*
 import com.maazm7d.termuxhub.domain.model.getPublishedDate
+import com.maazm7d.termuxhub.ui.components.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 enum class SortType(val label: String) {
     MOST_STARRED("Most starred"),
@@ -35,6 +35,7 @@ fun HomeScreen(
     onOpenSaved: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
+
     /* -------------------- STATE -------------------- */
 
     val uiState by viewModel.uiState.collectAsState()
@@ -50,11 +51,19 @@ fun HomeScreen(
     var sortMenuExpanded by remember { mutableStateOf(false) }
     var categoryMenuExpanded by remember { mutableStateOf(false) }
 
+    // 🔒 Menu cooldown
+    var isMenuEnabled by rememberSaveable { mutableStateOf(true) }
+
     /* -------------------- EFFECTS -------------------- */
 
     LaunchedEffect(Unit) {
         viewModel.refresh()
         drawerState.close()
+
+        // Disable menu for 2 seconds when HomeScreen appears
+        isMenuEnabled = false
+        delay(2000)
+        isMenuEnabled = true
     }
 
     BackHandler(drawerState.isOpen) {
@@ -149,10 +158,20 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        enabled = !drawerState.isAnimationRunning,
-                        onClick = { scope.launch { drawerState.open() } }
+                        enabled = isMenuEnabled && !drawerState.isAnimationRunning,
+                        onClick = {
+                            scope.launch { drawerState.open() }
+                        }
                     ) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Menu",
+                            tint = if (isMenuEnabled) {
+                                MaterialTheme.colorScheme.onSurface
+                            } else {
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                            }
+                        )
                     }
 
                     SearchBar(
