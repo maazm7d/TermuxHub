@@ -3,15 +3,18 @@
 
     <style name="Theme.TermuxHub" parent="Theme.Material3.DayNight.NoActionBar">
 
-    <!-- 🔥 ABSOLUTELY REQUIRED -->
-    <item name="android:windowBackground">@android:color/white</item>
+        <!-- REQUIRED to prevent pink / magenta flash -->
+        <item name="android:windowBackground">@android:color/white</item>
 
-    <!-- Edge-to-edge -->
-    <item name="android:statusBarColor">@android:color/transparent</item>
-    <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- Edge-to-edge support -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
 
-    <!-- Prevent transition flashes -->
-    <item name="android:windowAnimationStyle">@null</item>
+        <!-- Disable default animations that cause flashes -->
+        <item name="android:windowAnimationStyle">@null</item>
+
+        <!-- Material defaults -->
+        <item name="android:forceDarkAllowed">true</item>
 
     </style>
 
