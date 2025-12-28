@@ -98,14 +98,7 @@ fun HomeScreen(
 
     /* -------------------- UI -------------------- */
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Tools") }
-            )
-        }
-    ) { padding ->
-
+    Scaffold { padding -> 
         Column(
             modifier = Modifier
                 .fillMaxSize()
