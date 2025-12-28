@@ -7,34 +7,46 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun TermuxHubAppNav() {
+
     val navController = rememberNavController()
 
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination: NavDestination? = backStackEntry?.destination
 
-    val showBottomBar = currentDestination?.route !in listOf(
-        Destinations.SPLASH,
-        "${Destinations.DETAILS}/{toolId}"
-    )
+    /**
+     * Bottom bar should NOT be visible on:
+     * - Splash
+     * - Tool detail screen
+     */
+    val showBottomBar = when (currentDestination?.route) {
+        Destinations.SPLASH -> false
+        "${Destinations.DETAILS}/{toolId}" -> false
+        else -> true
+    }
 
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
                 NavigationBar {
                     bottomNavItems.forEach { item ->
-                        val selected =
-                            currentDestination?.hierarchy?.any { it.route == item.route } == true
+
+                        val isSelected =
+                            currentDestination
+                                ?.hierarchy
+                                ?.any { it.route == item.route } == true
 
                         NavigationBarItem(
-                            selected = selected,
+                            selected = isSelected,
                             onClick = {
                                 navController.navigate(item.route) {
+                                    // This is the Play Store navigation behavior
                                     popUpTo(Destinations.TOOLS) {
                                         saveState = true
                                     }
@@ -48,16 +60,16 @@ fun TermuxHubAppNav() {
                                     contentDescription = null
                                 )
                             },
-                            label = null // ICONS ONLY
+                            label = null // Icons only (Play Store style)
                         )
                     }
                 }
             }
         }
-    ) { padding ->
+    ) { innerPadding ->
         AppNavHost(
             navController = navController,
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(innerPadding)
         )
     }
 }

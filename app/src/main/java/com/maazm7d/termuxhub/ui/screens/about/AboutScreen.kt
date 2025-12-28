@@ -21,11 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.maazm7d.termuxhub.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutScreen(
-    onBack: () -> Unit
-) {
+fun AboutScreen() {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
@@ -33,111 +30,93 @@ fun AboutScreen(
         context.packageManager
             .getPackageInfo(context.packageName, 0)
             .versionName ?: "Unknown"
-    } catch (e: PackageManager.NameNotFoundException) {
+    } catch (_: PackageManager.NameNotFoundException) {
         "Unknown"
     }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.surface,
-        topBar = {
-            TopAppBar(
-                title = { Text("About") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-        }
-    ) { padding ->
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
-        Column(
+        // App Icon
+        Image(
+            painter = painterResource(id = R.drawable.ic_launcher),
+            contentDescription = "App Icon",
             modifier = Modifier
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .size(96.dp)
+                .clip(RoundedCornerShape(28.dp))
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // App Name
+        Text(
+            text = "Termux Hub",
+            style = MaterialTheme.typography.headlineSmall
+        )
+
+        // Tagline
+        Text(
+            text = "Open-source hub for powerful Termux tools.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp)
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // App Information
+        SectionCard(
+            title = "App Information",
+            icon = Icons.Default.Info
         ) {
-
-            // App Icon (Quircle)
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher),
-                contentDescription = "App Icon",
-                modifier = Modifier
-                    .size(96.dp)
-                    .clip(RoundedCornerShape(28.dp))
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // App Name
-            Text(
-                text = "Termux Hub",
-                style = MaterialTheme.typography.headlineSmall
-            )
-
-            // Tagline
-            Text(
-                text = "Open-source hub for powerful Termux tools.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp)
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // App Information
-            SectionCard(
-                title = "App Information",
-                icon = Icons.Default.Info
-            ) {
-                InfoItem(Icons.Default.Android, "Version", appVersion)
-                InfoItem(Icons.Default.Update, "Last Updated", "Dec 2025")
-                InfoItem(Icons.Default.Person, "Main Developer", "Maaz M")
-                InfoItem(Icons.Default.Code, "Platform", "Android / Termux")
-                InfoItem(Icons.Default.Public, "Open Source", "Yes")
-            }
-
-            // Links (includes donations)
-            SectionCard(
-                title = "Links",
-                icon = Icons.Default.Link
-            ) {
-                LinkItem(Icons.Default.Code, "Open Source Repository") {
-                    uriHandler.openUri("https://github.com/maazm7d/TermuxHub")
-                }
-
-                LinkItem(Icons.Default.BugReport, "Issue Tracker") {
-                    uriHandler.openUri("https://github.com/maazm7d/TermuxHub/issues")
-                }
-
-                LinkItem(Icons.Default.Person, "Developer GitHub") {
-                    uriHandler.openUri("https://github.com/maazm7d")
-                }
-
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
-
-                LinkItem(Icons.Default.AttachMoney, "Donate via PayPal") {
-                    uriHandler.openUri("https://paypal.me/maazm7d")
-                }
-
-                LinkItem(Icons.Default.Coffee, "Buy Me a Coffee") {
-                    uriHandler.openUri("https://buymeacoffee.com/maazm7d")
-                }
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Text(
-                text = "Made with ❤️ for the Termux community",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            InfoItem(Icons.Default.Android, "Version", appVersion)
+            InfoItem(Icons.Default.Update, "Last Updated", "Dec 2025")
+            InfoItem(Icons.Default.Person, "Main Developer", "Maaz M")
+            InfoItem(Icons.Default.Code, "Platform", "Android / Termux")
+            InfoItem(Icons.Default.Public, "Open Source", "Yes")
         }
+
+        // Links
+        SectionCard(
+            title = "Links",
+            icon = Icons.Default.Link
+        ) {
+            LinkItem(Icons.Default.Code, "Open Source Repository") {
+                uriHandler.openUri("https://github.com/maazm7d/TermuxHub")
+            }
+
+            LinkItem(Icons.Default.BugReport, "Issue Tracker") {
+                uriHandler.openUri("https://github.com/maazm7d/TermuxHub/issues")
+            }
+
+            LinkItem(Icons.Default.Person, "Developer GitHub") {
+                uriHandler.openUri("https://github.com/maazm7d")
+            }
+
+            Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+            LinkItem(Icons.Default.AttachMoney, "Donate via PayPal") {
+                uriHandler.openUri("https://paypal.me/maazm7d")
+            }
+
+            LinkItem(Icons.Default.Coffee, "Buy Me a Coffee") {
+                uriHandler.openUri("https://buymeacoffee.com/maazm7d")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = "Made with ❤️ for the Termux community",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -162,27 +141,18 @@ private fun SectionCard(
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            // Center-aligned header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Icon(icon, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Text(text = title, style = MaterialTheme.typography.titleMedium)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Left-aligned content
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.Start
-            ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
                 content()
             }
         }
@@ -218,20 +188,12 @@ private fun LinkItem(
 ) {
     TextButton(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            Text(text, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
