@@ -23,37 +23,22 @@ defaultConfig {
 
 signingConfigs {
     create("release") {
-        val keystorePath = System.getenv("KEYSTORE_FILE")
-
-        if (keystorePath != null) {
-            storeFile = file("${rootProject.projectDir}/$keystorePath")
-            storePassword = System.getenv("KEYSTORE_PASSWORD")
-            keyAlias = System.getenv("KEY_ALIAS")
-            keyPassword = System.getenv("KEY_PASSWORD")
-        }
+        storeFile = file("${rootDir}/release.keystore")
+        storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+        keyAlias = System.getenv("KEY_ALIAS") ?: ""
+        keyPassword = System.getenv("KEY_PASSWORD") ?: ""
     }
 }
 
 buildTypes {
-    getByName("release") {
-        val keystorePath = System.getenv("KEYSTORE_FILE")
-        require(!keystorePath.isNullOrBlank()) {
-            "KEYSTORE_FILE env var is missing (Release build)"
-        }
-
-        signingConfig = signingConfigs.getByName("release")
+    release {
         isMinifyEnabled = true
         isShrinkResources = true
         proguardFiles(
             getDefaultProguardFile("proguard-android-optimize.txt"),
             "proguard-rules.pro"
         )
-    }
-
-    getByName("debug") {
-        // DO NOT set signingConfig here
-        // Gradle will automatically use debug.keystore
-        isMinifyEnabled = true
+        signingConfig = signingConfigs.getByName("release")
     }
 }
 
