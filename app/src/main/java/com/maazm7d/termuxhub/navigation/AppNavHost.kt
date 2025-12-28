@@ -38,7 +38,7 @@ fun AppNavHost(
         // ───────────────────────────
         composable(Destinations.SPLASH) {
             SplashScreen(
-                onFinish = {
+                onFinished = {
                     navController.navigate(Destinations.TOOLS) {
                         popUpTo(Destinations.SPLASH) {
                             inclusive = true
