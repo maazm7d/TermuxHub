@@ -22,13 +22,12 @@ fun SavedScreen(
   if (savedTools.isEmpty()) {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
+                    .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "No saved tools yet",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.headlineSmall
                 )
             }
         } else {
