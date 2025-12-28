@@ -23,10 +23,13 @@ defaultConfig {
 
 signingConfigs {
     create("release") {
-        storeFile = file("${rootDir}/release.keystore")
-        storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
-        keyAlias = System.getenv("KEY_ALIAS") ?: ""
-        keyPassword = System.getenv("KEY_PASSWORD") ?: ""
+        val keystorePath = System.getenv("KEYSTORE_FILE")
+        if (keystorePath != null) {
+            storeFile = file("${rootProject.projectDir}/$keystorePath")
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
+        }
     }
 }
 
