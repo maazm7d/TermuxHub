@@ -18,15 +18,8 @@ fun SavedScreen(
 ) {
     val savedTools by viewModel.savedTools.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Saved") }
-            )
-        }
-    ) { padding ->
-
-        if (savedTools.isEmpty()) {
+    Scaffold { padding ->
+  if (savedTools.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
