@@ -1,63 +1,63 @@
 package com.maazm7d.termuxhub.navigation
 
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.maazm7d.termuxhub.ui.screens.details.ToolDetailScreen
-import com.maazm7d.termuxhub.ui.screens.details.ToolDetailViewModel
-import com.maazm7d.termuxhub.ui.screens.home.HomeScreen
-import com.maazm7d.termuxhub.ui.screens.home.HomeViewModel
-import com.maazm7d.termuxhub.ui.screens.saved.SavedScreen
-import com.maazm7d.termuxhub.ui.screens.saved.SavedViewModel
-import com.maazm7d.termuxhub.ui.screens.about.AboutScreen
-import com.maazm7d.termuxhub.ui.screens.splash.SplashScreen
 
 @Composable
-fun TermuxHubAppNav(modifier: Modifier = Modifier) {
+fun TermuxHubAppNav() {
     val navController = rememberNavController()
-    AppNavHost(navController = navController, modifier = modifier)
-}
 
-@Composable
-fun AppNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
-    NavHost(
-        navController = navController,
-        startDestination = Destinations.SPLASH,
-        modifier = modifier
-    ) {
-        composable(Destinations.SPLASH) {
-            SplashScreen(onFinished = {
-                navController.navigate(Destinations.HOME) {
-                    popUpTo(Destinations.SPLASH) { inclusive = true }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
+    val showBottomBar = currentDestination?.route !in listOf(
+        Destinations.SPLASH,
+        "${Destinations.DETAILS}/{toolId}"
+    )
+
+    Scaffold(
+        bottomBar = {
+            if (showBottomBar) {
+                NavigationBar {
+                    bottomNavItems.forEach { item ->
+                        val selected =
+                            currentDestination?.hierarchy?.any { it.route == item.route } == true
+
+                        NavigationBarItem(
+                            selected = selected,
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    popUpTo(Destinations.TOOLS) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = null
+                                )
+                            },
+                            label = null // ICONS ONLY
+                        )
+                    }
                 }
-            })
+            }
         }
-
-        composable(Destinations.HOME) {
-            val vm: HomeViewModel = hiltViewModel()
-            HomeScreen(
-                viewModel = vm,
-                onOpenDetails = { id -> navController.navigate("${Destinations.DETAILS}/$id") },
-                onOpenSaved = { navController.navigate(Destinations.SAVED) },
-                onOpenSettings = { navController.navigate(Destinations.ABOUT) }
-            )
-        }
-
-        composable("${Destinations.DETAILS}/{toolId}") { backStackEntry ->
-            val toolId = backStackEntry.arguments?.getString("toolId") ?: ""
-            val vm: ToolDetailViewModel = hiltViewModel()
-            ToolDetailScreen(toolId = toolId, viewModel = vm, onBack = { navController.popBackStack() })
-        }
-
-        composable(Destinations.SAVED) {
-            val vm: SavedViewModel = hiltViewModel()
-            SavedScreen(viewModel = vm, onBack = { navController.popBackStack() })
-        }
-
-        composable(Destinations.ABOUT) { AboutScreen(onBack = { navController.popBackStack() }) }
+    ) { padding ->
+        AppNavHost(
+            navController = navController,
+            modifier = Modifier.padding(padding)
+        )
     }
 }
