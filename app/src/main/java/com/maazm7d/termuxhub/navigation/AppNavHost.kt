@@ -36,14 +36,17 @@ fun AppNavHost(
         // ───────────────────────────
         // Splash (NO bottom bar)
         // ───────────────────────────
-        composable(Destinations.SAVED) {
-    val vm: SavedViewModel = hiltViewModel()
-    SavedScreen(
-        viewModel = vm,
-        onOpenDetails = { toolId ->
-            navController.navigate("${Destinations.DETAILS}/$toolId")
-        }
-    )
+        composable(Destinations.SPLASH) {
+            SplashScreen(
+                onFinished = {
+                    navController.navigate(Destinations.TOOLS) {
+                        popUpTo(Destinations.SPLASH) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
 
         // ───────────────────────────
