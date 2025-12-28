@@ -64,10 +64,14 @@ fun AppNavHost(
         }
 
         composable(Destinations.SAVED) {
-            val vm: SavedViewModel = hiltViewModel()
-            SavedScreen(viewModel = vm)
+    val vm: SavedViewModel = hiltViewModel()
+    SavedScreen(
+        viewModel = vm,
+        onOpenDetails = { toolId ->
+            navController.navigate("${Destinations.DETAILS}/$toolId")
         }
-
+    )
+        }
         composable(Destinations.HALL) {
             HallOfFameScreen()
         }
