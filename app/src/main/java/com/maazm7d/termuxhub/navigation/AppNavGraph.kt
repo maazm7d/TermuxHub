@@ -67,7 +67,7 @@ fun TermuxHubAppNav() {
                             },
                             label = null, // Icons only (Play Store style)
                             colors = NavigationBarItemDefaults.colors(
-                                indicatorColor = MaterialTheme.colorScheme.surface, // 🔵 no pink
+                                indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f), // 🔵 no pink
                                 selectedIconColor = MaterialTheme.colorScheme.primary,
                                 unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
