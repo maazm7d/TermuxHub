@@ -1,18 +1,17 @@
 package com.maazm7d.termuxhub.navigation
 
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.foundation.layout.padding
-
 
 @Composable
 fun TermuxHubAppNav() {
@@ -36,7 +35,9 @@ fun TermuxHubAppNav() {
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ) {
                     bottomNavItems.forEach { item ->
 
                         val isSelected =
@@ -48,7 +49,6 @@ fun TermuxHubAppNav() {
                             selected = isSelected,
                             onClick = {
                                 navController.navigate(item.route) {
-                                    // This is the Play Store navigation behavior
                                     popUpTo(Destinations.TOOLS) {
                                         saveState = true
                                     }
@@ -59,10 +59,18 @@ fun TermuxHubAppNav() {
                             icon = {
                                 Icon(
                                     imageVector = item.icon,
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .offset(y = if (item.isHome) (-4).dp else 0.dp)
+                                        .size(if (item.isHome) 30.dp else 22.dp)
                                 )
                             },
-                            label = null // Icons only (Play Store style)
+                            label = null, // Icons only (Play Store style)
+                            colors = NavigationBarItemDefaults.colors(
+                                indicatorColor = MaterialTheme.colorScheme.surface, // 🔵 no pink
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         )
                     }
                 }
