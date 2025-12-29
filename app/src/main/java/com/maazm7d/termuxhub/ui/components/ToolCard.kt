@@ -1,28 +1,33 @@
 package com.maazm7d.termuxhub.ui.components
 
-import android.widget.Toast
+import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material.icons.outlined.Security
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.maazm7d.termuxhub.domain.model.Tool
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.outlined.Security
+import androidx.compose.ui.text.style.TextAlign
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun ToolCard(
@@ -30,17 +35,20 @@ fun ToolCard(
     stars: Int?,
     onOpenDetails: (String) -> Unit,
     onToggleFavorite: (String) -> Unit,
+    onSave: (String) -> Unit,
     onShare: (Tool) -> Unit
 ) {
+
     val thumbnailUrl =
         "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/metadata/thumbnail/${tool.id}.png"
 
-    var isFav by remember(tool.id) { mutableStateOf(tool.isFavorite) }
-    val favScale by animateFloatAsState(if (isFav) 1.08f else 1f)
+    var isFav by remember { mutableStateOf(tool.isFavorite) }
+    val favScale by animateFloatAsState(targetValue = if (isFav) 1.05f else 1f)
 
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
 
+    // dialog state for star action
     var showStarDialog by remember { mutableStateOf(false) }
     var pendingRepoUrl by remember { mutableStateOf<String?>(null) }
 
@@ -50,140 +58,224 @@ fun ToolCard(
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .clickable { onOpenDetails(tool.id) },
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
+
         Column {
 
+            // Thumbnail
             AsyncImage(
                 model = thumbnailUrl,
-                contentDescription = null,
+                contentDescription = "${tool.name} thumbnail",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(16f / 9f)
             )
 
-            Column(modifier = Modifier.padding(14.dp)) {
+            Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
 
                 Text(
                     text = tool.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
 
-                Spacer(Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = tool.description.ifBlank { "No description available" },
-                    style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(Modifier.height(10.dp))
-
-                Row(
+    text = tool.description.ifBlank { "No description available" },
+    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 13.sp),
+    color = MaterialTheme.colorScheme.onSurfaceVariant,
+    maxLines = 2,
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+    textAlign = TextAlign.Center
+)
 
-                    Icon(
-                        Icons.Filled.CalendarMonth,
-                        null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Text(tool.publishedAt ?: "N/A", fontSize = 13.sp)
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    Spacer(Modifier.weight(1f))
+                // DATE
+                // DATE + AUTHOR on same line
 
-                    Icon(
-                        if (tool.requireRoot == true)
-                            Icons.Filled.Security
-                        else
-                            Icons.Outlined.Security,
-                        null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        if (tool.requireRoot == true) "Root" else "Non-Root",
-                        fontSize = 13.sp
-                    )
+Row(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 12.dp, vertical = 6.dp),
+    verticalAlignment = Alignment.CenterVertically
+) {
+
+    // LEFT — Published At
+    Row(
+        modifier = Modifier.weight(1f),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Filled.CalendarMonth,
+            contentDescription = "Published At",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = tool.publishedAt ?: "N/A",
+            style = MaterialTheme.typography.bodySmall,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1
+        )
+    }
+
+    // CENTER — Author
+    Row(
+        modifier = Modifier.weight(1f),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Person,
+            contentDescription = "Author",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = tool.author ?: "Unknown",
+            style = MaterialTheme.typography.bodySmall,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1
+        )
+    }
+
+    // RIGHT — Require Root
+    Row(
+        modifier = Modifier.weight(1f),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val isRoot = tool.requireRoot == true
+        Icon(
+            imageVector = if (isRoot) Icons.Filled.Security else Icons.Outlined.Security,
+            contentDescription = if (isRoot) "Root Required" else "Non-Root",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = if (isRoot) "Root" else "Non-Root",
+            style = MaterialTheme.typography.bodySmall,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1
+        )
+    }
+}
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // TAGS
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    tool.tags.take(2).forEach {
+                        AssistChip(
+                            onClick = {},
+                            label = { Text(it, fontSize = 12.sp) },
+                            shape = RoundedCornerShape(10.dp),
+                        )
+                    }
                 }
 
-                Spacer(Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
+                // ACTION ROW
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
-                    // ⭐ STARS
+                    // STAR (shows count and allows "open repo to star")
                     Row(
-                        modifier = Modifier.clickable {
-                            pendingRepoUrl = tool.repoUrl
-                            showStarDialog = true
-                        },
+                        modifier = Modifier
+                            .clickable {
+                                // open confirm dialog
+                                pendingRepoUrl = tool.repoUrl
+                                showStarDialog = true
+                            },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            if (stars != null) Icons.Filled.Star else Icons.Outlined.StarBorder,
-                            null,
+                            imageVector = if (stars != null) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                            contentDescription = "Stars",
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
                         )
-                        Spacer(Modifier.width(6.dp))
-                        Text(stars?.toString() ?: "—")
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(stars?.toString() ?: "—", fontSize = 14.sp)
                     }
 
-                    // 🔖 SAVE / UNSAVE (SINGLE TOGGLE)
-                    IconButton(
-                        modifier = Modifier.scale(favScale),
-                        onClick = {
-                            isFav = !isFav
-                            onToggleFavorite(tool.id)
+                    // SAVE (favorite)
+                    Row(
+    modifier = Modifier
+        .clickable {
+            isFav = !isFav
+            onToggleFavorite(tool.id)
 
-                            Toast.makeText(
-                                context,
-                                if (isFav) "Saved" else "Removed from saved",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    ) {
+            Toast.makeText(
+                context,
+                if (isFav) "Saved" else "Removed from saved",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        .scale(favScale),
+    verticalAlignment = Alignment.CenterVertically
+) {
                         Icon(
-                            imageVector =
-                                if (isFav) Icons.Filled.Bookmark
-                                else Icons.Outlined.BookmarkBorder,
-                            contentDescription = "Save"
+                            imageVector = if (isFav) Icons.Filled.Save else Icons.Filled.Save,
+                            contentDescription = "Save",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
                         )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Save", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                     }
 
-                    // 🔗 SHARE
-                    IconButton(onClick = { onShare(tool) }) {
-                        Icon(Icons.Filled.Share, null)
+                    // SHARE
+                    Row(
+                        modifier = Modifier.clickable { onShare(tool) },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(Icons.Filled.Share, contentDescription = "Share", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Share", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
         }
     }
 
+    // Star confirmation dialog
     if (showStarDialog) {
         AlertDialog(
             onDismissRequest = { showStarDialog = false },
             confirmButton = {
-                TextButton {
+                TextButton(onClick = {
                     showStarDialog = false
-                    pendingRepoUrl?.let(uriHandler::openUri)
-                } { Text("Continue") }
+                    pendingRepoUrl?.let { url ->
+                        // open repo page so user can star it on GitHub
+                        uriHandler.openUri(url)
+                    }
+                }) {
+                    Text("Continue")
+                }
             },
             dismissButton = {
-                TextButton { showStarDialog = false } { Text("Cancel") }
+                TextButton(onClick = { showStarDialog = false }) { Text("Cancel") }
             },
             title = { Text("Star on GitHub") },
-            text = { Text("Open repository to star it on GitHub?") }
+            text = { Text("Do you want to open the repository on GitHub to star it?") }
         )
     }
 }
