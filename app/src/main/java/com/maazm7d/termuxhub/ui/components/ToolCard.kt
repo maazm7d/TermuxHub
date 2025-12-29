@@ -28,6 +28,8 @@ import androidx.compose.material.icons.outlined.Security
 import androidx.compose.ui.text.style.TextAlign
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.outlined.BookmarkBorder
 
 @Composable
 fun ToolCard(
@@ -217,7 +219,7 @@ Row(
                     }
 
                     // SAVE (favorite)
-                    Row(
+Row(
     modifier = Modifier
         .clickable {
             isFav = !isFav
@@ -232,15 +234,22 @@ Row(
         .scale(favScale),
     verticalAlignment = Alignment.CenterVertically
 ) {
-                        Icon(
-                            imageVector = if (isFav) Icons.Filled.Save else Icons.Filled.Save,
-                            contentDescription = "Save",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Save", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
-                    }
+    Icon(
+        imageVector = if (isFav)
+            Icons.Filled.Bookmark
+        else
+            Icons.Outlined.BookmarkBorder,
+        contentDescription = if (isFav) "Saved" else "Save",
+        tint = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.size(20.dp)
+    )
+    Spacer(modifier = Modifier.width(6.dp))
+    Text(
+        text = if (isFav) "Saved" else "Save",
+        fontSize = 14.sp,
+        color = MaterialTheme.colorScheme.primary
+    )
+}
 
                     // SHARE
                     Row(
