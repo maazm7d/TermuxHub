@@ -18,9 +18,14 @@ class HallOfFameViewModel @Inject constructor(
     private val _members = mutableStateOf<List<HallOfFameMember>>(emptyList())
     val members: State<List<HallOfFameMember>> = _members
 
+    private val _isLoading = mutableStateOf(true)
+    val isLoading: State<Boolean> = _isLoading
+
     init {
         viewModelScope.launch {
+            _isLoading.value = true
             _members.value = repository.loadMembers()
+            _isLoading.value = false
         }
     }
 }
