@@ -74,4 +74,23 @@ fun HallOfFameScreen(
             members.isEmpty() -> {
                 Text(
                     text = "No internet connection.\nPlease connect to the internet to load Hall of Fame.",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            else -> {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    members.forEach { member ->
+                        HallOfFameCard(member)
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+                }
+            }
+        }
+    }
+}
