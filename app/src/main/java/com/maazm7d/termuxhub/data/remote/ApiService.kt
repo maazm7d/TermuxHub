@@ -4,6 +4,7 @@ import com.maazm7d.termuxhub.data.remote.dto.MetadataDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
+import com.maazm7d.termuxhub.data.remote.dto.HallOfFameIndexDto
 
 interface ApiService {
     @GET("metadata/metadata.json")
