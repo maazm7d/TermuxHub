@@ -16,11 +16,11 @@ fun HallOfFameScreen(
 ) {
 
     val members by viewModel.members
+    val isLoading by viewModel.isLoading
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
 
@@ -31,9 +31,29 @@ fun HallOfFameScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        members.forEach {
-            HallOfFameCard(it)
-            Spacer(Modifier.height(12.dp))
+        when {
+            isLoading -> {
+                CircularProgressIndicator()
+            }
+
+            members.isEmpty() -> {
+                Text(
+                    text = "No internet connection.\nPlease connect to the internet to load Hall of Fame.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            else -> {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    members.forEach {
+                        HallOfFameCard(it)
+                        Spacer(Modifier.height(12.dp))
+                    }
+                }
+            }
         }
     }
 }
