@@ -21,6 +21,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 import java.util.concurrent.TimeUnit
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import com.maazm7d.termuxhub.data.local.HallOfFameDao
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -90,4 +91,8 @@ fun provideRetrofit(
     @Provides
     @Singleton
     fun provideAppContext(@ApplicationContext context: Context): Context = context
+
+    @Provides
+    fun provideHallOfFameDao(db: AppDatabase): HallOfFameDao =
+    db.hallOfFameDao()
 }
