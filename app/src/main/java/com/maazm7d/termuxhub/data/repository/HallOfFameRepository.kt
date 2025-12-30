@@ -9,26 +9,36 @@ class HallOfFameRepository @Inject constructor(
 ) {
 
     suspend fun loadMembers(): List<HallOfFameMember> {
+        return try {
 
-        val indexResp = metadataClient.fetchHallOfFameIndex()
-        if (!indexResp.isSuccessful) return emptyList()
+            val indexResp = metadataClient.fetchHallOfFameIndex()
+            if (!indexResp.isSuccessful) return emptyList()
 
-        val members = indexResp.body()?.members ?: return emptyList()
+            val members = indexResp.body()?.members ?: return emptyList()
 
-        return members.map { dto ->
+            members.map { dto ->
+                val markdown = try {
+                    metadataClient
+                        .fetchHallOfFameMarkdown(dto.id)
+                        .body()
+                        .orEmpty()
+                } catch (e: Exception) {
+                    "" // markdown optional
+                }
 
-            val markdown = metadataClient
-                .fetchHallOfFameMarkdown(dto.id)
-                .body()
-                .orEmpty()
+                HallOfFameMember(
+                    id = dto.id,
+                    github = dto.github,
+                    speciality = dto.speciality,
+                    profileUrl = dto.profile,
+                    contribution = markdown
+                )
+            }
 
-            HallOfFameMember(
-                id = dto.id,
-                github = dto.github,
-                speciality = dto.speciality,
-                profileUrl = dto.profile,
-                contribution = markdown
-            )
+        } catch (e: Exception) {
+            // 🔥 THIS prevents crash when internet is OFF
+            e.printStackTrace()
+            emptyList()
         }
     }
 }
