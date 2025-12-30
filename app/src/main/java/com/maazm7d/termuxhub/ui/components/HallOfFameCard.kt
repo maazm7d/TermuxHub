@@ -18,14 +18,19 @@ fun HallOfFameCard(member: HallOfFameMember) {
 
     val uriHandler = LocalUriHandler.current
     val avatarUrl = "https://avatars.githubusercontent.com/${member.github}"
-    
+
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 8.dp), // ✅ same spacing as ToolCard
+        shape = RoundedCornerShape(12.dp),                // ✅ same radius
+        elevation = CardDefaults.cardElevation(6.dp),     // ✅ same elevation
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface // ✅ EXACT MATCH
+        )
     ) {
 
-        Column(Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(14.dp)) { // ✅ matches inner padding style
 
             Row {
                 AsyncImage(
@@ -39,9 +44,14 @@ fun HallOfFameCard(member: HallOfFameMember) {
                 Spacer(Modifier.width(12.dp))
 
                 Column {
-                    Text(member.github, style = MaterialTheme.typography.titleMedium)
                     Text(
-                        member.speciality,
+                        text = member.github,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Text(
+                        text = member.speciality,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -52,7 +62,8 @@ fun HallOfFameCard(member: HallOfFameMember) {
 
             MarkdownText(
                 markdown = member.contribution,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
 
             Spacer(Modifier.height(12.dp))
