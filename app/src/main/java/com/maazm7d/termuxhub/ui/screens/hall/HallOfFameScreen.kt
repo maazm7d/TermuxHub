@@ -3,6 +3,8 @@ package com.maazm7d.termuxhub.ui.screens.hall
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,26 +27,39 @@ fun HallOfFameScreen(
             .padding(16.dp)
     ) {
 
-        // Center aligned headline
-        Text(
-            text = "Hall of Fame",
-            style = MaterialTheme.typography.headlineSmall,
+        // Title with icon (centered)
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.EmojiEvents,
+                contentDescription = "Hall of Fame",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(22.dp)
+            )
 
-        Spacer(Modifier.height(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-        // Small explanatory dialog / description
+            Text(
+                text = "Hall of Fame",
+                style = MaterialTheme.typography.headlineSmall
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Description
         Text(
-            text = "This space celebrates contributors and members who made a significant impact on TermuxHub.",
+            text = "This space celebrates contributors and members who made a meaningful impact on TermuxHub.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
 
-        Spacer(Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         when {
             isLoading -> {
@@ -59,23 +74,4 @@ fun HallOfFameScreen(
             members.isEmpty() -> {
                 Text(
                     text = "No internet connection.\nPlease connect to the internet to load Hall of Fame.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-            }
-
-            else -> {
-                Column(
-                    modifier = Modifier.verticalScroll(rememberScrollState())
-                ) {
-                    members.forEach {
-                        HallOfFameCard(it)
-                        Spacer(Modifier.height(12.dp))
-                    }
-                }
-            }
-        }
-    }
-}
+                    style = MaterialTheme.typography.bodyMedium
