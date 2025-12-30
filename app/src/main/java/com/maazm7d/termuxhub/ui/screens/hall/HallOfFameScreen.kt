@@ -1,22 +1,39 @@
 package com.maazm7d.termuxhub.ui.screens.hall
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.maazm7d.termuxhub.ui.components.HallOfFameCard
 
 @Composable
-fun HallOfFameScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+fun HallOfFameScreen(
+    viewModel: HallOfFameViewModel = hiltViewModel()
+) {
+
+    val members by viewModel.members
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
     ) {
+
         Text(
             text = "Hall of Fame",
             style = MaterialTheme.typography.headlineSmall
         )
+
+        Spacer(Modifier.height(16.dp))
+
+        members.forEach {
+            HallOfFameCard(it)
+            Spacer(Modifier.height(12.dp))
+        }
     }
 }

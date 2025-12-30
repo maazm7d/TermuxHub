@@ -13,4 +13,13 @@ interface ApiService {
     suspend fun getToolReadme(
         @Path("id") toolId: String
     ): Response<String>
+
+@GET("metadata/halloffame/index.json")
+suspend fun getHallOfFameIndex(): Response<HallOfFameIndexDto>
+
+@GET("metadata/halloffame/{id}.md")
+suspend fun getHallOfFameMarkdown(
+    @Path("id") id: String
+): Response<String>
+
 }
