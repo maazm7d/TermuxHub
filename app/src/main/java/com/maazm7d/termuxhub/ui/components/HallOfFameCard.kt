@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import com.maazm7d.termuxhub.domain.model.HallOfFameMember
-import androidx.compose.ui.graphics.Color
 
 @Composable
 fun HallOfFameCard(member: HallOfFameMember) {
@@ -23,15 +22,15 @@ fun HallOfFameCard(member: HallOfFameMember) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 8.dp), // ✅ same spacing as ToolCard
-        shape = RoundedCornerShape(12.dp),                // ✅ same radius
-        elevation = CardDefaults.cardElevation(6.dp),     // ✅ same elevation
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(6.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface // ✅ EXACT MATCH
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
 
-        Column(modifier = Modifier.padding(14.dp)) { // ✅ matches inner padding style
+        Column(modifier = Modifier.padding(14.dp)) {
 
             Row {
                 AsyncImage(
@@ -61,10 +60,10 @@ fun HallOfFameCard(member: HallOfFameMember) {
 
             Spacer(Modifier.height(12.dp))
 
+            // ✅ NO color param here
             MarkdownText(
                 markdown = member.contribution,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Spacer(Modifier.height(12.dp))
