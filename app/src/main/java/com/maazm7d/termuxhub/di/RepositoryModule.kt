@@ -11,6 +11,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import com.maazm7d.termuxhub.data.local.HallOfFameDao
+import com.maazm7d.termuxhub.data.repository.HallOfFameRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -24,4 +26,13 @@ object RepositoryModule {
         github: GitHubClient,
         context: Context
     ): ToolRepository = ToolRepositoryImpl(dao, api, github, context)
+
+    @Provides
+    @Singleton
+    fun provideHallOfFameRepository(
+        api: MetadataClient,
+        dao: HallOfFameDao
+    ): HallOfFameRepository =
+         HallOfFameRepository(api, dao)
+    
 }
