@@ -17,9 +17,8 @@ import com.maazm7d.termuxhub.domain.model.HallOfFameMember
 fun HallOfFameCard(member: HallOfFameMember) {
 
     val uriHandler = LocalUriHandler.current
-    val avatarUrl =
-        "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/metadata/halloffame/pfp/${member.id}.png"
-
+    val avatarUrl = "https://avatars.githubusercontent.com/${member.github}"
+    
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
