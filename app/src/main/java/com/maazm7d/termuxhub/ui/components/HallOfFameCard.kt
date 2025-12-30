@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import com.maazm7d.termuxhub.domain.model.HallOfFameMember
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun HallOfFameCard(member: HallOfFameMember) {
