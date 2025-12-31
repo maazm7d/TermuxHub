@@ -27,7 +27,6 @@ fun SavedScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp)
         ) {
 
             // Title + count (centered, professional)
