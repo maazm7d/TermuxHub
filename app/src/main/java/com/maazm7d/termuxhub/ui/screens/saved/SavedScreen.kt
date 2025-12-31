@@ -22,7 +22,9 @@ fun SavedScreen(
     val savedTools by viewModel.savedTools.collectAsState()
     val count = savedTools.size
 
-    Scaffold { padding ->
+    Scaffold(
+    contentWindowInsets = WindowInsets(0)
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
