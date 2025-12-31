@@ -65,7 +65,7 @@ fun WhatsNewScreen() {
             modifier = Modifier
                 .width(120.dp),
             thickness = 1.dp,
-            color = MaterialTheme.colorScheme.surfaceVariant
+            color = MaterialTheme.colorScheme.surface
         )
 
         Spacer(modifier = Modifier.height(24.dp))
