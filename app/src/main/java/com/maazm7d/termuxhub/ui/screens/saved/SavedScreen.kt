@@ -31,7 +31,7 @@ fun SavedScreen(
                 .padding(padding)
         ) {
 
-            Spacer(modifier = Modifier.height(12.dp))
+        
 
             // Title
             Row(
