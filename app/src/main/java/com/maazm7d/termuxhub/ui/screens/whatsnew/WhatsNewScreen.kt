@@ -58,7 +58,7 @@ fun WhatsNewScreen() {
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         // Subtle divider
         Divider(
