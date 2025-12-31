@@ -24,7 +24,7 @@ fun HallOfFameScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
 
         // Title with icon (centered)
