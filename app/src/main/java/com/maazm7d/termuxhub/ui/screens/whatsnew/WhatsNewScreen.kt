@@ -62,12 +62,12 @@ fun WhatsNewScreen() {
 
         // Subtle divider
         Divider(
-            modifier = Modifier
-                .width(120.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.surface
-        )
-
+    modifier = Modifier
+        .width(120.dp)
+        .align(Alignment.CenterHorizontally),
+    thickness = 1.dp,
+    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+)
         Spacer(modifier = Modifier.height(24.dp))
 
         // Center content
