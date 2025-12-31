@@ -19,8 +19,6 @@ fun WhatsNewScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(8.dp))
-
         // Title with icon (same pattern as Hall of Fame & Saved)
         Row(
             verticalAlignment = Alignment.CenterVertically,
