@@ -73,6 +73,16 @@ fun SavedScreen(
                 textAlign = TextAlign.Center
             )
 
+            Spacer(modifier = Modifier.height(10.dp))
+
+        // Subtle divider
+        Divider(
+            modifier = Modifier
+                .width(120.dp),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.surface
+        )
+
             Spacer(modifier = Modifier.height(20.dp))
 
             if (savedTools.isEmpty()) {
