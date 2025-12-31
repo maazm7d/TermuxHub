@@ -30,14 +30,17 @@ fun SavedToolRow(
         "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/metadata/thumbnail/${tool.id}.png"
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onOpenDetails(tool.id) },
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
-        )
-    ) {
+    modifier = Modifier
+        .fillMaxWidth()
+        .clickable { onOpenDetails(tool.id) },
+    shape = RoundedCornerShape(12.dp), 
+    elevation = CardDefaults.cardElevation(
+        defaultElevation = 6.dp 
+    ),
+    colors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.surface
+    )
+) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 14.dp, vertical = 12.dp),
