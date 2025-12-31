@@ -2,7 +2,6 @@ package com.maazm7d.termuxhub.ui.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.OpenInNew
@@ -25,6 +24,7 @@ fun HallOfFameCard(
 ) {
     val uriHandler = LocalUriHandler.current
     val avatarUrl = "https://avatars.githubusercontent.com/${member.github}"
+    val avatarShape = RoundedCornerShape(14.dp) // 👈 squircle
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -34,37 +34,31 @@ fun HallOfFameCard(
             containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
 
             /* ───── Header ───── */
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+
                 AsyncImage(
                     model = avatarUrl,
                     contentDescription = "${member.github} avatar",
                     modifier = Modifier
                         .size(60.dp)
-                        .clip(CircleShape)
+                        .clip(avatarShape)
                         .border(
                             width = 1.dp,
                             color = MaterialTheme.colorScheme.outlineVariant,
-                            shape = CircleShape
+                            shape = avatarShape
                         )
                 )
 
                 Spacer(modifier = Modifier.width(14.dp))
 
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = member.github,
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        fontWeight = FontWeight.SemiBold
                     )
 
                     Spacer(modifier = Modifier.height(2.dp))
@@ -79,7 +73,6 @@ fun HallOfFameCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            /* ───── Contribution ───── */
             MarkdownText(
                 markdown = member.contribution,
                 style = MaterialTheme.typography.bodyMedium
@@ -87,7 +80,6 @@ fun HallOfFameCard(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            /* ───── Action ───── */
             TextButton(
                 onClick = { uriHandler.openUri(member.profileUrl) },
                 modifier = Modifier.align(Alignment.End),
@@ -99,10 +91,7 @@ fun HallOfFameCard(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "GitHub",
-                    style = MaterialTheme.typography.labelLarge
-                )
+                Text("GitHub")
             }
         }
     }
