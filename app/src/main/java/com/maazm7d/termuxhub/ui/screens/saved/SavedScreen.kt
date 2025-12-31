@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.maazm7d.termuxhub.ui.components.ToolCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,15 +22,18 @@ fun SavedScreen(
     val count = savedTools.size
 
     Scaffold(
-    contentWindowInsets = WindowInsets(0)
+        contentWindowInsets = WindowInsets(0)
     ) { padding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
 
-            // Title + count (centered, professional)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Title
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -53,7 +55,6 @@ fun SavedScreen(
 
                 if (count > 0) {
                     Spacer(modifier = Modifier.width(6.dp))
-
                     Text(
                         text = "· $count",
                         style = MaterialTheme.typography.bodyMedium,
@@ -64,27 +65,25 @@ fun SavedScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Description
             Text(
                 text = "All your bookmarked tools live here for quick access anytime.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
-        // Subtle divider
-        Divider(
-    modifier = Modifier
-        .width(120.dp)
-        .align(Alignment.CenterHorizontally),
-    thickness = 1.dp,
-    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-)
+            Divider(
+                modifier = Modifier
+                    .width(120.dp)
+                    .align(Alignment.CenterHorizontally),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+            )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             if (savedTools.isEmpty()) {
                 Box(
@@ -100,22 +99,22 @@ fun SavedScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 12.dp)
+                    contentPadding = PaddingValues(
+                        horizontal = 16.dp,
+                        vertical = 12.dp
+                    )
                 ) {
                     items(
                         items = savedTools,
                         key = { it.id }
                     ) { tool ->
-                        ToolCard(
+                        SavedToolRow(
                             tool = tool,
-                            stars = null,
                             onOpenDetails = onOpenDetails,
-                            onToggleFavorite = { viewModel.removeTool(tool) },
-                            onSave = { viewModel.removeTool(tool) },
-                            onShare = {}
+                            onRemove = { viewModel.removeTool(tool) }
                         )
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                     }
                 }
             }
