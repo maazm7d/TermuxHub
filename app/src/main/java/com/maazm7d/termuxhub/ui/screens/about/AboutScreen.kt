@@ -77,7 +77,7 @@ fun AboutScreen() {
         ) {
             InfoItem(Icons.Default.Android, "Version", appVersion)
             InfoItem(Icons.Default.Update, "Last Updated", "Jan 2026")
-            InfoItem(Icons.Default.Person, "Developer", "Maaz M")
+            InfoItem(Icons.Default.Person, "Developer", "maazm7d")
             InfoItem(Icons.Default.Code, "Platform", "Android / Termux")
             InfoItem(Icons.Default.Public, "Open Source", "Yes")
         }
