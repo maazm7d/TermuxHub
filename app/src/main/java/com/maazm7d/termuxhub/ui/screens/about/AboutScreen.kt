@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.maazm7d.termuxhub.R
+import androidx.compose.material.icons.filled.Gavel
 
 @Composable
 fun AboutScreen() {
@@ -80,6 +81,7 @@ fun AboutScreen() {
             InfoItem(Icons.Default.Person, "Developer", "maazm7d")
             InfoItem(Icons.Default.Code, "Platform", "Android / Termux")
             InfoItem(Icons.Default.Public, "Open Source", "Yes")
+            InfoItem(Icons.Default.Gavel, "License", "GPL-3.0")
         }
 
         // Links
