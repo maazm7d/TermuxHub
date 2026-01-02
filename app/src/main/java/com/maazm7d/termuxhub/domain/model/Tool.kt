@@ -12,7 +12,6 @@ data class Tool(
     val author: String? = "",
     val requireRoot: Boolean = false,
     val thumbnail: String?,
-    val version: String?,
     val updatedAt: Long,
     val isFavorite: Boolean,
     val publishedAt: String?,
