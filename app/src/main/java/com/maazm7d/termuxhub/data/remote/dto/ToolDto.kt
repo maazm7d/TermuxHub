@@ -13,7 +13,6 @@ data class ToolDto(
     val author: String? = "",
     val requireRoot: Boolean? = false,
     val thumbnail: String? = null,
-    val version: String? = null,
     val updatedAt: Long? = 0L,
     val tags: List<String>? = emptyList(),
     val publishedAt: String? = null
