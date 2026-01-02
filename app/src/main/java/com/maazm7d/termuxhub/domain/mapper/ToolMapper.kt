@@ -12,7 +12,6 @@ fun ToolEntity.toDomain() = Tool(
     repoUrl = repoUrl,
     author = author ?: "",
     thumbnail = thumbnail,
-    version = version,
     updatedAt = updatedAt,
     isFavorite = isFavorite,
     publishedAt = publishedAt
