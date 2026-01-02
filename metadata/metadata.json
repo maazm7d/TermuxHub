@@ -9,7 +9,6 @@
 cd seeker/
 chmod +x install.sh
 ./install.sh",
-      "version": "1.3.1",
       "thumbnail": "",
       "repo": "https://github.com/thewhiteh4t/seeker",
       "author": "thewhiteh4t",
@@ -25,7 +24,6 @@ chmod +x install.sh
 cargo install findomain
 cd $HOME/.cargo/bin
 ./findomain",
-      "version": "10.0.1",
       "thumbnail": "",
       "repo": "https://github.com/Findomain/Findomain",
       "author": "findomain",
@@ -40,7 +38,6 @@ cd $HOME/.cargo/bin
       "install": "git clone https://github.com/1N3/BruteX
 cd BruteX
 ./install.sh",
-      "version": "2.3",
       "thumbnail": "",
       "repo": "https://github.com/1N3/BruteX",
       "author": "1n3",
@@ -55,7 +52,6 @@ cd BruteX
       "install": "git clone https://github.com/jofpin/trape.git
 cd trape
 python3 trape.py -h",
-      "version": "2.0",
       "thumbnail": "",
       "repo": "https://github.com/jofpin/trape",
       "author": "jofpin",
@@ -70,7 +66,6 @@ python3 trape.py -h",
       "install": "git clone https://github.com/byt3bl33d3r/gcat
 cd gcat
 python3 gcat.py",
-      "version": "1.0.1",
       "thumbnail": "",
       "repo": "https://github.com/byt3bl33d3r/gcat",
       "author": "byt3bl33d3r",
@@ -85,7 +80,6 @@ python3 gcat.py",
       "install": "wget https://raw.githubusercontent.com/bytezcrew/wfdroid-termux/master/wfdinstall
 chmod +x wfdinstall
 ./wfdinstall",
-      "version": "1.0",
       "thumbnail": "",
       "repo": "https://github.com/bytezcrew/wfdroid-termux",
       "author": "bytezcrew",
@@ -100,7 +94,6 @@ chmod +x wfdinstall
       "install": "git clone https://github.com/chinoogawa/fbht
 cd fbht
 python3 main.py",
-      "version": "2.0",
       "thumbnail": "",
       "repo": "https://github.com/chinoogawa/fbht",
       "author": "chinoogawa",
@@ -115,7 +108,6 @@ python3 main.py",
       "install": "git clone https://github.com/chrizator/netattack
 cd netattack
 python3 netattack.py",
-      "version": "1.0",
       "thumbnail": "",
       "repo": "https://github.com/chrizator/netattack",
       "author": "chrizator",
