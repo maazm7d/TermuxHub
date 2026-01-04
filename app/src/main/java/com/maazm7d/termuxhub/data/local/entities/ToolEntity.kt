@@ -13,7 +13,6 @@ data class ToolEntity(
     @ColumnInfo(name = "install_command") val installCommand: String?,
     @ColumnInfo(name = "repo_url") val repoUrl: String?,
     @ColumnInfo(name = "thumbnail") val thumbnail: String?,
-    val version: String?,
     @ColumnInfo(name = "updated_at") val updatedAt: Long = 0L,
     @ColumnInfo(name = "is_favorite") val isFavorite: Boolean = false,
     @ColumnInfo(name = "author") val author: String? = "",
