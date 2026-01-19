@@ -479,6 +479,18 @@
       "author": "jsonluca",
       "requireRoot": false,
       "publishedAt": "09-01-2026"
+    },
+    {
+      "id": "0061",
+      "name": "sqlmap",
+      "description": "Automatic SQL injection and database takeover tool",
+      "category": "Web Security",
+      "install": "git clone https://github.com/sqlmapproject/sqlmap.git\ncd sqlmap\npython3 sqlmap.py",
+      "thumbnail": "",
+      "repo": "https://github.com/sqlmapproject/sqlmap.git",
+      "author": "sqlmapproject",
+      "requireRoot": false,
+      "publishedAt": "19-01-2026"
     }
   ]
 }
