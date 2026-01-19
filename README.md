@@ -23,19 +23,19 @@ Consumed files:
 
 ### Tools
 - Metadata index  
-  `https://github.com/maazm7d/TermuxHub/blob/main/metadata/metadata.json`
+  `https://github.com/maazm7d/TermuxHub/metadata/metadata.json`
 - Star counts  
-  `https://github.com/maazm7d/TermuxHub/blob/main/metadata/stars.json`
+  `https://github.com/maazm7d/TermuxHub/metadata/stars.json`
 - Tool README  
-  `https://github.com/maazm7d/TermuxHub/blob/main/metadata/readme/<tool.id>.md`
+  `https://github.com/maazm7d/TermuxHub/metadata/readme/<tool.id>.md`
 - Thumbnails  
-  `https://github.com/maazm7d/TermuxHub/blob/main/metadata/thumbnail/<tool.id>.webp`
+  `https://github.com/maazm7d/TermuxHub/metadata/thumbnail/<tool.id>.webp`
 
 ### Hall of Fame
 - Index  
-  `https://github.com/maazm7d/TermuxHub/blob/main/metadata/halloffame/index.json`
+  `https://github.com/maazm7d/TermuxHub/metadata/halloffame/index.json`
 - Member markdown  
-  `https://github.com/maazm7d/TermuxHub/blob/main/metadata/halloffame/<member.id>.md`
+  `https://github.com/maazm7d/TermuxHub/metadata/halloffame/<member.id>.md`
 
 
 Only these resources are consumed.
