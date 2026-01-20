@@ -723,14 +723,14 @@
     {
       "id": "0061",
       "name": "network_monitor",
-      "description": "Live IP Network Surveillance: Maintain a vigilant watch over your network in real time, providing detailed records of internet connectivity and pinpointing the exact moment devices disconnect.",
+      "description": "Real-time network monitoring with detailed connectivity logs and instant device disconnect detection.",
       "category": "Network Security",
       "install": "git clone https://github.com/moayad-star/network_monitor\npip install python-nmap\ncd network_monitor\npython3 network_monitor.py",
       "thumbnail": "",
       "repo": "https://github.com/moayad-star/network_monitor",
       "author": "moayad-star",
       "requireRoot": false,
-      "publishedAt": "19-01-2026"
+      "publishedAt": "20-01-2026"
     }
   ]
 }
