@@ -3,6 +3,7 @@ package com.maazm7d.termuxhub.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun TermuxHubTheme(
@@ -11,12 +12,12 @@ fun TermuxHubTheme(
 ) {
     val colorScheme = if (darkTheme) {
         darkColorScheme(
-            primary = md_theme_dark_primary,
-            onPrimary = md_theme_dark_onPrimary,
-            background = md_theme_dark_background,
-            surface = md_theme_dark_surface,
-            onSurface = md_theme_dark_onSurface,
-            outline = md_theme_dark_outline
+            primary = md_theme_amoled_primary,
+            onPrimary = md_theme_amoled_onPrimary,
+            background = Color.Black,
+            surface = Color.Black,
+            onSurface = md_theme_amoled_onSurface,
+            outline = md_theme_amoled_outline
         )
     } else {
         lightColorScheme(
