@@ -8,8 +8,8 @@
       "install": "git clone https://github.com/thewhiteh4t/seeker.git\ncd seeker\nchmod +x install.sh\n./install.sh",
       "thumbnail": "",
       "repo": "https://github.com/thewhiteh4t/seeker",
-      "author": thewhiteh4t",
-      "requireRoot": false
+      "author": ",",
+      "requireRoot": false,
       "publishedAt": "11-12-2025"
     },
     {
@@ -1133,7 +1133,7 @@
       "name": "PhoneInfoga",
       "description": "PhoneInfoga is one of the most advanced tools to scan phone numbers using only free resources.",
       "category": "OSINT & Recon",
-      "install": "clear && echo 'Download starting...' && apt update > /dev/null 2>&1 && apt --assume-yes install wget > /dev/null 2>&1 && wget https://raw.githubusercontent.com/ExpertAnonymous/PhoneInfoga/master/phoneinfoga.sh -q && clear && bash phoneinfoga.sh",    
+      "install": "clear && echo 'Download starting...' && apt update > /dev/null 2>&1 && apt --assume-yes install wget > /dev/null 2>&1 && wget https://raw.githubusercontent.com/ExpertAnonymous/PhoneInfoga/master/phoneinfoga.sh -q && clear && bash phoneinfoga.sh",
       "thumbnail": "",
       "repo": "https://github.com/ExpertAnonymous/PhoneInfoga",
       "author": "ExpertAnonymous",
