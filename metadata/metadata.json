@@ -8,7 +8,7 @@
       "install": "git clone https://github.com/thewhiteh4t/seeker.git\ncd seeker\nchmod +x install.sh\n./install.sh",
       "thumbnail": "",
       "repo": "https://github.com/thewhiteh4t/seeker",
-      "author": ",",
+      "author": "thewhiteh4t",
       "requireRoot": false,
       "publishedAt": "11-12-2025"
     },
