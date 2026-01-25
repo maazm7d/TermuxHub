@@ -1229,7 +1229,7 @@
       "name": "thc-hydra",
       "description": "hydra",
       "category": "Brute Force",
-      "install": "git clone https://github.com/vanhauser-thc/thc-hydra.git\ncd thc-hydra\n./configure make\nmake install",
+      "install": "git clone https://github.com/vanhauser-thc/thc-hydra.git\ncd thc-hydra\n./configure\nmake\nmake install",
       "thumbnail": "",
       "repo": "https://github.com/vanhauser-thc/thc-hydra",
       "author": "vanhauser-thc",
