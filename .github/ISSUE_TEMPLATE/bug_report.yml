@@ -1,0 +1,59 @@
+name: Bug Report
+description: Report a bug or a problem
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: hub_version
+    attributes:
+      label: TermuxHub Version
+      options:
+        - 2.1.1 (Latest)
+        - 1.0.0
+    validations:
+      required: true
+
+  - type: input
+    id: termux_version
+    attributes:
+      label: Termux Version
+      placeholder: e.g. 0.118.0
+    validations:
+      required: true
+
+  - type: input
+    id: android_version
+    attributes:
+      label: Android Version
+      placeholder: e.g. Android 13 (HyperOS / MIUI 14)
+    validations:
+      required: true
+
+  - type: input
+    id: device_model
+    attributes:
+      label: Device Model
+      placeholder: e.g. Xiaomi Poco F5
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe what happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Tell us how you encountered the bug.
+      placeholder: |
+        1. Open the app
+        2. Click on...
+        3. See error
+    validations:
+      required: false
