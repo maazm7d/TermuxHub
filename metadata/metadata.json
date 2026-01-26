@@ -1199,6 +1199,18 @@
       "author": "devxprite",
       "requireRoot": false,
       "publishedAt": "23-01-2026"
+    },
+    {
+      "id": "0101",
+      "name": "termux-shizuku-tools",
+      "description": "Shizuku management utilities for Termux",
+      "category": "Utilities & Dev",
+      "install": "git clone https://github.com/AlexeiCrystal/termux-shizuku-tools.git\ncd termux-shizuku-tools\nbash build.sh\ndpkg -i termux-shizuku-tools.deb",
+      "thumbnail": "",
+      "repo": "https://github.com/AlexeiCrystal/termux-shizuku-tools",
+      "author": "AlexeiCrystal",
+      "requireRoot": false,
+      "publishedAt": "26-01-2026"
     }
   ]
 }
