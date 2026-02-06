@@ -5,8 +5,25 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose") version "2.2.20" apply false
     id("com.google.devtools.ksp") version "2.2.20-2.0.4" apply false
     id("com.google.dagger.hilt.android") version "2.57" apply false
+    id("com.diffplug.spotless") version "6.25.0"
 }
 
-tasks.register<Delete>("clean") {
-    delete(rootProject.layout.buildDirectory)
+dependencyAnalysis {
+    issues {
+        all {
+            onAny {
+                severity("fail")
+            }
+        }
+    }
+    reporting {
+        printBuildHealth(true)
+    }
+}
+
+spotless {
+    kotlin {
+        target("**/*.kt")
+        ktlint()
+    }
 }

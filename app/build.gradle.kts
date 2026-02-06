@@ -5,6 +5,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
+    id("com.autonomousapps.dependency-analysis")
 }
 
 android {
