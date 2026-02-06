@@ -111,7 +111,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.8.4")
     ksp("androidx.room:room-compiler:2.8.4")
 
-    implementation("androidx.work:work-runtime-ktx:2.9.1")
+    implementation("androidx.work:work-runtime-ktx:2.11.1")
 
     implementation("com.google.dagger:hilt-android:2.59.1")
     ksp("com.google.dagger:hilt-compiler:2.59.1")
