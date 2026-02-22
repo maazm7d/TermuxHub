@@ -1,46 +1,12 @@
-<p>
-  <strong>Termux Hub</strong> is a lightweight, open-source Android application that indexes and organizes tools designed for use with <strong>Termux</strong>.
-  It provides a clean, searchable catalog of community tools using a transparent, metadata-driven data pipeline.
-</p>
-<p>
-  The app focuses on reproducibility and reliability. All tool information is processed automatically from a public GitHub repository,
-  validated, and stored locally on your device. Once synced, the local database becomes the single source of truth,
-  ensuring fast access even when offline.
-</p>
-
+<p><strong>Termux Hub</strong> is a lightweight, open-source Android application that indexes and organizes tools designed for use with <strong>Termux</strong>. It provides a clean, searchable catalog of community tools using a transparent, metadata-driven data pipeline.</p>
+<p>The app focuses on reproducibility and reliability. All tool information is processed automatically from a public GitHub repository, validated, and stored locally on your device. Once synced, the local database becomes the single source of truth, ensuring fast access even when offline.</p>
 <h2>Key features</h2>
-<ul>
-  <li>Browse and search curated Termux tools by category</li>
-  <li>View detailed tool information, installation commands, and repositories</li>
-  <li>Daily updates of GitHub star counts and README content (00:00 UTC)</li>
-  <li>Offline-first design with local Room database storage</li>
-  <li>No trackers, no analytics, no ads</li>
-</ul>
-
+<ul><li>Browse and search curated Termux tools by category</li><li>View detailed tool information, installation commands, and repositories</li><li>Daily updates of GitHub star counts and README content (00:00 UTC)</li><li>Offline-first design with local Room database storage</li><li>No trackers, no analytics, no ads</li></ul>
 <h2>How it works</h2>
-<p>
-  Termux Hub fetches static metadata from GitHub and processes tool data, star counts,
-  and README files independently. All validated data is stored in a local Room database.
-  If syncing fails, the app safely falls back to cached or bundled data.
-</p>
-
+<p>Termux Hub fetches static metadata from GitHub and processes tool data, star counts, and README files independently. All validated data is stored in a local Room database. If syncing fails, the app safely falls back to cached or bundled data.</p>
 <h2>Data sources</h2>
-<p>
-  All data is <strong>read-only</strong> and sourced from the public
-  <a href="https://github.com/maazm7d/TermuxHub">TermuxHub GitHub repository</a>.
-  This includes tool metadata, repositories, thumbnails, GitHub stars, READMEs,
-  and Hall of Fame entries.
-</p>
-
+<p>All data is <strong>read-only</strong> and sourced from the public <a href="https://github.com/maazm7d/TermuxHub">TermuxHub GitHub repository</a>. This includes tool metadata, repositories, thumbnails, GitHub stars, READMEs, and Hall of Fame entries.</p>
 <h2>Privacy</h2>
-<p>
-  Termux Hub does not collect personal data, does not require accounts,
-  and does not include tracking, analytics, or advertising libraries.
-</p>
-
+<p>Termux Hub does not collect personal data, does not require accounts, and does not include tracking, analytics, or advertising libraries.</p>
 <h2>Contributing</h2>
-<p>
-  Anyone can help improve the catalog. To add or update a tool,
-  please see the contribution guidelines in
-  <a href="https://github.com/maazm7d/TermuxHub/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>.
-</p>
+<p>Anyone can help improve the catalog. To add or update a tool, please see the contribution guidelines in <a href="https://github.com/maazm7d/TermuxHub/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>.</p>
