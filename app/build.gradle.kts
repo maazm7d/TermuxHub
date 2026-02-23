@@ -113,8 +113,8 @@ dependencies {
 
     implementation("androidx.work:work-runtime-ktx:2.11.1")
 
-    implementation("com.google.dagger:hilt-android:2.59.1")
-    ksp("com.google.dagger:hilt-compiler:2.59.1")
+    implementation("com.google.dagger:hilt-android:2.59.2")
+    ksp("com.google.dagger:hilt-compiler:2.59.2")
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
     implementation("androidx.hilt:hilt-work:1.3.0")
     ksp("androidx.hilt:hilt-compiler:1.3.0")
