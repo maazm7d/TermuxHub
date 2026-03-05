@@ -6,7 +6,12 @@ import com.maazm7d.termuxhub.data.repository.ToolRepository
 import com.maazm7d.termuxhub.domain.mapper.toDomain
 import com.maazm7d.termuxhub.domain.model.Tool
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,9 +25,12 @@ class HomeViewModel @Inject constructor(
     private val repository: ToolRepository
 ) : ViewModel() {
 
+    private val _starsMap = MutableStateFlow<Map<String, Int>>(emptyMap())
+    val starsMap: StateFlow<Map<String, Int>> = _starsMap.asStateFlow()
+
     val uiState: StateFlow<HomeUiState> =
         repository.observeAll()
-            .map { entities ->
+            .combine(starsMap) { entities, stars ->
                 HomeUiState(
                     tools = entities.map { it.toDomain() }
                 )
@@ -33,17 +41,13 @@ class HomeViewModel @Inject constructor(
                 initialValue = HomeUiState()
             )
 
-    private val _starsMap = MutableStateFlow<Map<String, Int>>(emptyMap())
-    val starsMap: StateFlow<Map<String, Int>> = _starsMap.asStateFlow()
-
     init {
         fetchStarsOnce()
     }
 
     fun toggleFavorite(toolId: String) {
         viewModelScope.launch {
-            val tool = repository.getToolById(toolId) ?: return@launch
-            repository.setFavorite(toolId, !tool.isFavorite)
+            repository.setFavorite(toolId, !(repository.getToolById(toolId)?.isFavorite ?: false))
         }
     }
 
@@ -61,7 +65,7 @@ class HomeViewModel @Inject constructor(
                     _starsMap.value = stars
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                // Log error if needed
             }
         }
     }
