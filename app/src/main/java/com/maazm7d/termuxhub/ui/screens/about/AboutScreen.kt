@@ -2,13 +2,38 @@ package com.maazm7d.termuxhub.ui.screens.about
 
 import android.content.pm.PackageManager
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Android
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Coffee
+import androidx.compose.material.icons.filled.Gavel
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Update
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +44,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.maazm7d.termuxhub.BuildConfig
 import com.maazm7d.termuxhub.R
 
 @Composable
@@ -26,12 +52,14 @@ fun AboutScreen() {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
-    val appVersion = try {
-        context.packageManager
-            .getPackageInfo(context.packageName, 0)
-            .versionName ?: "Unknown"
-    } catch (_: PackageManager.NameNotFoundException) {
-        "Unknown"
+    val appVersion = remember {
+        try {
+            context.packageManager
+                .getPackageInfo(context.packageName, 0)
+                .versionName ?: BuildConfig.VERSION_NAME
+        } catch (_: PackageManager.NameNotFoundException) {
+            BuildConfig.VERSION_NAME
+        }
     }
 
     Column(
@@ -165,7 +193,7 @@ private fun LinkItem(icon: ImageVector, text: String, onClick: () -> Unit) {
     TextButton(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 0.dp)
+        contentPadding = androidx.compose.material3.ButtonDefaults.TextButtonContentPadding
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
