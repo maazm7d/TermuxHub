@@ -1,39 +1,63 @@
 package com.maazm7d.termuxhub.ui.screens.details
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.maazm7d.termuxhub.ui.components.DetailScreenThumbnail
-import com.maazm7d.termuxhub.ui.components.shimmer
 import com.maazm7d.termuxhub.ui.components.ToolRepoBadgesRow
-import com.maazm7d.termuxhub.domain.model.ToolDetails
-import kotlinx.coroutines.launch
-import androidx.compose.foundation.text.selection.SelectionContainer
+import com.maazm7d.termuxhub.ui.components.shimmer
+import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import com.mikepenz.markdown.m3.Markdown
 import com.mikepenz.markdown.m3.markdownTypography
-import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.shape.RoundedCornerShape
+import kotlinx.coroutines.launch
 
 @Composable
 fun ToolDetailScreen(
     toolId: String,
-    viewModel: ToolDetailViewModel,
+    viewModel: ToolDetailViewModel = viewModel(),
     onBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -76,12 +100,16 @@ fun ToolDetailScreen(
 
 @Composable
 private fun ToolDetailContent(
-    tool: ToolDetails,
+    tool: com.maazm7d.termuxhub.domain.model.ToolDetails,
     onBack: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
     val scrollState = rememberScrollState()
-    val scope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
+
+    val showScrollToBottom by remember {
+        derivedStateOf { scrollState.maxValue > 0 && scrollState.value < scrollState.maxValue }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         SelectionContainer {
@@ -148,16 +176,16 @@ private fun ToolDetailContent(
                         content = tool.readme,
                         modifier = Modifier.fillMaxWidth(),
                         typography = markdownTypography(
-                            text = TextStyle(fontSize = 13.sp, lineHeight = 18.sp),
-                            h1 = TextStyle(fontSize = 20.sp),
-                            h2 = TextStyle(fontSize = 18.sp),
-                            h3 = TextStyle(fontSize = 16.sp),
-                            h4 = TextStyle(fontSize = 15.sp),
-                            h5 = TextStyle(fontSize = 14.sp),
-                            h6 = TextStyle(fontSize = 13.sp),
-                            code = TextStyle(fontSize = 12.sp, lineHeight = 16.sp),
-                            bullet = TextStyle(fontSize = 13.sp),
-                            quote = TextStyle(fontSize = 13.sp)
+                            text = androidx.compose.ui.text.TextStyle(fontSize = 13.sp, lineHeight = 18.sp),
+                            h1 = androidx.compose.ui.text.TextStyle(fontSize = 20.sp),
+                            h2 = androidx.compose.ui.text.TextStyle(fontSize = 18.sp),
+                            h3 = androidx.compose.ui.text.TextStyle(fontSize = 16.sp),
+                            h4 = androidx.compose.ui.text.TextStyle(fontSize = 15.sp),
+                            h5 = androidx.compose.ui.text.TextStyle(fontSize = 14.sp),
+                            h6 = androidx.compose.ui.text.TextStyle(fontSize = 13.sp),
+                            code = androidx.compose.ui.text.TextStyle(fontSize = 12.sp, lineHeight = 16.sp),
+                            bullet = androidx.compose.ui.text.TextStyle(fontSize = 13.sp),
+                            quote = androidx.compose.ui.text.TextStyle(fontSize = 13.sp)
                         ),
                         imageTransformer = Coil3ImageTransformerImpl
                     )
@@ -185,6 +213,7 @@ private fun ToolDetailContent(
                                 .filter { it.isNotBlank() }
                                 .forEach { cmd ->
                                     InstallCommandRow(command = cmd)
+                                    Spacer(modifier = Modifier.height(8.dp))
                                 }
                         }
                     }
@@ -227,10 +256,10 @@ private fun ToolDetailContent(
             }
         }
 
-        if (scrollState.maxValue > 0 && scrollState.value < scrollState.maxValue) {
+        if (showScrollToBottom) {
             FloatingActionButton(
                 onClick = {
-                    scope.launch {
+                    coroutineScope.launch {
                         scrollState.animateScrollTo(scrollState.maxValue)
                     }
                 },
@@ -262,7 +291,7 @@ private fun ToolDetailShimmer() {
                 .shimmer()
         )
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Box(
             modifier = Modifier
@@ -272,7 +301,7 @@ private fun ToolDetailShimmer() {
                 .shimmer()
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Box(
             modifier = Modifier
@@ -282,7 +311,7 @@ private fun ToolDetailShimmer() {
                 .align(Alignment.CenterHorizontally)
         )
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         repeat(3) {
             Box(
@@ -294,7 +323,7 @@ private fun ToolDetailShimmer() {
             )
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Box(
             modifier = Modifier
@@ -303,7 +332,7 @@ private fun ToolDetailShimmer() {
                 .shimmer()
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         repeat(6) {
             Box(
@@ -315,7 +344,7 @@ private fun ToolDetailShimmer() {
             )
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Box(
             modifier = Modifier
@@ -324,7 +353,7 @@ private fun ToolDetailShimmer() {
                 .shimmer()
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         repeat(2) {
             Box(
@@ -336,7 +365,7 @@ private fun ToolDetailShimmer() {
             )
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
