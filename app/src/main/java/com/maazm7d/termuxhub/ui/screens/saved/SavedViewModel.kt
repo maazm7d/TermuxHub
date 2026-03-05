@@ -21,9 +21,7 @@ class SavedViewModel @Inject constructor(
     val savedTools: StateFlow<List<Tool>> =
         repository.observeFavorites()
             .map { toolEntities ->
-                toolEntities.map { toolEntity ->
-                    toolEntity.toDomain()
-                }
+                toolEntities.map { it.toDomain() }
             }
             .stateIn(
                 scope = viewModelScope,
