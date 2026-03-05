@@ -47,10 +47,13 @@ class ToolRepositoryImpl @Inject constructor(
             val response = metadataClient.fetchMetadata()
             if (response.isSuccessful && response.body() != null) {
                 val repoStats = fetchRepoStats()
-                response.body()!!.tools.forEach { dto ->
+                val metadata = response.body()!!
+                val entities = metadata.tools.mapNotNull { dto ->
                     val existing = toolDao.getToolById(dto.id)
-                    val entity = dto.toEntity(existing, repoStats)
-                    if (entity != null) toolDao.insert(entity)
+                    dto.toEntity(existing, repoStats)
+                }
+                if (entities.isNotEmpty()) {
+                    toolDao.insertAll(entities)   // batch insert
                 }
                 applyStars()
                 true
@@ -102,10 +105,13 @@ class ToolRepositoryImpl @Inject constructor(
             val adapter = moshi.adapter(MetadataDto::class.java)
             val dto = adapter.fromJson(text)
 
-            dto?.tools?.forEach { t ->
+            val entities = dto?.tools?.mapNotNull { t ->
                 val existing = toolDao.getToolById(t.id)
-                val entity = t.toEntity(existing, repoStats)
-                if (entity != null) toolDao.insert(entity)
+                t.toEntity(existing, repoStats)
+            } ?: emptyList()
+
+            if (entities.isNotEmpty()) {
+                toolDao.insertAll(entities)   // batch insert
             }
 
             applyStars()
@@ -143,25 +149,30 @@ class ToolRepositoryImpl @Inject constructor(
                 ?: existing?.updatedAt
                 ?: System.currentTimeMillis(),
             isFavorite = existing?.isFavorite ?: false,
-            publishedAt = publishedAt
+            publishedAt = publishedAt,
+            tags = tags,                     // directly assign List<String>? from DTO
+            readme = existing?.readme         // preserve any previously cached readme
         )
     }
 
     override suspend fun getToolDetails(id: String): ToolDetails? {
         val tool = toolDao.getToolById(id) ?: return null
-
-        val readmeText = try {
-            val resp = metadataClient.fetchReadme(id)
-            if (resp.isSuccessful) resp.body() ?: "" else ""
-        } catch (_: Exception) {
-            ""
+        var readme = tool.readme
+        if (readme.isNullOrBlank()) {
+            readme = try {
+                metadataClient.fetchReadme(id).body() ?: ""
+            } catch (e: Exception) {
+                ""
+            }
+            if (readme.isNotBlank()) {
+                toolDao.update(tool.copy(readme = readme))
+            }
         }
-
         return ToolDetails(
             id = tool.id,
             title = tool.name,
             description = tool.description,
-            readme = readmeText,
+            readme = readme,
             installCommands = tool.installCommand ?: "",
             repoUrl = tool.repoUrl,
             stars = tool.stars,
