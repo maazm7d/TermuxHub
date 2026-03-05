@@ -5,17 +5,33 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NewReleases
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
@@ -25,17 +41,17 @@ import kotlinx.coroutines.delay
 @Composable
 fun WhatsNewScreen() {
     val uriHandler = LocalUriHandler.current
-    var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
+    var textLayoutResult by remember { mutableStateOf<androidx.compose.ui.text.TextLayoutResult?>(null) }
 
     val whatsNewItems = listOf(
-	"- App link support added — open tool details directly from a single shared link",
-	"- Redesigned Tool Detail Screen with cleaner layout, better spacing, and smoother scrolling",
-	"- Repository stats badges (stars, forks, etc.) added for quick insights",
-	"- Migrated markdown rendering to multiplatform-markdown-renderer for improved compatibility and readability",
-	"- Text selection enabled in the tool detail screen",
-	"- Updated cards to a modern Outlined Material 3 style",
-	"- Enhanced Saved Screen layout for a cleaner look",
-	"- Refined typography across key screens for improved visual consistency"
+        "- App link support added — open tool details directly from a single shared link",
+        "- Redesigned Tool Detail Screen with cleaner layout, better spacing, and smoother scrolling",
+        "- Repository stats badges (stars, forks, etc.) added for quick insights",
+        "- Migrated markdown rendering to multiplatform-markdown-renderer for improved compatibility and readability",
+        "- Text selection enabled in the tool detail screen",
+        "- Updated cards to a modern Outlined Material 3 style",
+        "- Enhanced Saved Screen layout for a cleaner look",
+        "- Refined typography across key screens for improved visual consistency"
     )
 
     val feedbackText = buildAnnotatedString {
@@ -66,7 +82,6 @@ fun WhatsNewScreen() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
