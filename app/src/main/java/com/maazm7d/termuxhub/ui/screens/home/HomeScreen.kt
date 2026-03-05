@@ -1,21 +1,47 @@
 package com.maazm7d.termuxhub.ui.screens.home
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.GridView
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.maazm7d.termuxhub.domain.model.getPublishedDate
 import com.maazm7d.termuxhub.ui.components.CategoryChips
 import com.maazm7d.termuxhub.ui.components.SearchBar
@@ -34,67 +60,53 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     onOpenDetails: (String) -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val starsMap by viewModel.starsMap.collectAsStateWithLifecycle()
 
-    val uiState by viewModel.uiState.collectAsState()
-    val starsMap by viewModel.starsMap.collectAsState()
-
-    val searchQuery = rememberSaveable { mutableStateOf("") }
-    var selectedCategoryIndex by rememberSaveable { mutableStateOf(0) }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    var selectedCategoryIndex by rememberSaveable { mutableIntStateOf(0) }
     var currentSort by rememberSaveable { mutableStateOf(SortType.NEWEST_FIRST) }
 
     var sortMenuExpanded by remember { mutableStateOf(false) }
     var categoryMenuExpanded by remember { mutableStateOf(false) }
 
-    val listState = rememberSaveable(
-        saver = listSaver(
-            save = { listOf(it.firstVisibleItemIndex, it.firstVisibleItemScrollOffset) },
-            restore = { LazyListState(firstVisibleItemIndex = it[0], firstVisibleItemScrollOffset = it[1]) }
-        )
-    ) { LazyListState() }
+    val listState = rememberLazyListState()
 
-    var lastSort by rememberSaveable { mutableStateOf(currentSort) }
-    var lastCategory by rememberSaveable { mutableStateOf(selectedCategoryIndex) }
-    var lastQuery by rememberSaveable { mutableStateOf(searchQuery.value) }
-
-    LaunchedEffect(currentSort, selectedCategoryIndex, searchQuery.value) {
-        val sortChanged = lastSort != currentSort
-        val categoryChanged = lastCategory != selectedCategoryIndex
-        val queryChanged = lastQuery != searchQuery.value
-
-        if (sortChanged || categoryChanged || queryChanged) {
-            listState.scrollToItem(0)
-        }
-
-        lastSort = currentSort
-        lastCategory = selectedCategoryIndex
-        lastQuery = searchQuery.value
+    // Derive categories and counts
+    val categories = remember(uiState.tools) {
+        val allCount = uiState.tools.size
+        val counts = uiState.tools.groupingBy { it.category }.eachCount()
+        listOf("All" to allCount) + counts.entries.sortedBy { it.key }.map { it.key to it.value }
     }
 
-    val categoryCounts = remember(uiState.tools) { uiState.tools.groupingBy { it.category }.eachCount() }
-    val categories = remember(uiState.tools, categoryCounts) {
-        listOf("All" to uiState.tools.size) + categoryCounts.keys.sorted().map { it to (categoryCounts[it] ?: 0) }
-    }
+    // Filter and sort tools
+    val filteredTools by remember(uiState.tools, searchQuery, selectedCategoryIndex, currentSort, starsMap) {
+        derivedStateOf {
+            uiState.tools
+                .filter { tool ->
+                    val matchesQuery = searchQuery.isBlank() ||
+                            tool.name.contains(searchQuery, ignoreCase = true) ||
+                            tool.description.contains(searchQuery, ignoreCase = true)
 
-    val filteredTools = remember(uiState.tools, searchQuery.value, selectedCategoryIndex, currentSort, starsMap) {
-        uiState.tools
-            .filter { tool ->
-                val matchesQuery = searchQuery.value.isBlank() ||
-                        tool.name.contains(searchQuery.value, true) ||
-                        tool.description.contains(searchQuery.value, true)
+                    val matchesCategory = selectedCategoryIndex == 0 ||
+                            tool.category.equals(categories[selectedCategoryIndex].first, ignoreCase = true)
 
-                val matchesCategory = selectedCategoryIndex == 0 ||
-                        tool.category.equals(categories[selectedCategoryIndex].first, true)
-
-                matchesQuery && matchesCategory
-            }
-            .let { list ->
-                when (currentSort) {
-                    SortType.NEWEST_FIRST -> list.sortedByDescending { it.getPublishedDate() }
-                    SortType.OLDEST_FIRST -> list.sortedBy { it.getPublishedDate() }
-                    SortType.MOST_STARRED -> list.sortedByDescending { starsMap[it.id] ?: 0 }
-                    SortType.LEAST_STARRED -> list.sortedBy { starsMap[it.id] ?: 0 }
+                    matchesQuery && matchesCategory
                 }
-            }
+                .let { list ->
+                    when (currentSort) {
+                        SortType.NEWEST_FIRST -> list.sortedByDescending { it.getPublishedDate() }
+                        SortType.OLDEST_FIRST -> list.sortedBy { it.getPublishedDate() }
+                        SortType.MOST_STARRED -> list.sortedByDescending { starsMap[it.id] ?: 0 }
+                        SortType.LEAST_STARRED -> list.sortedBy { starsMap[it.id] ?: 0 }
+                    }
+                }
+        }
+    }
+
+    // Scroll to top when filter/sort changes
+    LaunchedEffect(currentSort, selectedCategoryIndex, searchQuery) {
+        listState.scrollToItem(0)
     }
 
     Scaffold { padding ->
@@ -102,16 +114,20 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 6.dp)
+                .padding(padding)
         ) {
-
-            // SEARCH + SORT
+            // Search and Sort Row
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SearchBar(queryState = searchQuery, modifier = Modifier.weight(1f))
+                SearchBar(
+                    queryState = remember { mutableStateOf(searchQuery) },
+                    onQueryChange = { searchQuery = it },
+                    modifier = Modifier.weight(1f)
+                )
 
                 Box {
                     IconButton(onClick = { sortMenuExpanded = true }) {
@@ -122,11 +138,13 @@ fun HomeScreen(
                         expanded = sortMenuExpanded,
                         onDismissRequest = { sortMenuExpanded = false }
                     ) {
-                        SortType.values().forEach { sort ->
+                        SortType.entries.forEach { sort ->
                             DropdownMenuItem(
                                 text = { Text(sort.label) },
                                 leadingIcon = {
-                                    if (currentSort == sort) Icon(Icons.Default.Check, null)
+                                    if (currentSort == sort) {
+                                        Icon(Icons.Default.Check, contentDescription = null)
+                                    }
                                 },
                                 onClick = {
                                     currentSort = sort
@@ -140,7 +158,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // CATEGORY ROW
+            // Category Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -154,11 +172,13 @@ fun HomeScreen(
                         expanded = categoryMenuExpanded,
                         onDismissRequest = { categoryMenuExpanded = false }
                     ) {
-                        categories.forEachIndexed { index, item ->
+                        categories.forEachIndexed { index, (name, count) ->
                             DropdownMenuItem(
-                                text = { Text("${item.first} (${item.second})") },
+                                text = { Text("$name ($count)") },
                                 leadingIcon = {
-                                    if (selectedCategoryIndex == index) Icon(Icons.Default.Check, null)
+                                    if (selectedCategoryIndex == index) {
+                                        Icon(Icons.Default.Check, contentDescription = null)
+                                    }
                                 },
                                 onClick = {
                                     selectedCategoryIndex = index
@@ -178,7 +198,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // TOOL LIST
+            // Tool List
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
@@ -196,4 +216,37 @@ fun HomeScreen(
             }
         }
     }
+}
+
+// Updated SearchBar composable to accept onQueryChange instead of MutableState
+@Composable
+private fun SearchBar(
+    queryState: String,
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    placeholder: String = "Search tools..."
+) {
+    androidx.compose.material3.TextField(
+        value = queryState,
+        onValueChange = onQueryChange,
+        modifier = modifier.fillMaxWidth(),
+        placeholder = { Text(placeholder) },
+        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+        trailingIcon = {
+            if (queryState.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
+                    Icon(Icons.Default.Clear, contentDescription = "Clear")
+                }
+            }
+        },
+        singleLine = true,
+        colors = androidx.compose.material3.TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+            focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+            unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+            cursorColor = MaterialTheme.colorScheme.primary
+        ),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+    )
 }
