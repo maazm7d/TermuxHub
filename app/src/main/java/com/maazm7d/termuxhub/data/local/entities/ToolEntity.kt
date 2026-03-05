@@ -42,5 +42,11 @@ data class ToolEntity(
     val publishedAt: String? = null,
 
     @ColumnInfo(name = "stars")
-    val stars: Int = 0
+    val stars: Int = 0,
+
+    @ColumnInfo(name = "tags")
+    val tags: List<String>? = null,
+
+    @ColumnInfo(name = "readme")
+    val readme: String? = null
 )
