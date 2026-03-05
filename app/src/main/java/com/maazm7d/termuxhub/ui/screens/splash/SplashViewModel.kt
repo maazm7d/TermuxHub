@@ -24,9 +24,9 @@ class SplashViewModel @Inject constructor(
             val minDelayMs = 1200L
             val start = System.currentTimeMillis()
 
-            try {
+            runCatching {
                 repository.refreshFromRemote()
-            } catch (_: Exception) {}
+            }
 
             val elapsed = System.currentTimeMillis() - start
             if (elapsed < minDelayMs) {
