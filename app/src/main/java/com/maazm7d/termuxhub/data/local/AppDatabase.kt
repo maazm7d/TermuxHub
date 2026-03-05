@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.maazm7d.termuxhub.data.local.entities.HallOfFameEntity
 import com.maazm7d.termuxhub.data.local.entities.ToolEntity
 
@@ -12,9 +13,10 @@ import com.maazm7d.termuxhub.data.local.entities.ToolEntity
         ToolEntity::class,
         HallOfFameEntity::class
     ],
-    version = 4,
+    version = 5,               
     exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun toolDao(): ToolDao
