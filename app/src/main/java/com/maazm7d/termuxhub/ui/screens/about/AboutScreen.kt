@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,7 +45,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.maazm7d.termuxhub.BuildConfig
 import com.maazm7d.termuxhub.R
 
 @Composable
@@ -56,9 +56,9 @@ fun AboutScreen() {
         try {
             context.packageManager
                 .getPackageInfo(context.packageName, 0)
-                .versionName ?: BuildConfig.VERSION_NAME
+                .versionName ?: "Unknown"
         } catch (_: PackageManager.NameNotFoundException) {
-            BuildConfig.VERSION_NAME
+            "Unknown"
         }
     }
 
@@ -138,7 +138,7 @@ fun AboutScreen() {
 private fun SectionCard(
     title: String,
     icon: ImageVector,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit
 ) {
     Card(
         modifier = Modifier
