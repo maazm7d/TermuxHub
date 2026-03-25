@@ -43,6 +43,8 @@ Add your tool entry to the metadata file.
 - Cryptography Tools  
 - Privacy & Anonymity  
 - Utilities & Dev  
+- TUI Apps
+- Games
 
 ---
 
