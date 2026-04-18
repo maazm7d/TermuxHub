@@ -1,11 +1,5 @@
 package com.maazm7d.termuxhub.navigation
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -61,26 +55,25 @@ fun TermuxHubAppNav(
                 modifier = Modifier.fillMaxSize()
             )
 
-            AnimatedVisibility(
-                visible = showBottomBar,
-                enter = slideInVertically { it / 2 } + fadeIn(),
-                exit = slideOutVertically { it / 2 } + fadeOut(),
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
-            ) {
-                BottomPillNavBar(
-                    currentDestination = currentDestination,
-                    onNavigate = { route ->
-                        navController.navigate(route) {
-                            popUpTo(Destinations.TOOLS) {
-                                saveState = true
+            if (showBottomBar) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(horizontal = 16.dp, vertical = 16.dp)
+                ) {
+                    BottomPillNavBar(
+                        currentDestination = currentDestination,
+                        onNavigate = { route ->
+                            navController.navigate(route) {
+                                popUpTo(Destinations.TOOLS) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }
@@ -110,10 +103,7 @@ private fun BottomPillNavBar(
                     ?.hierarchy
                     ?.any { it.route == item.route } == true
 
-                val scale by animateFloatAsState(
-                    targetValue = if (selected) 1.08f else 1f,
-                    label = "scale"
-                )
+                val scale = if (selected) 1.08f else 1f
 
                 NavigationBarItem(
                     selected = selected,

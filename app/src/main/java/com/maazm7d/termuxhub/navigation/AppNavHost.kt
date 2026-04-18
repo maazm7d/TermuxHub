@@ -1,5 +1,7 @@
 package com.maazm7d.termuxhub.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,7 +28,11 @@ fun AppNavHost(
     NavHost(
         navController = navController,
         startDestination = Destinations.SPLASH,
-        modifier = modifier
+        modifier = modifier,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
     ) {
 
         composable(Destinations.SPLASH) {

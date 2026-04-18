@@ -1,9 +1,5 @@
 package com.maazm7d.termuxhub.ui.screens.whatsnew
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -165,28 +161,11 @@ private fun AnimatedWhatsNewItem(
     text: String,
     delayMillis: Int
 ) {
-    var visible by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        delay(delayMillis.toLong())
-        visible = true
-    }
-
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(
-            animationSpec = tween(durationMillis = 400)
-        ) + slideInVertically(
-            initialOffsetY = { it / 6 },
-            animationSpec = tween(durationMillis = 400)
-        )
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 8.dp)
-        )
-    }
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.padding(horizontal = 8.dp)
+    )
 }

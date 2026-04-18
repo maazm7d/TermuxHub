@@ -1,7 +1,6 @@
 package com.maazm7d.termuxhub.ui.components
 
 import android.widget.Toast
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,7 +37,7 @@ fun ToolCard(
         "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/metadata/thumbnail/${tool.id}.webp"
 
     var isFav by remember { mutableStateOf(tool.isFavorite) }
-    val favScale by animateFloatAsState(targetValue = if (isFav) 1.05f else 1f)
+    val favScale = if (isFav) 1.05f else 1f
 
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
