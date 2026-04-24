@@ -28,7 +28,9 @@ import com.mikepenz.markdown.m3.markdownTypography
 import com.mikepenz.markdown.coil3.Coil3ImageTransformerImpl
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
+import com.maazm7d.termuxhub.ui.screens.details.components.InstallCommandRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.maazm7d.termuxhub.utils.UiState
 
 @Composable
 fun ToolDetailScreen(
@@ -36,19 +38,19 @@ fun ToolDetailScreen(
     viewModel: ToolDetailViewModel,
     onBack: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiStateWrapper by viewModel.uiState.collectAsState()
 
     LaunchedEffect(toolId) {
-        viewModel.load(toolId)
+        viewModel.loadToolDetails(toolId)
     }
 
-    when (uiState) {
-        is ToolDetailUiState.Loading -> ToolDetailShimmer()
-        is ToolDetailUiState.Success -> ToolDetailContent(
-            tool = (uiState as ToolDetailUiState.Success).tool,
+    when (val state = uiStateWrapper) {
+        is UiState.Loading -> ToolDetailShimmer()
+        is UiState.Success -> ToolDetailContent(
+            tool = state.data,
             onBack = onBack
         )
-        is ToolDetailUiState.Error -> {
+        is UiState.Error -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -64,7 +66,7 @@ fun ToolDetailScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = (uiState as ToolDetailUiState.Error).message,
+                        text = state.message,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

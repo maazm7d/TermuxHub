@@ -1,12 +1,12 @@
 package com.maazm7d.termuxhub.di
 
 import android.content.Context
-import com.maazm7d.termuxhub.data.local.ToolDao
-import com.maazm7d.termuxhub.data.local.HallOfFameDao
-import com.maazm7d.termuxhub.data.remote.MetadataClient
-import com.maazm7d.termuxhub.data.repository.ToolRepository
+import com.maazm7d.termuxhub.data.source.local.LocalDataSource
+import com.maazm7d.termuxhub.data.source.remote.RemoteDataSource
+import com.maazm7d.termuxhub.domain.repository.ToolRepository
 import com.maazm7d.termuxhub.data.repository.ToolRepositoryImpl
-import com.maazm7d.termuxhub.data.repository.HallOfFameRepository
+import com.maazm7d.termuxhub.domain.repository.HallOfFameRepository
+import com.maazm7d.termuxhub.data.repository.HallOfFameRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,22 +20,20 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideToolRepository(
-        dao: ToolDao,
-        metadataClient: MetadataClient,
-        context: Context
+        localDataSource: LocalDataSource,
+        remoteDataSource: RemoteDataSource
     ): ToolRepository = ToolRepositoryImpl(
-        toolDao = dao,
-        metadataClient = metadataClient,
-        appContext = context
+        localDataSource = localDataSource,
+        remoteDataSource = remoteDataSource
     )
 
     @Provides
     @Singleton
     fun provideHallOfFameRepository(
-        metadataClient: MetadataClient,
-        dao: HallOfFameDao
-    ): HallOfFameRepository = HallOfFameRepository(
-        metadataClient = metadataClient,
-        dao = dao
+        localDataSource: LocalDataSource,
+        remoteDataSource: RemoteDataSource
+    ): HallOfFameRepository = HallOfFameRepositoryImpl(
+        localDataSource = localDataSource,
+        remoteDataSource = remoteDataSource
     )
 }

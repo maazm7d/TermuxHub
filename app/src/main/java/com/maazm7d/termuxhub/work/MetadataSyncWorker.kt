@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.maazm7d.termuxhub.data.repository.ToolRepository
+import com.maazm7d.termuxhub.domain.repository.ToolRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 

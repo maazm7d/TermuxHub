@@ -1,7 +1,7 @@
 package com.maazm7d.termuxhub.di
 
-import com.maazm7d.termuxhub.data.repository.HallOfFameRepository
-import com.maazm7d.termuxhub.data.repository.ToolRepository
+import com.maazm7d.termuxhub.domain.repository.HallOfFameRepository
+import com.maazm7d.termuxhub.domain.repository.ToolRepository
 import com.maazm7d.termuxhub.domain.usecase.*
 import dagger.Module
 import dagger.Provides

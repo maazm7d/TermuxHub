@@ -123,4 +123,9 @@ dependencies {
     ksp("androidx.hilt:hilt-compiler:1.3.0")
 
     implementation("androidx.core:core-splashscreen:1.2.0")
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("io.mockk:mockk:1.13.17")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
+    testImplementation("app.cash.turbine:turbine:1.2.0")
 }

@@ -1,4 +1,4 @@
-package com.maazm7d.termuxhub.data.repository
+package com.maazm7d.termuxhub.domain.repository
 
 import com.maazm7d.termuxhub.data.local.entities.ToolEntity
 import kotlinx.coroutines.flow.Flow

@@ -7,6 +7,10 @@ import com.maazm7d.termuxhub.data.local.ToolDao
 import com.maazm7d.termuxhub.data.local.HallOfFameDao
 import com.maazm7d.termuxhub.data.remote.ApiService
 import com.maazm7d.termuxhub.data.remote.MetadataClient
+import com.maazm7d.termuxhub.data.source.local.LocalDataSource
+import com.maazm7d.termuxhub.data.source.local.LocalDataSourceImpl
+import com.maazm7d.termuxhub.data.source.remote.RemoteDataSource
+import com.maazm7d.termuxhub.data.source.remote.RemoteDataSourceImpl
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -26,8 +30,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DataModule {
 
-    private const val METADATA_BASE_URL =
-        "https://raw.githubusercontent.com/maazm7d/TermuxHub/main/"
+    private const val METADATA_BASE_URL = com.maazm7d.termuxhub.utils.Constants.METADATA_BASE_URL
 
     @Provides
     @Singleton
@@ -86,4 +89,18 @@ object DataModule {
     @Provides
     @Singleton
     fun provideAppContext(@ApplicationContext context: Context): Context = context
+
+    @Provides
+    @Singleton
+    fun provideRemoteDataSource(apiService: ApiService): RemoteDataSource =
+        RemoteDataSourceImpl(apiService)
+
+    @Provides
+    @Singleton
+    fun provideLocalDataSource(
+        toolDao: ToolDao,
+        hallOfFameDao: HallOfFameDao,
+        @ApplicationContext context: Context,
+        moshi: Moshi
+    ): LocalDataSource = LocalDataSourceImpl(toolDao, hallOfFameDao, context, moshi)
 }

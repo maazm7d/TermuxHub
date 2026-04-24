@@ -1,4 +1,4 @@
-package com.maazm7d.termuxhub.ui.screens.details
+package com.maazm7d.termuxhub.ui.screens.details.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

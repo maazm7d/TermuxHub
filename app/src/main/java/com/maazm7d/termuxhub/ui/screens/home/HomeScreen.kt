@@ -19,6 +19,7 @@ import com.maazm7d.termuxhub.domain.model.getPublishedDate
 import com.maazm7d.termuxhub.ui.components.CategoryChips
 import com.maazm7d.termuxhub.ui.components.SearchBar
 import com.maazm7d.termuxhub.ui.components.ToolCard
+import com.maazm7d.termuxhub.utils.UiState
 
 enum class SortType(val label: String) {
     NEWEST_FIRST("Newest first"),
@@ -33,9 +34,38 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     onOpenDetails: (String) -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val starsMap by viewModel.starsMap.collectAsState()
+    val uiStateWrapper by viewModel.uiState.collectAsState()
 
+    when (val state = uiStateWrapper) {
+        is UiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+        is UiState.Error -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = state.message, color = MaterialTheme.colorScheme.error)
+            }
+        }
+        is UiState.Success -> {
+            HomeContent(
+                state = state.data,
+                onRefresh = { viewModel.refresh() },
+                onToggleFavorite = { viewModel.toggleFavorite(it) },
+                onOpenDetails = onOpenDetails
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HomeContent(
+    state: HomeUiState,
+    onRefresh: () -> Unit,
+    onToggleFavorite: (String) -> Unit,
+    onOpenDetails: (String) -> Unit
+) {
     val searchQuery = rememberSaveable { mutableStateOf("") }
     var selectedCategoryIndex by rememberSaveable { mutableStateOf(0) }
     var currentSort by rememberSaveable { mutableStateOf(SortType.NEWEST_FIRST) }
@@ -45,13 +75,13 @@ fun HomeScreen(
 
     val listState = rememberLazyListState()
 
-    val categoryCounts = remember(uiState.tools) { uiState.tools.groupingBy { it.category }.eachCount() }
-    val categories = remember(uiState.tools, categoryCounts) {
-        listOf("All" to uiState.tools.size) + categoryCounts.keys.sorted().map { it to (categoryCounts[it] ?: 0) }
+    val categoryCounts = remember(state.tools) { state.tools.groupingBy { it.category }.eachCount() }
+    val categories = remember(state.tools, categoryCounts) {
+        listOf("All" to state.tools.size) + categoryCounts.keys.sorted().map { it to (categoryCounts[it] ?: 0) }
     }
 
-    val filteredTools = remember(uiState.tools, searchQuery.value, selectedCategoryIndex, currentSort, starsMap) {
-        uiState.tools
+    val filteredTools = remember(state.tools, searchQuery.value, selectedCategoryIndex, currentSort, state.starsMap) {
+        state.tools
             .filter { tool ->
                 val matchesQuery = searchQuery.value.isBlank() ||
                         tool.name.contains(searchQuery.value, true) ||
@@ -64,15 +94,15 @@ fun HomeScreen(
                 when (currentSort) {
                     SortType.NEWEST_FIRST -> list.sortedByDescending { it.getPublishedDate() }
                     SortType.OLDEST_FIRST -> list.sortedBy { it.getPublishedDate() }
-                    SortType.MOST_STARRED -> list.sortedByDescending { starsMap[it.id] ?: 0 }
-                    SortType.LEAST_STARRED -> list.sortedBy { starsMap[it.id] ?: 0 }
+                    SortType.MOST_STARRED -> list.sortedByDescending { state.starsMap[it.id] ?: 0 }
+                    SortType.LEAST_STARRED -> list.sortedBy { state.starsMap[it.id] ?: 0 }
                 }
             }
     }
 
     PullToRefreshBox(
-        isRefreshing = uiState.isRefreshing,
-        onRefresh = { viewModel.refresh() }
+        isRefreshing = state.isRefreshing,
+        onRefresh = onRefresh
     ) {
         Column(
             modifier = Modifier
@@ -150,33 +180,19 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            if (!uiState.error.isNullOrBlank()) {
-                Text(
-                    text = uiState.error!!,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-
-            if (uiState.isLoading && filteredTools.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 12.dp)
-                ) {
-                    items(filteredTools, key = { it.id }) { tool ->
-                        ToolCard(
-                            tool = tool,
-                            stars = starsMap[tool.id],
-                            onOpenDetails = onOpenDetails,
-                            onToggleFavorite = { viewModel.toggleFavorite(it) },
-                            onSave = { viewModel.toggleFavorite(it) }
-                        )
-                    }
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 12.dp)
+            ) {
+                items(filteredTools, key = { it.id }) { tool ->
+                    ToolCard(
+                        tool = tool,
+                        stars = state.starsMap[tool.id],
+                        onOpenDetails = onOpenDetails,
+                        onToggleFavorite = { onToggleFavorite(it) },
+                        onSave = { onToggleFavorite(it) }
+                    )
                 }
             }
         }
