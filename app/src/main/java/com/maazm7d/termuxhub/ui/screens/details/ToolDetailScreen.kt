@@ -83,12 +83,19 @@ fun ToolDetailScreen(
             title = { Text("Permission Required") },
             text = {
                 Column {
-                    Text("Termux requires 'allow-external-apps' to be enabled to run commands from other apps.")
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Termux requires two steps to allow external commands:")
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text("Step 1: Enable in Termux", fontWeight = FontWeight.Bold)
                     Text(
-                        "1. Open Termux\n2. Run: nano ~/.termux/termux.properties\n3. Set: allow-external-apps = true\n4. Save and run: termux-reload-settings",
+                        "Run these in Termux:\n1. nano ~/.termux/termux.properties\n2. Set: allow-external-apps = true\n3. Run: termux-reload-settings",
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text("Step 2: App Permissions", fontWeight = FontWeight.Bold)
+                    Text(
+                        "1. Go to Android Settings > Apps > Termux Hub\n2. Select 'Permissions'\n3. Find 'Additional permissions'\n4. Allow 'Run commands in Termux environment'",
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             },
