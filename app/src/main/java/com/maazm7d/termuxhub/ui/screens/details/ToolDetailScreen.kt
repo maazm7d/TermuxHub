@@ -1,19 +1,26 @@
 package com.maazm7d.termuxhub.ui.screens.details
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.foundation.border
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -38,38 +45,94 @@ fun ToolDetailScreen(
     viewModel: ToolDetailViewModel,
     onBack: () -> Unit
 ) {
+    val context = LocalContext.current
     val uiStateWrapper by viewModel.uiState.collectAsState()
+    val installState by viewModel.installState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    var showSecurityDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(toolId) {
         viewModel.loadToolDetails(toolId)
     }
 
-    when (val state = uiStateWrapper) {
-        is UiState.Loading -> ToolDetailShimmer()
-        is UiState.Success -> ToolDetailContent(
-            tool = state.data,
-            onBack = onBack
-        )
-        is UiState.Error -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "Failed to load tool",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.error
-                    )
+    LaunchedEffect(installState) {
+        when (val state = installState) {
+            is InstallState.Launched -> {
+                snackbarHostState.showSnackbar("Launched in Termux")
+                viewModel.resetInstallState()
+            }
+            is InstallState.TermuxMissing -> {
+                snackbarHostState.showSnackbar("Termux is not installed")
+                viewModel.resetInstallState()
+            }
+            is InstallState.SecurityError -> {
+                showSecurityDialog = true
+                viewModel.resetInstallState()
+            }
+            is InstallState.Error -> {
+                snackbarHostState.showSnackbar("Error: ${state.message}")
+                viewModel.resetInstallState()
+            }
+            else -> {}
+        }
+    }
+
+    if (showSecurityDialog) {
+        AlertDialog(
+            onDismissRequest = { showSecurityDialog = false },
+            title = { Text("Permission Required") },
+            text = {
+                Column {
+                    Text("Termux requires 'allow-external-apps' to be enabled to run commands from other apps.")
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = state.message,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        "1. Open Termux\n2. Run: nano ~/.termux/termux.properties\n3. Set: allow-external-apps = true\n4. Save and run: termux-reload-settings",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
                     )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showSecurityDialog = false }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { padding ->
+        Box(modifier = Modifier.padding(padding)) {
+            when (val state = uiStateWrapper) {
+                is UiState.Loading -> ToolDetailShimmer()
+                is UiState.Success -> ToolDetailContent(
+                    tool = state.data,
+                    viewModel = viewModel,
+                    onBack = onBack
+                )
+                is UiState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Failed to load tool",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = state.message,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -79,8 +142,10 @@ fun ToolDetailScreen(
 @Composable
 private fun ToolDetailContent(
     tool: ToolDetails,
+    viewModel: ToolDetailViewModel,
     onBack: () -> Unit
 ) {
+    val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
@@ -182,11 +247,47 @@ private fun ToolDetailContent(
 
                             Spacer(modifier = Modifier.height(12.dp))
 
+                            if (tool.requireRoot) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(
+                                            MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f),
+                                            RoundedCornerShape(8.dp)
+                                        )
+                                        .border(
+                                            1.dp,
+                                            MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
+                                            RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Warning,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.error,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "This tool runs 'su' inside Termux.",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+
                             tool.installCommands
                                 .lines()
                                 .filter { it.isNotBlank() }
                                 .forEach { cmd ->
-                                    InstallCommandRow(command = cmd)
+                                    InstallCommandRow(
+                                        command = cmd,
+                                        onRunClick = { viewModel.runInstall(context, tool) }
+                                    )
                                 }
                         }
                     }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +22,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun InstallCommandRow(command: String) {
+fun InstallCommandRow(
+    command: String,
+    onRunClick: () -> Unit
+) {
     val clipboard = LocalClipboardManager.current
     val shape = RoundedCornerShape(14.dp)
 
@@ -50,6 +54,16 @@ fun InstallCommandRow(command: String) {
             )
 
             Spacer(modifier = Modifier.width(8.dp))
+
+            IconButton(
+                onClick = onRunClick
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = "Run command in Termux",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
 
             IconButton(
                 onClick = {

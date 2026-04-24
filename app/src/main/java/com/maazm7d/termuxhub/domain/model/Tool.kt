@@ -44,5 +44,6 @@ data class ToolDetails(
     val issues: Int = 0,
     val pullRequests: Int = 0,
     val license: String? = null,
-    val lastUpdated: Long = 0L
+    val lastUpdated: Long = 0L,
+    val requireRoot: Boolean = false
 )

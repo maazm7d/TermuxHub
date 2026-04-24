@@ -5,6 +5,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <queries>
+        <package android:name="com.termux" />
+    </queries>
+
     <application
         android:name=".TermuxHubApp"
         android:allowBackup="true"

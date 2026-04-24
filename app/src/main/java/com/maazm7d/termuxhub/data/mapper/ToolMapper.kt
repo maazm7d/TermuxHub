@@ -71,5 +71,6 @@ fun ToolEntity.toDetailDomain(readme: String) = ToolDetails(
     issues = issues,
     pullRequests = pullRequests,
     license = license,
-    lastUpdated = updatedAt
+    lastUpdated = updatedAt,
+    requireRoot = requireRoot
 )
