@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,7 +25,7 @@ fun CategoryChips(
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier.padding(horizontal = 12.dp, vertical = 2.dp)
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         itemsIndexed(chips, key = { index, _ -> index }) { index, (category, count) ->
             val label = if (category == "All") "All ($count)" else "$category ($count)"
@@ -36,11 +33,24 @@ fun CategoryChips(
             FilterChip(
                 selected = selectedIndex == index,
                 onClick = { onChipSelected(index) },
-                label = { Text(label) },
+                label = {
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                },
                 shape = MaterialTheme.shapes.medium,
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = MaterialTheme.colorScheme.primary,
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+                ),
+                border = FilterChipDefaults.filterChipBorder(
+                    enabled = true,
+                    selected = selectedIndex == index,
+                    borderColor = MaterialTheme.colorScheme.outlineVariant,
+                    selectedBorderColor = MaterialTheme.colorScheme.primary
                 )
             )
         }

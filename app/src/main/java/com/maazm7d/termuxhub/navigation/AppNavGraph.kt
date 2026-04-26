@@ -50,26 +50,10 @@ fun TermuxHubAppNav(
         else -> true
     }
 
-    Scaffold(containerColor = Color.Transparent) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            AppNavHost(
-                navController = navController,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            AnimatedVisibility(
-                visible = showBottomBar,
-                enter = slideInVertically { it / 2 } + fadeIn(),
-                exit = slideOutVertically { it / 2 } + fadeOut(),
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
-            ) {
-                BottomPillNavBar(
+    Scaffold(
+        bottomBar = {
+            if (showBottomBar) {
+                StandardNavigationBar(
                     currentDestination = currentDestination,
                     onNavigate = { route ->
                         navController.navigate(route) {
@@ -83,64 +67,52 @@ fun TermuxHubAppNav(
                 )
             }
         }
+    ) { paddingValues ->
+        AppNavHost(
+            navController = navController,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        )
     }
 }
 
 @Composable
-private fun BottomPillNavBar(
+private fun StandardNavigationBar(
     currentDestination: NavDestination?,
     onNavigate: (String) -> Unit
 ) {
-    Surface(
-        shape = RoundedCornerShape(28.dp),
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = 6.dp,
-        modifier = Modifier.wrapContentWidth() 
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 0.dp
     ) {
-        NavigationBar(
-            modifier = Modifier
-                .height(48.dp)
-                .wrapContentWidth()               
-                .padding(horizontal = 8.dp),     
-            containerColor = Color.Transparent,
-            tonalElevation = 0.dp
-        ) {
-            bottomNavItems.forEach { item ->
-                val selected = currentDestination
-                    ?.hierarchy
-                    ?.any { it.route == item.route } == true
+        bottomNavItems.forEach { item ->
+            val selected = currentDestination
+                ?.hierarchy
+                ?.any { it.route == item.route } == true
 
-                val scale by animateFloatAsState(
-                    targetValue = if (selected) 1.08f else 1f,
-                    label = "scale"
-                )
-
-                NavigationBarItem(
-                    selected = selected,
-                    onClick = { onNavigate(item.route) },
-                    icon = {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(if (item.isHome) 22.dp else 20.dp)
-                                .graphicsLayer {
-                                    scaleX = scale
-                                    scaleY = scale
-                                }
-                        )
-                    },
-                    label = null,
-                    alwaysShowLabel = false,
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.Transparent,
-                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                            alpha = 0.7f
-                        )
+            NavigationBarItem(
+                selected = selected,
+                onClick = { onNavigate(item.route) },
+                icon = {
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = null
                     )
+                },
+                label = {
+                    Text(
+                        text = item.route.replaceFirstChar { it.uppercase() },
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                },
+                alwaysShowLabel = true,
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+                    selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
+            )
         }
     }
 }
