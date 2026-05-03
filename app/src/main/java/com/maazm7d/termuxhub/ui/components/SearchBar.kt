@@ -15,13 +15,14 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
-    queryState: MutableState<String>,
+    query: String,
+    onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: String = "Search tools..."
 ) {
     TextField(
-        value = queryState.value,
-        onValueChange = { queryState.value = it },
+        value = query,
+        onValueChange = onQueryChange,
         modifier = modifier
             .fillMaxWidth(),
         placeholder = {
@@ -39,8 +40,8 @@ fun SearchBar(
             )
         },
         trailingIcon = {
-            if (queryState.value.isNotEmpty()) {
-                IconButton(onClick = { queryState.value = "" }) {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = { onQueryChange("") }) {
                     Icon(
                         imageVector = Icons.Filled.Clear,
                         contentDescription = "Clear",

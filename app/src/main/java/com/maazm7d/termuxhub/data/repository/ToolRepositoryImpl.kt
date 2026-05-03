@@ -8,6 +8,7 @@ import com.maazm7d.termuxhub.data.source.local.LocalDataSource
 import com.maazm7d.termuxhub.data.source.remote.RemoteDataSource
 import com.maazm7d.termuxhub.domain.model.ToolDetails
 import com.maazm7d.termuxhub.domain.repository.ToolRepository
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import javax.inject.Inject
@@ -28,27 +29,41 @@ class ToolRepositoryImpl @Inject constructor(
         localDataSource.getToolById(id)
 
     override suspend fun setFavorite(toolId: String, isFav: Boolean) {
-        val current = localDataSource.getToolById(toolId) ?: return
-        localDataSource.updateTool(current.copy(isFavorite = isFav))
+        try {
+            val current = localDataSource.getToolById(toolId) ?: return
+            localDataSource.updateTool(current.copy(isFavorite = isFav))
+        } catch (e: Exception) {
+            Timber.e(e, "Error setting favorite for tool: $toolId")
+        }
     }
 
     override suspend fun refreshFromRemote(): Boolean {
         return try {
-            val response = remoteDataSource.fetchMetadata()
-            if (response.isSuccessful && response.body() != null) {
-                val repoStats = fetchRepoStats()
-                val metadata = response.body()!!
-                val entities = metadata.tools.mapNotNull { dto ->
-                    val existing = localDataSource.getToolById(dto.id)
-                    dto.toEntity(existing, repoStats)
+            kotlinx.coroutines.coroutineScope {
+                val metadataDeferred = async { remoteDataSource.fetchMetadata() }
+                val repoStatsDeferred = async { fetchRepoStats() }
+                val starsDeferred = async { fetchStars() }
+
+                val response = metadataDeferred.await()
+                val repoStats = repoStatsDeferred.await()
+                val starsMap = starsDeferred.await()
+
+                if (response.isSuccessful && response.body() != null) {
+                    val metadata = response.body()!!
+                    val existingTools = localDataSource.getAllTools().associateBy { it.id }
+                    val entities = metadata.tools.mapNotNull { dto ->
+                        val existing = existingTools[dto.id]
+                        dto.toEntity(existing, repoStats)?.copy(
+                            stars = starsMap[dto.id] ?: existing?.stars ?: 0
+                        )
+                    }
+                    if (entities.isNotEmpty()) {
+                        localDataSource.insertTools(entities)
+                    }
+                    true
+                } else {
+                    loadFromAssets()
                 }
-                if (entities.isNotEmpty()) {
-                    localDataSource.insertTools(entities)
-                }
-                applyStars()
-                true
-            } else {
-                loadFromAssets()
             }
         } catch (e: Exception) {
             Timber.e(e, "Error refreshing tools from remote")
@@ -56,35 +71,40 @@ class ToolRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchStars(): Map<String, Int> {
-        return try {
-            val resp = remoteDataSource.fetchStars()
-            if (resp.isSuccessful) resp.body()?.stars ?: emptyMap()
-            else emptyMap()
-        } catch (e: Exception) {
-            Timber.e(e, "Error fetching stars")
-            emptyMap()
-        }
+    override suspend fun fetchStars(): Map<String, Int> = runCatching {
+        val resp = remoteDataSource.fetchStars()
+        if (resp.isSuccessful) resp.body()?.stars ?: emptyMap()
+        else emptyMap()
+    }.getOrElse { e ->
+        Timber.e(e, "Error fetching stars")
+        emptyMap()
     }
 
-    private suspend fun fetchRepoStats(): Map<String, RepoStatsDto> {
-        return try {
-            val resp = remoteDataSource.fetchRepoStats()
-            if (resp.isSuccessful) resp.body()?.stats ?: emptyMap()
-            else emptyMap()
-        } catch (e: Exception) {
-            Timber.e(e, "Error fetching repo stats")
-            emptyMap()
-        }
+    private suspend fun fetchRepoStats(): Map<String, RepoStatsDto> = runCatching {
+        val resp = remoteDataSource.fetchRepoStats()
+        if (resp.isSuccessful) resp.body()?.stats ?: emptyMap()
+        else emptyMap()
+    }.getOrElse { e ->
+        Timber.e(e, "Error fetching repo stats")
+        emptyMap()
     }
 
     private suspend fun applyStars() {
         val starsMap = fetchStars()
-        starsMap.forEach { (toolId, starCount) ->
-            val tool = localDataSource.getToolById(toolId)
-            if (tool != null && tool.stars != starCount) {
-                localDataSource.updateTool(tool.copy(stars = starCount))
+        if (starsMap.isEmpty()) return
+
+        val allTools = localDataSource.getAllTools()
+        val toolsToUpdate = allTools.mapNotNull { tool ->
+            val remoteStars = starsMap[tool.id]
+            if (remoteStars != null && tool.stars != remoteStars) {
+                tool.copy(stars = remoteStars)
+            } else {
+                null
             }
+        }
+
+        if (toolsToUpdate.isNotEmpty()) {
+            localDataSource.updateTools(toolsToUpdate)
         }
     }
 
@@ -92,9 +112,10 @@ class ToolRepositoryImpl @Inject constructor(
         return try {
             val repoStats = fetchRepoStats()
             val dto = localDataSource.loadMetadataFromAssets(assetsFileName)
+            val existingTools = localDataSource.getAllTools().associateBy { it.id }
 
             val entities = dto?.tools?.mapNotNull { t ->
-                val existing = localDataSource.getToolById(t.id)
+                val existing = existingTools[t.id]
                 t.toEntity(existing, repoStats)
             } ?: emptyList()
 

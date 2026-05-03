@@ -8,7 +8,7 @@ import com.maazm7d.termuxhub.domain.model.ToolDetails
 
 fun ToolDto.toEntity(
     existing: ToolEntity? = null,
-    repoStats: Map<String, RepoStatsDto>
+    repoStats: Map<String, RepoStatsDto> = emptyMap()
 ): ToolEntity? {
     if (id.isBlank() || name.isBlank()) return null
 

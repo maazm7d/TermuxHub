@@ -16,10 +16,12 @@ import javax.inject.Inject
 
 interface LocalDataSource {
     fun getAllToolsFlow(): Flow<List<ToolEntity>>
+    suspend fun getAllTools(): List<ToolEntity>
     fun getFavoritesFlow(): Flow<List<ToolEntity>>
     suspend fun getToolById(id: String): ToolEntity?
     suspend fun insertTools(tools: List<ToolEntity>)
     suspend fun updateTool(tool: ToolEntity)
+    suspend fun updateTools(tools: List<ToolEntity>)
     suspend fun loadMetadataFromAssets(fileName: String): MetadataDto?
 
     fun getAllHallOfFameFlow(): Flow<List<HallOfFameEntity>>
@@ -34,10 +36,12 @@ class LocalDataSourceImpl @Inject constructor(
     private val moshi: Moshi
 ) : LocalDataSource {
     override fun getAllToolsFlow(): Flow<List<ToolEntity>> = toolDao.getAllToolsFlow()
+    override suspend fun getAllTools(): List<ToolEntity> = toolDao.getAllTools()
     override fun getFavoritesFlow(): Flow<List<ToolEntity>> = toolDao.getFavoritesFlow()
     override suspend fun getToolById(id: String): ToolEntity? = toolDao.getToolById(id)
     override suspend fun insertTools(tools: List<ToolEntity>) = toolDao.insertAll(tools)
     override suspend fun updateTool(tool: ToolEntity) = toolDao.update(tool)
+    override suspend fun updateTools(tools: List<ToolEntity>) = toolDao.updateAll(tools)
 
     override suspend fun loadMetadataFromAssets(fileName: String): MetadataDto? = withContext(Dispatchers.IO) {
         try {

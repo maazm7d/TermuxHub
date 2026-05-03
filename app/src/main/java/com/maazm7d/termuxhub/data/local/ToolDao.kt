@@ -10,6 +10,9 @@ interface ToolDao {
     @Query("SELECT * FROM tools ORDER BY name COLLATE NOCASE ASC")
     fun getAllToolsFlow(): Flow<List<ToolEntity>>
 
+    @Query("SELECT * FROM tools")
+    suspend fun getAllTools(): List<ToolEntity>
+
     @Query("SELECT * FROM tools ORDER BY stars DESC, name COLLATE NOCASE ASC")
     fun getToolsByStarsFlow(): Flow<List<ToolEntity>>
 
@@ -27,6 +30,9 @@ interface ToolDao {
 
     @Update
     suspend fun update(tool: ToolEntity)
+
+    @Update
+    suspend fun updateAll(tools: List<ToolEntity>)
 
     @Query("DELETE FROM tools")
     suspend fun clearAll()
