@@ -70,6 +70,11 @@ private fun HomeContent(
 
     val listState = rememberLazyListState()
 
+    // Scroll to top when filters change
+    LaunchedEffect(state.searchQuery, state.selectedCategoryIndex, state.currentSort) {
+        listState.animateScrollToItem(0)
+    }
+
     PullToRefreshBox(
         isRefreshing = state.isRefreshing,
         onRefresh = onRefresh
