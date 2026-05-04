@@ -1824,5 +1824,17 @@
       "requireRoot": false,
       "publishedAt": "25-03-2026"
     }
+ {
+      "id": "0153",
+      "name": "illeagal-sounds",
+      "description": "this is a py script that automates offloading for a youtube to mp3 converter i found",
+      "category": "util",
+      "install": "pkg install ffmpeg pkg install pip, pip install yt-dlp",
+      "thumbnail": "",
+      "repo": "https://github.com/stp-ngnm/illeagal-sounds",
+      "author": "stp-ngnm",
+      "requireRoot": false,
+      "publishedAt": "01-04-2026"
+    }
   ]
 }
