@@ -1829,7 +1829,7 @@
       "name": "illeagal-sounds",
       "description": "this is an automated offlaoder tool for a youtube converter i found; new commands soon.",
       "category": "util",
-      "install": "pkg install ffmpeg pip/pip install yt-dlp",
+      "install": "pkg install ffmpeg pip / pip install yt-dlp",
       "thumbnail": "",
       "repo": "https://github.com/stp-ngnm/illeagal-sounds",
       "author": "stp-ngnm",
