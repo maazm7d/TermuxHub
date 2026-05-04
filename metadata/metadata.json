@@ -1823,6 +1823,18 @@
       "author": "fph",
       "requireRoot": false,
       "publishedAt": "25-03-2026"
-    }
+    },
+    {
+      "id": "0153",
+      "name": "illeagal-sounds",
+      "description": "this is an automated offlaoder tool for a youtube converter i found; new commands soon.",
+      "category": "util",
+      "install": "pkg install ffmpeg pip","pip install yt-dlp",
+      "thumbnail": "",
+      "repo": "https://github.com/stp-ngnm/illeagal-sounds",
+      "author": "stp-ngnm",
+      "requireRoot": false,
+      "publishedAt": "04-01-2026"
+    },
   ]
 }
