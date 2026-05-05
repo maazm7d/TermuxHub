@@ -2043,12 +2043,12 @@
     {
       "id": "0171",
       "name": "oh-my-termux",
-      "description": "Make your termux look beautiful with Oh-My-Zsh and powerlevel10k.",
+      "description": "Make your termux look beautiful with Oh-My-Zsh.",
       "category": "Utilities & Dev",
       "install": "pkg install curl -y\nsh -c \"$(curl -fsSL https://raw.githubusercontent.com/StayPirate/oh-my-termux/main/install.sh)\"",
       "thumbnail": "",
-      "repo": "https://github.com/StayPirate/oh-my-termux",
-      "author": "StayPirate",
+      "repo": "https://github.com/4679/oh-my-termux",
+      "author": "4679",
       "requireRoot": false,
       "publishedAt": "03-05-2026"
     },
