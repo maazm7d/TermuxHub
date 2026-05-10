@@ -2063,6 +2063,18 @@
       "author": "remo7777",
       "requireRoot": false,
       "publishedAt": "03-05-2026"
-    }
+    },
+    {
+      "id": "0173",
+      "name": "youtube to mp3",
+      "description": "this is an anti-capitalist idea i had that keeps me silently entertained by media conglomerates... remember the clergymens vice is herecy",
+      "category": "utilities",
+      "install": "pkg install ffmpeg pip / pip install yt-dlp",
+      "thumbnail": "",
+      "repo": "https://github.com/stp-ngnm/illeagal-sounds",
+      "author": "stp-ngnm",
+      "requireRoot": false,
+      "publishedAt": "01-01-26"
+    },
   ]
 }
