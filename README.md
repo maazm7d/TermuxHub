@@ -5,6 +5,33 @@
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fmaazm7d%2FTermuxHub%2Fmain%2Fmetadata%2Fmetadata.json&query=%24.tools.length&label=tools&color=blue" alt="Tools Count">
+  <img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fmaazm7d%2FTermuxHub%2Fmain%2Fmetadata%2Frepo_stats.json&query=%24.lastUpdated&label=last%20metadata%20update&color=green" alt="Last Metadata Update">
+  <a href="https://github.com/maazm7d/TermuxHub/actions/workflows/build.yml">
+    <img src="https://github.com/maazm7d/TermuxHub/actions/workflows/build.yml/badge.svg" alt="CI Status">
+  </a>
+  <a href="https://github.com/maazm7d/TermuxHub/actions/workflows/metadata-sync.yml">
+    <img src="https://github.com/maazm7d/TermuxHub/actions/workflows/metadata-sync.yml/badge.svg" alt="Metadata Sync Status">
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Android-7.1.1%2B-green.svg?logo=android" alt="Android Version">
+  <a href="https://github.com/maazm7d/TermuxHub/releases">
+    <img src="https://img.shields.io/github/v/release/maazm7d/TermuxHub" alt="Latest Release">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/maazm7d/TermuxHub" alt="License">
+  </a>
+  <a href="https://github.com/maazm7d/TermuxHub/stargazers">
+    <img src="https://img.shields.io/github/stars/maazm7d/TermuxHub?style=social" alt="GitHub stars">
+  </a>
+  <a href="https://github.com/maazm7d/TermuxHub/network/members">
+    <img src="https://img.shields.io/github/forks/maazm7d/TermuxHub?style=social" alt="GitHub forks">
+  </a>
+</p>
+
+<p align="center">
   <a href="https://github.com/maazm7d/TermuxHub/releases/latest/download/app-release.apk">
     <img
       src="https://raw.githubusercontent.com/NeoApplications/Neo-Backup/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png"
