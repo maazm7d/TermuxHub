@@ -27,12 +27,13 @@ Qu1cksc0pe aims to get even more information about suspicious files and helps us
 | MacOS Executables (mach-o) | Static |
 | Android Files (.apk, .jar, .dex) | Static, Dynamic(for now .apk only) |
 | Golang Binaries (Linux) | Static |
-| Document Files | Static |
-| VBScript/VBA Family (.vbs, .vbe, .vba, .vb, .bas, .cls, .frm) | Static (`--docs`) |
+| Document Files | Static; sandboxed VBA behavior emulation when macros are present |
+| VBScript/VBA Family (.vbs, .vbe, .vba, .vb, .bas, .cls, .frm) | Static + sandboxed behavior emulation (`--docs`) |
+| AppleScript Source (.applescript, including content detected under misleading VB-family extensions) | Static (`--analyze`) |
 | HTML Documents (.html, .htm) | Static (`--analyze`) |
 | JavaScript (.js) | Static (`--analyze`) |
 | HTA / HTML Application (.hta) | Static (`--analyze`) |
-| Windows Batch Scripts (.bat, .cmd) | Static (`--analyze`) |
+| Windows Batch Scripts (.bat, .cmd, including content detected under misleading VB-family extensions) | Static (`--analyze`) |
 | Windows Shortcut (.lnk) | Static (`--analyze`) |
 | Archive Files (.zip, .rar, .ace) | Static |
 | PCAP Files (.pcap) | Static |
@@ -130,6 +131,11 @@ python3 qu1cksc0pe.py --ui
 ![Screenshot](https://github.com/user-attachments/assets/84b72c33-8ca6-48f5-a613-52fca7c596e2)
 
 # Updates
+<b>25/08/2026</b>
+- [X] New feature: Office VBA projects and plaintext VBScript/VBA-family files are now emulated automatically in a native, in-memory sandbox during `--docs` analysis. The normal static scan still runs, and JSON reports include the emulation findings, IOC event trace, network requests, process attempts, persistence activity, and virtual files.
+- [X] New feature: added AppleScript source analysis to `Modules/apple_analyzer.py`, including execution, network, credential-access, collection, persistence, defense-evasion, filesystem, shell-command, URL, and YARA indicators. Use `--analyze`; AppleScript is never executed through `osascript`.
+- [X] New feature: added dedicated Windows Batch analysis for `.bat`/`.cmd` files, with execution, persistence, defense-evasion, download/network, obfuscation, IOC, and YARA detection.
+
 <b>12/08/2026</b>
 - [X] New feature: added an MCP server (`--mcp`, `Modules/mcp_server.py`, `.mcp.json`) exposing Qu1cksc0pe as tools for MCP clients like Claude Code, defaulting to `streamable-http` (persistent, multi-client; `stdio`/`sse` also available) with logging to stderr and `sc0pe_reports/mcp/mcp_server.log` (`SC0PE_MCP_LOG_LEVEL`/`SC0PE_MCP_LOG_FILE`). See the "MCP Server" section above.
 - [X] New feature: `--ai` now supports Claude, OpenAI, DeepSeek, Kimi, and GLM as alternative backends to Ollama via `--ai_provider`/`SC0PE_AI_PROVIDER` (or the MCP tools' `ai_provider` argument). Ollama stays the local-only default unless a cloud provider is explicitly selected; see "AI Analysis Providers" above.
@@ -304,7 +310,7 @@ python .\\qu1cksc0pe.py --file app.apk --analyze --report
 ![total](https://user-images.githubusercontent.com/42123683/189416676-06216d52-4882-492d-9ee4-4ff7c04b6358.gif)
 
 ## Document scan
-<i><b>Description</b>: This feature can perform deep file inspection against given document files. For example: You can detect and extract possible malicious links or embedded exploits/payloads from your suspicious document file easily!</i>
+<i><b>Description</b>: This feature performs deep inspection of document files and VBScript/VBA-family source. It detects and extracts possible malicious links, embedded exploits/payloads, and macro code. When plaintext VBA/VBScript is available, Qu1cksc0pe also runs it automatically through its in-memory behavior-emulation sandbox after the normal static analysis.</i>
 
 <b>Effective Against</b>:
 - Word Documents (.doc, .docm, .docx)
@@ -315,12 +321,48 @@ python .\\qu1cksc0pe.py --file app.apk --analyze --report
 - VBScript/VBA Family (.vbs, .vbe, .vba, .vb, .bas, .cls, .frm)
 
 <b>Usage</b>: ```python qu1cksc0pe.py --file suspicious_document --docs```<br>
+
+### Automatic VBA/VBScript behavior emulation
+
+The emulator models common VBA/VBScript behavior such as `CreateObject`,
+filesystem and registry access, HTTP/COM calls, process creation, WMI,
+Office object access, scheduled tasks, decoding, and dynamic execution. All
+filesystem, registry, process, and network effects are virtual: analyzed code
+does not execute commands or contact remote systems on the host.
+
+- Runs automatically in addition to the static document/script scan.
+- Combines all extracted modules into one VBA project namespace so cross-module calls can be observed.
+- Invokes conventional Office auto-entry points and recovered Ribbon/shape callbacks where available.
+- Uses a fixed 15-second safety budget for each script or VBA project.
+- Adds a step-by-step IOC trace and an `emulation` section to JSON reports.
+- Skips encoded `.vbe` bodies when plaintext cannot be recovered; their static indicators are still analyzed.
+
+```bash
+# Macro-enabled Office document
+python qu1cksc0pe.py --file suspicious.xlsm --docs --report
+
+# Plain VBScript/VBA-family source
+python qu1cksc0pe.py --file suspicious.vbs --docs --report
+```
+
 ![docs](https://user-images.githubusercontent.com/42123683/189416778-f7f93d49-7ff0-4eb5-9898-53e63e5833a1.gif)
+
+## AppleScript scan
+
+<i><b>Description</b>: Statically analyzes AppleScript source for shell execution, downloads, credential/keychain access, browser or wallet collection, persistence, defense evasion, filesystem activity, URLs, and YARA matches. It does not invoke `osascript` or execute recovered shell commands.</i>
+
+<b>Usage</b>: ```python qu1cksc0pe.py --file suspicious_script.applescript --analyze --report```<br>
+
+Content-based routing also recognizes AppleScript stored under a misleading
+VB-family extension such as `.vba`.
 
 ## Batch Script scan (.bat/.cmd)
 <i><b>Description</b>: Analyze Windows Batch scripts for suspicious commands, encoded payload patterns, URLs/domains/IPs, and rule matches.</i>
 
 <b>Usage</b>: ```python qu1cksc0pe.py --file suspicious_script.bat --analyze --report```<br>
+
+Content-based routing also recognizes Batch source stored under a misleading
+VB-family extension while avoiding ordinary VBA/VBScript `Call` statements.
 
 ### Embedded File/Exploit Extraction
 ![exploit](https://user-images.githubusercontent.com/42123683/189676461-86565ff2-3a0c-426a-a66b-80a9462489b7.gif)
