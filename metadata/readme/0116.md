@@ -30,9 +30,9 @@ Qu1cksc0pe aims to get even more information about suspicious files and helps us
 | Document Files | Static; sandboxed VBA behavior emulation when macros are present |
 | VBScript/VBA Family (.vbs, .vbe, .vba, .vb, .bas, .cls, .frm) | Static + sandboxed behavior emulation (`--docs`) |
 | AppleScript Source (.applescript, including content detected under misleading VB-family extensions) | Static (`--analyze`) |
-| HTML Documents (.html, .htm) | Static (`--analyze`) |
-| JavaScript (.js) | Static (`--analyze`) |
-| HTA / HTML Application (.hta) | Static (`--analyze`) |
+| HTML Documents (.html, .htm) | Static + isolated inline JavaScript behavior emulation (`--analyze`) |
+| JavaScript (.js) | Static + isolated behavior emulation (`--analyze`) |
+| HTA / HTML Application (.hta) | Static + isolated JScript behavior emulation (`--analyze`) |
 | Windows Batch Scripts (.bat, .cmd, including content detected under misleading VB-family extensions) | Static (`--analyze`) |
 | Windows Shortcut (.lnk) | Static (`--analyze`) |
 | Archive Files (.zip, .rar, .ace) | Static |
@@ -131,6 +131,9 @@ python3 qu1cksc0pe.py --ui
 ![Screenshot](https://github.com/user-attachments/assets/84b72c33-8ca6-48f5-a613-52fca7c596e2)
 
 # Updates
+<b>01/09/2026</b>
+- [X] New feature: malicious JavaScript can now be emulated automatically during HTML/JS/HTA analysis by a native, bounded abstract interpreter. Browser, WSH, ActiveX, Node.js network/process/filesystem/registry APIs and decoded `eval` layers are modeled entirely in memory; sample code, commands, files, and network requests are never executed on the host.
+
 <b>25/08/2026</b>
 - [X] New feature: Office VBA projects and plaintext VBScript/VBA-family files are now emulated automatically in a native, in-memory sandbox during `--docs` analysis. The normal static scan still runs, and JSON reports include the emulation findings, IOC event trace, network requests, process attempts, persistence activity, and virtual files.
 - [X] New feature: added AppleScript source analysis to `Modules/apple_analyzer.py`, including execution, network, credential-access, collection, persistence, defense-evasion, filesystem, shell-command, URL, and YARA indicators. Use `--analyze`; AppleScript is never executed through `osascript`.
@@ -346,23 +349,6 @@ python qu1cksc0pe.py --file suspicious.vbs --docs --report
 ```
 
 ![docs](https://user-images.githubusercontent.com/42123683/189416778-f7f93d49-7ff0-4eb5-9898-53e63e5833a1.gif)
-
-## AppleScript scan
-
-<i><b>Description</b>: Statically analyzes AppleScript source for shell execution, downloads, credential/keychain access, browser or wallet collection, persistence, defense evasion, filesystem activity, URLs, and YARA matches. It does not invoke `osascript` or execute recovered shell commands.</i>
-
-<b>Usage</b>: ```python qu1cksc0pe.py --file suspicious_script.applescript --analyze --report```<br>
-
-Content-based routing also recognizes AppleScript stored under a misleading
-VB-family extension such as `.vba`.
-
-## Batch Script scan (.bat/.cmd)
-<i><b>Description</b>: Analyze Windows Batch scripts for suspicious commands, encoded payload patterns, URLs/domains/IPs, and rule matches.</i>
-
-<b>Usage</b>: ```python qu1cksc0pe.py --file suspicious_script.bat --analyze --report```<br>
-
-Content-based routing also recognizes Batch source stored under a misleading
-VB-family extension while avoiding ordinary VBA/VBScript `Call` statements.
 
 ### Embedded File/Exploit Extraction
 ![exploit](https://user-images.githubusercontent.com/42123683/189676461-86565ff2-3a0c-426a-a66b-80a9462489b7.gif)
