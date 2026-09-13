@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="CommixProject" src="https://commixproject.com/images/logo.png" height="140" />
+  <img alt="CommixProject" src="https://commixproject.com/images/logo-header.png" height="120" />
 </p>
 
 <div align="center">
