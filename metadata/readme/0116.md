@@ -37,7 +37,7 @@ Qu1cksc0pe aims to get even more information about suspicious files and helps us
 | Windows Shortcut (.lnk) | Static (`--analyze`) |
 | Archive Files (.zip, .rar, .ace) | Static |
 | PCAP Files (.pcap) | Static |
-| Powershell Scripts | Static |
+| PowerShell Scripts (.ps1, .PS1) | Static + bounded in-memory behavior emulation (`--analyze`) |
 | E-Mail Files (.eml) | Static |
 
 # MCP Server
@@ -131,6 +131,9 @@ python3 qu1cksc0pe.py --ui
 ![Screenshot](https://github.com/user-attachments/assets/84b72c33-8ca6-48f5-a613-52fca7c596e2)
 
 # Updates
+<b>14/09/2026</b>
+- [X] New feature: PowerShell analysis (`--analyze`) now includes Qu1cksc0pe's bounded, in-memory abstract emulator. It models supported PowerShell operations and selected .NET APIs to report dynamic code, network requests, process attempts, and filesystem activity without invoking a real PowerShell runtime or fetching network responses. Unsupported operations, unresolved inputs, and resource limits can leave the analysis incomplete; speculative behavior does not establish runtime reachability.
+
 <b>01/09/2026</b>
 - [X] New feature: malicious JavaScript can now be emulated automatically during HTML/JS/HTA analysis by a native, bounded abstract interpreter. Browser, WSH, ActiveX, Node.js network/process/filesystem/registry APIs and decoded `eval` layers are modeled entirely in memory; sample code, commands, files, and network requests are never executed on the host.
 
