@@ -131,6 +131,13 @@ python3 qu1cksc0pe.py --ui
 ![Screenshot](https://github.com/user-attachments/assets/84b72c33-8ca6-48f5-a613-52fca7c596e2)
 
 # Updates
+<b>18/09/2026</b>
+- [X] Windows dynamic analysis: improved x86/x64 API tracing, process-tree monitoring, PID reuse handling, and debugger cleanup. Live-memory YARA/IOC scanning, bounded memory exports, and process injection/hollowing checks are enabled by default. Correlated API sequences and image anomalies are reported as candidates, not confirmed malicious execution.
+- [X] Linux dynamic analysis: `--watch` now supports process-tree monitoring with `strace`/`ltrace`, network connections, open files, live-memory YARA/IOC scanning, and structured behavior observations. Reports record collection errors and incomplete coverage.
+- [X] Android dynamic analysis: added explicit ADB device selection, APK installation or installed-package monitoring, native/Java Frida hooks, process tracking, logcat, file changes, and sampled memory analysis. Fixed stale Frida detach events affecting replacement sessions; APK/device ABI compatibility and installation failures are now reported.
+- [X] Android static analysis: improved manifest, permissions, component, and network-security checks; bounded archive/member scanning; and isolated JADX output. Limited `aapt` recovery preserves package identity and observed permissions when the manifest parser fails. Partial decompilation is reported explicitly, and generic component names no longer establish a malware-family candidate.
+- [X] YARA updates: expanded the bundled rules and added Koodous metadata compatibility for Android. Missing metadata remains unknown; compilation failures and partial scans are visible in reports. Fixed lost matches from rules without string instances and overly broad conditions that caused false positives. Added `tools/audit_yara_rules.py` to check compilation and empty-input matches.
+
 <b>14/09/2026</b>
 - [X] New feature: PowerShell analysis (`--analyze`) now includes Qu1cksc0pe's bounded, in-memory abstract emulator. It models supported PowerShell operations and selected .NET APIs to report dynamic code, network requests, process attempts, and filesystem activity without invoking a real PowerShell runtime or fetching network responses. Unsupported operations, unresolved inputs, and resource limits can leave the analysis incomplete; speculative behavior does not establish runtime reachability.
 
