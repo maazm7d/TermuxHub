@@ -2087,6 +2087,20 @@
       "author": "ncjcjfvkkvkv-create",
       "requireRoot": false,
       "publishedAt": "04-07-2026"
-    }
+    },
+    
+{
+  "id": "0175",
+  "name": "Termux Web Server",
+  "description": "A complete web server environment for Android powered by Nginx, PHP-FPM, MariaDB, Redis, HTTPS and Cloudflare Tunnel.",
+  "category": "Utilities & Dev",
+  "install": "pkg update -y && pkg upgrade -y\npkg install -y python git curl\ngit clone https://github.com/elias0esmail/termux-web-server.git\ncd termux-web-server\npython install.py",
+  "thumbnail": "",
+  "repo": "https://github.com/elias0esmail/termux-web-server",
+  "author": "elias0esmail",
+  "requireRoot": false,
+  "publishedAt": "30-10-2026"
+}
+
   ]
 }
